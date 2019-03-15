@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+  <!-- We use a custom world for the panda + softhand. -->
+  <!-- One can change this world to his needs or use another one. -->
+  
+  <world name="default">
+	
+		<!-- box (like a table) -->
+    <model name="table">
+			<pose> 0.6 0 -0.05 0 0 0</pose>
+			<static>true</static>
+			<link name='linkTable'>
+				<pose>0 0 0 0 0 0</pose>
+				
+				<collision name="my_collisionTable">
+		 			<pose>0 0 0 0 0 0</pose>
+					<geometry>
+		        <box>
+		          <size>1 1 0.05</size>
+		        </box>
+		      </geometry>
+	      </collision>
+				
+				<visual name="my_visualTable">
+					<geometry>
+		        <box>
+							<size>1 1 0.05</size>
+		        </box>
+		      </geometry>
+	      </visual>
+				
+				<self_collide>0</self_collide>		
+				<gravity>1</gravity>
+			</link>
+    </model>
+
+  </world>
+  
+</sdf>

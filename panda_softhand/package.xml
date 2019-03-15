@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+  <name>panda_softhand</name>
+  <version>1.0.0</version>
+  <description>The panda_softhand package</description>
+
+  <author email="georgejose.pollayil@phd.unipi.it">George Jose Pollayil</author>
+  <maintainer email="mathewjose.pollayil@phd.unipi.it">Mathew Jose Pollayil</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <export>
+    <metapackage/>
+  </export>
+</package>
