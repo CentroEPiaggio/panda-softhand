@@ -9,7 +9,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "TaskSequencer.h"
 
 /**********************************************
-ROS NODE MAIN TASK SEQUENCE CLIENT 
+ROS NODE MAIN TASK SEQUENCE SERVER 
 **********************************************/
 
 int main(int argc, char **argv)

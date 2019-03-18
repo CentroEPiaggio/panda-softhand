@@ -82,7 +82,7 @@ bool JointControl::initialize(panda_softhand_control::joint_control::Request &re
 // Performs motion planning for the joints towards goal
 bool JointControl::performMotionPlan(){
 
-    // Move group interface 
+    // Move group interface
     moveit::planning_interface::MoveGroupInterface group(this->group_name);
     
     // Getting current joint state
@@ -116,8 +116,6 @@ bool JointControl::performMotionPlan(){
 
     // Setting the joint config target of the move group
     group.setJointValueTarget(this->joint_goal);
-
-    if(DEBUG) ROS_INFO("Done setting the target joint config in MoveIt Group.");
 
     // Planning to joint configuration
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;

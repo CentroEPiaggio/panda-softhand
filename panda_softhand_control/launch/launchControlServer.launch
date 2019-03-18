@@ -5,10 +5,7 @@
 	
 	<!-- Loading config file to param server -->
 
-	<!-- Panda SoftHand namespace -->
-    <group ns="panda_softhand">
-		<!-- Load main node -->
-  		<node name="control_server_node" pkg="panda_softhand_control" type="control_server" output="screen"/>
-	</group>
+	<!-- Load main node -->
+  <node name="control_server_node" pkg="panda_softhand_control" type="control_server" output="screen"/>
 
 </launch>

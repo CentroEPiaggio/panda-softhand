@@ -18,19 +18,19 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     }
 
     // Initializing the object subscriber and waiting (TODO: parse the topic name)
-    this->object_topic_name = "object_pose";
+    this->object_topic_name = "/object_pose";
     this->object_sub = this->nh.subscribe(this->object_topic_name, 1, &TaskSequencer::get_object_pose, this);
     ros::topic::waitForMessage<geometry_msgs::Pose>(this->object_topic_name, ros::Duration(2.0));
 
     // Initializing the franka_state_sub subscriber and waiting
-    this->franka_state_sub = this->nh.subscribe(this->robot_name + this->franka_state_topic_name, 1, &TaskSequencer::get_franka_state, this);
-    ros::topic::waitForMessage<franka_msgs::FrankaState>(this->robot_name + this->franka_state_topic_name, ros::Duration(2.0));
+    this->franka_state_sub = this->nh.subscribe("/" + this->robot_name + this->franka_state_topic_name, 1, &TaskSequencer::get_franka_state, this);
+    ros::topic::waitForMessage<franka_msgs::FrankaState>("/" + this->robot_name + this->franka_state_topic_name, ros::Duration(2.0));
 
     // Initializing the tau_ext norm and franka recovery publishers
-    this->pub_franka_recovery = this->nh.advertise<franka_control::ErrorRecoveryActionGoal>(this->robot_name + "/franka_control/error_recovery/goal", 1);
+    this->pub_franka_recovery = this->nh.advertise<franka_control::ErrorRecoveryActionGoal>("/" + this->robot_name + "/franka_control/error_recovery/goal", 1);
     this->pub_tau_ext_norm = this->nh.advertise<std_msgs::Float64>("tau_ext_norm", 1);
 
-    // Initializing Panda SoftHand Client
+    // Initializing Panda SoftHand Client (TODO: Return error if initialize returns false)
     this->panda_softhand_client.initialize(this->nh);
 
     // Setting the task service names
