@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(panda_softhand_control)
+
 add_definitions(-std=c++11)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_BUILD_TYPE Debug)
@@ -45,8 +46,9 @@ generate_messages(DEPENDENCIES
 find_package(SDFormat REQUIRED)
 
 catkin_package(
+  INCLUDE_DIRS include
   CATKIN_DEPENDS actionlib_msgs moveit_ros_planning_interface message_runtime std_msgs std_srvs
-  LIBRARIES sdformat
+  LIBRARIES ${PROJECT_NAME}_lib
 )
 
 set(OBJECTS_SOURCE_FILES
@@ -59,8 +61,23 @@ set(OBJECTS_SOURCE_FILES
   src/TaskSequencer.cpp
 )
 
-include_directories(include ${catkin_INCLUDE_DIRS} /usr/include/eigen3 ${SDFormat_INCLUDE_DIRS})
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+  /usr/include/eigen3
+  ${SDFormat_INCLUDE_DIRS}
+)
+
 link_directories(${SDFormat_LIBRARY_DIRS})
+
+## Declare a C++ library
+set(LIB_SOURCE_FILES
+    src/PandaSoftHandClient.cpp
+)
+add_library(${PROJECT_NAME}_lib
+  ${LIB_SOURCE_FILES}
+)
+target_link_libraries(${PROJECT_NAME}_lib ${catkin_LIBRARIES} ${ROS_LIBRARIES})
 
 # NODE: Lower level position controls
 add_executable(control_server src/control_server.cpp ${OBJECTS_SOURCE_FILES})
@@ -77,6 +94,12 @@ add_executable(world_to_planning_scene_node src/SdfToPlanningScene.cpp)
 target_link_libraries(world_to_planning_scene_node ${catkin_LIBRARIES} ${ROS_LIBRARIES} ${SDFormat_LIBRARIES})
 
 # Mark cpp header files for installation
+install(TARGETS ${PROJECT_NAME}_lib
+        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
+
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
   FILES_MATCHING PATTERN "*.h"
