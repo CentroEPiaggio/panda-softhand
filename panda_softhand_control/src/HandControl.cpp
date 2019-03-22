@@ -2,7 +2,7 @@
 Authors: George Jose Pollayil - Mathew Jose Pollayil
 Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
-#include "HandControl.h"
+#include "panda_softhand_control/HandControl.h"
 
 HandControl::HandControl(ros::NodeHandle& nh_, int n_wp_, std::string synergy_joint_name_,
     boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> hand_client_ptr_){

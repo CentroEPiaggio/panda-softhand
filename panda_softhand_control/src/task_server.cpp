@@ -6,7 +6,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "ros/ros.h"
 
 // Object Includes
-#include "TaskSequencer.h"
+#include "panda_softhand_control/TaskSequencer.h"
 
 /**********************************************
 ROS NODE MAIN TASK SEQUENCE SERVER 

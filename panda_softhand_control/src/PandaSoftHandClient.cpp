@@ -3,7 +3,7 @@ control Panda + SoftHand
 Authors: George Jose Pollayil - Mathew Jose Pollayil
 Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
-#include "PandaSoftHandClient.h"
+#include "panda_softhand_control/PandaSoftHandClient.h"
 
 PandaSoftHandClient::PandaSoftHandClient(){
 

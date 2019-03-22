@@ -6,10 +6,10 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "ros/ros.h"
 
 // Object Includes
-#include "HandControl.h"
-#include "SlerpControl.h"
-#include "PoseControl.h"
-#include "JointControl.h"
+#include "panda_softhand_control/HandControl.h"
+#include "panda_softhand_control/SlerpControl.h"
+#include "panda_softhand_control/PoseControl.h"
+#include "panda_softhand_control/JointControl.h"
 
 /**********************************************
 ROS NODE MAIN SERVICE SERVERS 

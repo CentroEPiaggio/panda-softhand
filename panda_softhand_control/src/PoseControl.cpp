@@ -7,7 +7,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <sstream>
 #include <string>
 
-#include "PoseControl.h"
+#include "panda_softhand_control/PoseControl.h"
 
 #include <moveit_visual_tools/moveit_visual_tools.h>
 

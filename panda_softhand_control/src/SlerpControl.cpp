@@ -7,7 +7,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <sstream>
 #include <string>
 
-#include "SlerpControl.h"
+#include "panda_softhand_control/SlerpControl.h"
 
 #include <moveit_visual_tools/moveit_visual_tools.h>
 

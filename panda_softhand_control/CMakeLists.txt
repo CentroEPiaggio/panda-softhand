@@ -75,3 +75,10 @@ target_link_libraries(task_server ${catkin_LIBRARIES} ${ROS_LIBRARIES})
 # NODE: Utility to publish collision objects to planning scene from world file
 add_executable(world_to_planning_scene_node src/SdfToPlanningScene.cpp)
 target_link_libraries(world_to_planning_scene_node ${catkin_LIBRARIES} ${ROS_LIBRARIES} ${SDFormat_LIBRARIES})
+
+# Mark cpp header files for installation
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+  FILES_MATCHING PATTERN "*.h"
+  PATTERN ".svn" EXCLUDE
+)

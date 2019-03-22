@@ -5,7 +5,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "sensor_msgs/JointState.h"
 
 #include "utils/parsing_utilities.h"
-#include "TaskSequencer.h"
+#include "panda_softhand_control/TaskSequencer.h"
 
 TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     
