@@ -46,7 +46,7 @@ find_package(SDFormat REQUIRED)
 
 catkin_package(
   CATKIN_DEPENDS actionlib_msgs moveit_ros_planning_interface message_runtime std_msgs std_srvs
-  LIBRARIES moveit_ros_planning_interface sdformat
+  LIBRARIES sdformat
 )
 
 set(OBJECTS_SOURCE_FILES
