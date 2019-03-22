@@ -275,6 +275,7 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
+    // 4) Lifting the grasped? object
     if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
         ROS_ERROR("Could not lift to the specified pose.");
         res.success = false;
