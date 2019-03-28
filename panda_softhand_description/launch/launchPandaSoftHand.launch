@@ -19,6 +19,7 @@
     <!-- Utilities -->
     <arg name="environment_name" default="panda_soma"/>
     <arg name="use_moveit" default="true"/>
+    <arg name="use_safety" default="true"/>
 
     <!-- START LAUNCH -->
 
@@ -108,6 +109,11 @@
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller joint_trajectory_controller"/>
         <node name="controller_stopper" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="--stopped velocity_controller"/>
 
+    </group>
+
+    <!-- Panda SoftHand Safety -->
+    <group if="$(arg use_safety)">
+            <include file="$(find panda_softhand_safety)/launch/panda_softhand_safety.launch"></include>
     </group>
 
     <!-- QB Interface -->
