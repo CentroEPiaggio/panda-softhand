@@ -51,6 +51,9 @@ bool CollisionEvader::CheckCollision(){
         this->current_state_->setJointPositions(this->current_joints_.name[i], &this->current_joints_.position[i]);
     }
 
+    // Set the current robot state to planning scene
+    this->planning_scene_->setCurrentState(*this->current_state_);
+
     // Get collision objects in scene
     this->collision_objects_map_ = this->planning_scene_interface_.getObjects();
     if (DEBUG_CE) ROS_INFO("Checking for collision objects in the planning scene...");
@@ -61,19 +64,26 @@ bool CollisionEvader::CheckCollision(){
         }
     }
 
-    // (TODO: set the current robot state to planning scene)
-
-    // Print distance to collision
-    ROS_INFO_STREAM("Distance to Collision: " << this->planning_scene_->distanceToCollision(*this->current_state_));
-
     // Checking for collision
     this->collision_result_.clear();
-    this->planning_scene_->checkCollision(this->collision_request_, this->collision_result_);
+    this->planning_scene_->checkCollision(this->collision_request_, this->collision_result_, *this->current_state_);
 
-    ROS_INFO_STREAM("Distance to Collision in result: " << this->collision_result_.distance);
+    this->distance_to_env_ = this->planning_scene_->distanceToCollision(*this->current_state_);
+    this->distance_to_self_ = this->collision_result_.distance;
+
+    // Print distance to collision
+    if (DEBUG_CE) {
+        ROS_INFO_STREAM("Distance to world collision: " << this->distance_to_env_);
+        ROS_INFO_STREAM("Distance to self collision: " << this->distance_to_self_);
+    }
+
+    // TODO: Use only checkCollision() for both self and world collisions
 
     // Now we know if collision
-    return this->collision_result_.collision;
+    this->collision_found_ = 
+        (this->distance_to_env_ < this->collision_threshold_ || this->distance_to_self_ < this->collision_threshold_);
+    
+    return this->collision_found_;
     
 }
 
@@ -96,6 +106,12 @@ bool CollisionEvader::parse_parameters(ros::NodeHandle& nh){
 		success = false;
 	}
 
+    if(!ros::param::get("/panda_softhand_safety/collision_threshold", this->collision_threshold_)){
+		ROS_WARN("The param 'collision_threshold' not found in param server! Using default.");
+		this->collision_threshold_ = 0.01;
+		success = false;
+	}
+
     return success;
     
 }
@@ -112,6 +128,11 @@ bool CollisionEvader::initialize(){
 
     // Filling up part of collision request
     this->collision_request_.group_name = this->group_name_;
+    this->collision_request_.contacts = true;
+    this->collision_request_.distance = true;
+    this->collision_request_.max_contacts = 100;
+    this->collision_request_.max_contacts_per_pair = 5;
+    this->collision_request_.verbose = false;
 
     return true;
 }

@@ -76,8 +76,14 @@ class CollisionEvader {
         // Constants
         std::string joints_topic_ = "/joint_states";
 
+        // Other variables
+        bool collision_found_ = false;          // Set by CheckCollision()
+        double distance_to_env_;                // Current distance from environment
+        double distance_to_self_;               // Current distance from self
+
         // Parsed variables
         std::string group_name_;                // Robots MoveIt! group
+        double collision_threshold_;            // Minimum distance from collision
 
 };
 
