@@ -17,11 +17,17 @@ int main(int argc, char** argv) {
         
         ros::spinOnce();
 
-        // Clearing the message
+        // Resetting the message
+        safety_info_msg.header.stamp = ros::Time::now();
+        safety_info_msg.collision = false;
+        safety_info_msg.joint_position_limits = false;
+        safety_info_msg.joint_velocity_limits = false;
+        safety_info_msg.joint_acceleration_limits = false;
 
         // Checking for collisions
-        if (!collision_evader.EvadeCollision()){
-            
+        if (collision_evader.CheckCollision()){
+            safety_info_msg.collision = true;
+            ROS_ERROR("A collision found!");
         }
     }
 

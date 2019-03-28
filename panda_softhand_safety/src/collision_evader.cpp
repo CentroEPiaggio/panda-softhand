@@ -12,13 +12,21 @@ CollisionEvader::CollisionEvader(ros::NodeHandle& nh){
 
     this->ce_nh_ = nh;
 
+    // Initializing ROS elements
+    this->sub_joint_states_ = this->ce_nh_.subscribe<sensor_msgs::JointState>(this->joints_topic_, 1, &CollisionEvader::joints_callback, this);
+    this->first_joints_ = ros::topic::waitForMessage<sensor_msgs::JointState>(this->joints_topic_, ros::Duration(2.0));
+    if (this->first_joints_ == NULL) {
+        ROS_ERROR("Cannot contact the joint states topic! This is not safe anymore.");
+    }
+    this->current_joints_ = *this->first_joints_;
+
     // Getting necessary parameters for initializing
-    if(!this->parse_parameters(this->ce_nh_)){
+    if (!this->parse_parameters(this->ce_nh_)) {
         ROS_ERROR("Could not parse the needed parameters! Using default ones.");
     }
 
     // Initializing the needed elements
-    if(!this->initialize()){
+    if (!this->initialize()) {
         ROS_FATAL("Failed to initialize some of the variables for collision check! This is not safe anymore.");
     }
 
@@ -31,21 +39,65 @@ CollisionEvader::~CollisionEvader(){
 }
 
 // Function that spins to check for collisions
-bool CollisionEvader::EvadeCollision(){
+bool CollisionEvader::CheckCollision(){
+
+    // Spinning to get the latest joints
+    ros::spinOnce();
+
+    // Setting the joints in robot state
+    for (int i = 0; i < 7; i++){
+        this->current_state_->setJointPositions(this->current_joints_.name[i], &this->current_joints_.position[i]);
+    }
+
+    // Get collision objects in scene
+    this->collision_objects_map_ = this->planning_scene_interface_.getObjects();
+    for (auto it : this->collision_objects_map_) {
+        this->planning_scene_->processCollisionObjectMsg(it.second);
+    }
+
+    // Checking for collision
+    this->collision_result_.clear();
+    this->planning_scene_->checkCollision(this->collision_request_, this->collision_result_);
+
+    // Now we know if collision
+    return this->collision_result_.collision;
     
 }
 
 // Callback to joint_states topic
-void CollisionEvader::callback_joint_states(sensor_msgs::JointStateConstPtr msg){
+void CollisionEvader::joints_callback(const sensor_msgs::JointState::ConstPtr &msg){
     
+    // Saving the joints message
+    this->current_joints_ = *msg;
+
 }
 
 // Function to parse parameters
 bool CollisionEvader::parse_parameters(ros::NodeHandle& nh){
+
+    bool success = true;
+
+    if(!ros::param::get("/panda_softhand_safety/group_name_", this->group_name_)){
+		ROS_WARN("The param 'group_name_' not found in param server! Using default.");
+		this->group_name_ = "panda_arm";
+		success = false;
+	}
+
+    return success;
     
 }
 
 // Function to initialize all main variables
 bool CollisionEvader::initialize(){
+
+    // Initializing MoveIt variables
+    this->group_ptr_ = std::make_shared<moveit::planning_interface::MoveGroupInterface>(this->group_name_);
+    this->robot_model_loader_ = std::make_shared<robot_model_loader::RobotModelLoader>("robot_description");
+    this->kinematic_model_ = this->robot_model_loader_->getModel();
+    this->planning_scene_ = std::make_shared<planning_scene::PlanningScene>(this->kinematic_model_);
+    this->current_state_ = std::make_shared<robot_state::RobotState>(this->planning_scene_->getCurrentStateNonConst());
+
+    // Filling up part of collision request
+    this->collision_request_.group_name = this->group_name_;
 
 }
