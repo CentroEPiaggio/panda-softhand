@@ -5,4 +5,4 @@ panda_softhand_safety:
   # Name of the moveit group
   group_name: panda_arm
   # Collision distance threshold
-  collision_threshold: 0.01
+  collision_threshold: 0.025
