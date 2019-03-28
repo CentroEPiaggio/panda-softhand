@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
     ros::init (argc, argv, "panda_softhand_safety_node");
     ros::NodeHandle nh;
     
-    ros::Publisher safety_pub = nh.advertise<panda_softhand_safety::SafetyInfo>("panda_softhand_safety_info", 1);
+    ros::Publisher safety_pub = nh.advertise<panda_softhand_safety::SafetyInfo>("/panda_softhand_safety_info", 1);
 
     // Safety info message
     panda_softhand_safety::SafetyInfo safety_info_msg;
