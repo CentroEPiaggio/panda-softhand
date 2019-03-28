@@ -1,10 +1,14 @@
 #include "panda_softhand_safety/collision_evader.h"
 #include "panda_softhand_safety/SafetyInfo.h"
 
+#define     DEBUG_PSS       0       // Prints out debug info
+
 int main(int argc, char** argv) {
     
     ros::init (argc, argv, "panda_softhand_safety_node");
     ros::NodeHandle nh;
+    
+    ros::Publisher safety_pub = nh.advertise<panda_softhand_safety::SafetyInfo>("panda_softhand_safety_info", 1);
 
     // Safety info message
     panda_softhand_safety::SafetyInfo safety_info_msg;
@@ -27,8 +31,11 @@ int main(int argc, char** argv) {
         // Checking for collisions
         if (collision_evader.CheckCollision()){
             safety_info_msg.collision = true;
-            ROS_ERROR("A collision found!");
+            if (DEBUG_PSS) ROS_ERROR("A collision found!");
         }
+
+        // Publish the message
+        safety_pub.publish(safety_info_msg);
     }
 
     ros::shutdown();

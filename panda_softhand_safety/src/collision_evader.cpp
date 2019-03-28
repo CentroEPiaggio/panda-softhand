@@ -6,7 +6,7 @@
 
 #include "panda_softhand_safety/collision_evader.h"
 
-#define     DEBUG_CE        1       // Prints out additional info
+#define     DEBUG_CE        0       // Prints out additional info
 
 using namespace panda_softhand_safety;
 
