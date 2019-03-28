@@ -1,0 +1,5 @@
+Header header 
+bool collision
+bool joint_position_limits
+bool joint_velocity_limits
+bool joint_acceleration_limits
