@@ -6,6 +6,8 @@
 
 #include "panda_softhand_safety/collision_evader.h"
 
+#define     DEBUG_CE        1       // Prints out additional info
+
 using namespace panda_softhand_safety;
 
 CollisionEvader::CollisionEvader(ros::NodeHandle& nh){
@@ -51,13 +53,24 @@ bool CollisionEvader::CheckCollision(){
 
     // Get collision objects in scene
     this->collision_objects_map_ = this->planning_scene_interface_.getObjects();
+    if (DEBUG_CE) ROS_INFO("Checking for collision objects in the planning scene...");
     for (auto it : this->collision_objects_map_) {
         this->planning_scene_->processCollisionObjectMsg(it.second);
+        if (DEBUG_CE) {
+            std::cout << "Found collision object " << it.first << " with id " << it.second.id << "." << std::endl;
+        }
     }
+
+    // (TODO: set the current robot state to planning scene)
+
+    // Print distance to collision
+    ROS_INFO_STREAM("Distance to Collision: " << this->planning_scene_->distanceToCollision(*this->current_state_));
 
     // Checking for collision
     this->collision_result_.clear();
     this->planning_scene_->checkCollision(this->collision_request_, this->collision_result_);
+
+    ROS_INFO_STREAM("Distance to Collision in result: " << this->collision_result_.distance);
 
     // Now we know if collision
     return this->collision_result_.collision;
@@ -77,8 +90,8 @@ bool CollisionEvader::parse_parameters(ros::NodeHandle& nh){
 
     bool success = true;
 
-    if(!ros::param::get("/panda_softhand_safety/group_name_", this->group_name_)){
-		ROS_WARN("The param 'group_name_' not found in param server! Using default.");
+    if(!ros::param::get("/panda_softhand_safety/group_name", this->group_name_)){
+		ROS_WARN("The param 'group_name' not found in param server! Using default.");
 		this->group_name_ = "panda_arm";
 		success = false;
 	}
@@ -100,4 +113,5 @@ bool CollisionEvader::initialize(){
     // Filling up part of collision request
     this->collision_request_.group_name = this->group_name_;
 
+    return true;
 }

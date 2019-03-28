@@ -1,0 +1,6 @@
+# Parameters for panda_softhand_safety
+# Remember that there might be other important constants that can only be changed from the src code.
+
+panda_softhand_safety:
+  # Name of the moveit group
+  group_name: panda_arm
