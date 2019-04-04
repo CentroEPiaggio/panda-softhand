@@ -64,9 +64,7 @@ class JointLimitsEvader {
 			KDL::JntArray pos_min;
 			KDL::JntArray pos_max;
 			KDL::JntArray pos_center;
-            KDL::JntArray vel_min;
 			KDL::JntArray vel_max;
-            KDL::JntArray acc_min;
             KDL::JntArray acc_max;
     
 		} joint_limits_;

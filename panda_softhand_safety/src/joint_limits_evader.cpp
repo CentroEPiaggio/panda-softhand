@@ -149,8 +149,11 @@ bool JointLimitsEvader::initialize(){
     this->joint_limits_.pos_min.resize(this->kdl_chain_.getNrOfJoints());
     this->joint_limits_.pos_max.resize(this->kdl_chain_.getNrOfJoints());
     this->joint_limits_.pos_center.resize(this->kdl_chain_.getNrOfJoints());
+    this->joint_limits_.vel_max.resize(this->kdl_chain_.getNrOfJoints());
+    this->joint_limits_.acc_max.resize(this->kdl_chain_.getNrOfJoints());
+
+    // Getting the position and velocity limits (the acceleration limits are now all the same)
     int index;
-    
     for (int i = 0; i < this->kdl_chain_.getNrOfJoints() && link_; i++) {
         joint_ = model.getJoint(link_->parent_joint->name);  
         ROS_INFO("Getting limits for joint: %s", joint_->name.c_str());
@@ -158,8 +161,12 @@ bool JointLimitsEvader::initialize(){
         this->joint_limits_.pos_min(index) = joint_->limits->lower;
         this->joint_limits_.pos_max(index) = joint_->limits->upper;
         this->joint_limits_.pos_center(index) = (this->joint_limits_.pos_min(index) + this->joint_limits_.pos_max(index))/2;
+        this->joint_limits_.vel_max(index) = joint_->limits->velocity;
+        this->joint_limits_.acc_max(index) = this->acceleration_limit_;
         link_ = model.getLink(link_->getParent()->name);
     }
+
+    // TODO : get the correct acceleration limits from a yaml file (from Franka Documentation)
 
     return true;
 }
