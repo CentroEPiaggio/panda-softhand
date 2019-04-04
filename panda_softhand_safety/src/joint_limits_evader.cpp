@@ -41,6 +41,8 @@ JointLimitsEvader::JointLimitsEvader(ros::NodeHandle& nh){
     this->current_joint_values_.vel.resize(7);
     this->current_joint_values_.acc.resize(7);
 
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Resized the vectors!");
+
     // Saving the joint state values
     for (int i = 0; i < 7; i ++) {
         this->previous_joint_values_.pos[i] = this->current_joints_.position[i];
@@ -51,6 +53,8 @@ JointLimitsEvader::JointLimitsEvader(ros::NodeHandle& nh){
         this->current_joint_values_.acc[i] = 0.0;
     }
 
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Filled up the vectors!");
+
     // Getting necessary parameters for initializing
     if (!this->parse_parameters(this->jle_nh_)) {
         ROS_ERROR("Could not parse the needed parameters! Using default ones.");
@@ -60,6 +64,8 @@ JointLimitsEvader::JointLimitsEvader(ros::NodeHandle& nh){
     if (!this->initialize()) {
         ROS_FATAL("Failed to initialize some of the variables for collision check! This is not safe anymore.");
     }
+
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Finished initialization!");
 
 }
 
@@ -78,6 +84,8 @@ bool JointLimitsEvader::CheckLimitsViolations(panda_softhand_safety::SafetyInfo 
     safety_msg.joint_velocity_limits = false;
     safety_msg.joint_acceleration_limits = false;
 
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Going to check the limits!");
+
     for (int i = 0; i < this->current_joint_values_.pos.size(); i++) {
         if ( std::abs(this->joint_limits_.pos_max.data[i] - this->current_joint_values_.pos[i]) <= this->joint_pos_thresh_ ) {
             limit_violated = true;
@@ -93,20 +101,22 @@ bool JointLimitsEvader::CheckLimitsViolations(panda_softhand_safety::SafetyInfo 
                 " (" << this->current_joint_values_.pos[i] << ") has violated the lower limit (" << this->joint_limits_.pos_min.data[i] << ").");
         }
 
-        if ( std::abs(this->joint_limits_.vel_max.data[i] - this->current_joint_values_.vel[i]) <= this->joint_vel_thresh_ ) {
+        if ( std::abs(this->joint_limits_.vel_max.data[i] - std::abs(this->current_joint_values_.vel[i])) <= this->joint_vel_thresh_ ) {
             limit_violated = true;
             safety_msg.joint_velocity_limits = true;
             ROS_ERROR_STREAM("Attention: the velocity of joint " << i+1 << 
                 " (" << this->current_joint_values_.vel[i] << ") has violated the limit (" << this->joint_limits_.vel_max.data[i] << ").");
         }
 
-        if ( std::abs(this->joint_limits_.acc_max.data[i] - this->current_joint_values_.acc[i]) <= this->joint_acc_thresh_ ) {
+        if ( std::abs(this->joint_limits_.acc_max.data[i] - std::abs(this->current_joint_values_.acc[i])) <= this->joint_acc_thresh_ ) {
             limit_violated = true;
             safety_msg.joint_acceleration_limits = true;
             ROS_ERROR_STREAM("Attention: the acceleration of joint " << i+1 << 
                 " (" << this->current_joint_values_.acc[i] << ") has violated the limit (" << this->joint_limits_.acc_max.data[i] << ").");
         }     
     }
+
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Finished checking the limits!");
 
     return limit_violated;
 
@@ -119,18 +129,24 @@ void JointLimitsEvader::joints_callback(const sensor_msgs::JointState::ConstPtr 
     this->time_now_ = ros::Time::now();
     this->period_ = this->time_now_ - this->time_before_;
     this->time_before_ = this->time_now_;
+
+    // Saving the prevous joint values
+    this->previous_joint_values_ = this->current_joint_values_;
     
     // Saving the joints message
     this->current_joints_ = *msg;
 
-    // Saving the prevous joint values and the current ones
-    this->previous_joint_values_ = this->current_joint_values_;
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Going to save the joints!");
+
+    // Saving the current joint values
     for (int i = 0; i < 7; i ++) {
         this->current_joint_values_.pos[i] = this->current_joints_.position[i];
         this->current_joint_values_.vel[i] = this->current_joints_.velocity[i];
         this->current_joint_values_.acc[i] = 
             (this->current_joint_values_.vel[i] - this->previous_joint_values_.vel[i]) / period_.toSec();
     }
+
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Finished saving the joints!");
 
 }
 
@@ -178,15 +194,16 @@ bool JointLimitsEvader::initialize(){
         ROS_ERROR_STREAM("JointLimitsEvader: No robot description (urdf) found on parameter server (" << this->jle_nh_.getNamespace() << "/robot_description)");
         return false;
     }
-    if (!this->jle_nh_.getParam("root_name", root_name)) {
-        ROS_ERROR_STREAM("JointLimitsEvader: No root name found on parameter server (" << this->jle_nh_.getNamespace() << "/root_name)");
+    if (!this->jle_nh_.getParam("/panda_softhand_safety/root_name", root_name)) {
+        ROS_ERROR_STREAM("JointLimitsEvader: No root name found on parameter server (/panda_softhand_safety/root_name)");
         return false;
     }
-    if (!this->jle_nh_.getParam("tip_name", tip_name))
-    {
-        ROS_ERROR_STREAM("JointLimitsEvader: No tip name found on parameter server (" << this->jle_nh_.getNamespace() << "/tip_name)");
+    if (!this->jle_nh_.getParam("/panda_softhand_safety/tip_name", tip_name)) {
+        ROS_ERROR_STREAM("JointLimitsEvader: No tip name found on parameter server (/panda_softhand_safety/tip_name)");
         return false;
     }
+
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Going to save the robot_description!");
 
     // Construct urdf model from parsed xml string
     std::string xml_string;
@@ -205,6 +222,8 @@ bool JointLimitsEvader::initialize(){
     }
 
     ROS_DEBUG("%s content\n%s", robot_description.c_str(), xml_string.c_str());
+
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Going to get the urdf!");
     
     // Get urdf model from robot_description
     urdf::Model model;
@@ -214,6 +233,8 @@ bool JointLimitsEvader::initialize(){
         return false;
     }
     ROS_INFO("Successfully parsed urdf file");
+
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Going to parse the kdl tree!");
     
     // Create a kdl tree from the urdf model
     KDL::Tree kdl_tree_;
@@ -222,6 +243,8 @@ bool JointLimitsEvader::initialize(){
         this->jle_nh_.shutdown();
         return false;
     }
+
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Going to get the kdl chain!");
 
     // Populate the kdl chain
     if (!kdl_tree_.getChain(root_name, tip_name, this->kdl_chain_)) {
@@ -238,6 +261,8 @@ bool JointLimitsEvader::initialize(){
 
     ROS_DEBUG("Number of segments: %d", this->kdl_chain_.getNrOfSegments());
     ROS_DEBUG("Number of joints in chain: %d", this->kdl_chain_.getNrOfJoints());
+
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Going to resize the joint limits!");
     
     // Parsing joint limits from urdf model along kdl chain
     boost::shared_ptr<const urdf::Link> link_ = model.getLink(tip_name);
@@ -247,6 +272,8 @@ bool JointLimitsEvader::initialize(){
     this->joint_limits_.pos_center.resize(this->kdl_chain_.getNrOfJoints());
     this->joint_limits_.vel_max.resize(this->kdl_chain_.getNrOfJoints());
     this->joint_limits_.acc_max.resize(this->kdl_chain_.getNrOfJoints());
+
+    if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Going to get the joint limits!");
 
     // Getting the position and velocity limits (the acceleration limits are for now all the same)
     int index;
