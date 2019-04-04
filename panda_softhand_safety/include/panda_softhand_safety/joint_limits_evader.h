@@ -95,6 +95,9 @@ class JointLimitsEvader {
         // Other KDL stuff
         KDL::Chain kdl_chain_;
 
+        // Print out bools
+        std::vector<bool> violation_print_ = {true, true, true, true};
+
 };
 
 }

@@ -79,7 +79,7 @@ JointLimitsEvader::~JointLimitsEvader(){
 // Function that spins to check for joint limits violations
 bool JointLimitsEvader::CheckLimitsViolations(panda_softhand_safety::SafetyInfo &safety_msg){
 
-    // Checking if the limits are violated
+    // Safety msg is temporarily filled as safe
     bool limit_violated = false;
     safety_msg.joint_position_limits = false;
     safety_msg.joint_velocity_limits = false;
@@ -88,33 +88,62 @@ bool JointLimitsEvader::CheckLimitsViolations(panda_softhand_safety::SafetyInfo 
     if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Going to check the limits!");
 
     for (int i = 0; i < this->current_joint_values_.pos.size(); i++) {
+
+        // Checking for max joint position violation and in that case printing only once
         if ( std::abs(this->joint_limits_.pos_max.data[i] - this->current_joint_values_.pos[i]) <= this->joint_pos_thresh_ ) {
             limit_violated = true;
             safety_msg.joint_position_limits = true;
-            ROS_ERROR_STREAM("Attention: the position of joint " << i+1 << 
-                " (" << this->current_joint_values_.pos[i] << ") has violated the upper limit (" << this->joint_limits_.pos_max.data[i] << ").");
+            if (this->violation_print_[0]) {
+                this->violation_print_[0] = false;
+                ROS_WARN_STREAM("Attention: the position of joint " << i+1 << 
+                    " (" << this->current_joint_values_.pos[i] << ") is about to violate the upper limit (" << this->joint_limits_.pos_max.data[i] << ").");
+            }          
+        } else {
+            this->violation_print_[0] = true;
         }
 
+        // Checking for min joint position violation and in that case printing only once
         if ( std::abs(this->current_joint_values_.pos[i] - this->joint_limits_.pos_min.data[i]) <= this->joint_pos_thresh_ ) {
             limit_violated = true;
             safety_msg.joint_position_limits = true;
-            ROS_ERROR_STREAM("Attention: the position of joint " << i+1 << 
-                " (" << this->current_joint_values_.pos[i] << ") has violated the lower limit (" << this->joint_limits_.pos_min.data[i] << ").");
+            if (this->violation_print_[1]) {
+                this->violation_print_[1] = false;
+                ROS_WARN_STREAM("Attention: the position of joint " << i+1 << 
+                    " (" << this->current_joint_values_.pos[i] << ") is about to violate the lower limit (" << this->joint_limits_.pos_min.data[i] << ").");
+            }
+            
+        } else {
+            this->violation_print_[1] = true;
         }
 
+        // Checking for joint velocity violation and in that case printing only once
         if ( std::abs(this->joint_limits_.vel_max.data[i] - std::abs(this->current_joint_values_.vel[i])) <= this->joint_vel_thresh_ ) {
             limit_violated = true;
             safety_msg.joint_velocity_limits = true;
-            ROS_ERROR_STREAM("Attention: the velocity of joint " << i+1 << 
-                " (" << this->current_joint_values_.vel[i] << ") has violated the limit (" << this->joint_limits_.vel_max.data[i] << ").");
+            if (this->violation_print_[2]) {
+                this->violation_print_[2] = false;
+                ROS_WARN_STREAM("Attention: the velocity of joint " << i+1 << 
+                    " (" << this->current_joint_values_.vel[i] << ") is about to violate the limit (" << this->joint_limits_.vel_max.data[i] << ").");
+            }
+            
+        } else {
+            this->violation_print_[2] = true;
         }
 
+        // Checking for joint acceleration violation and in that case printing only once
         if ( std::abs(this->joint_limits_.acc_max.data[i] - std::abs(this->current_joint_values_.acc[i])) <= this->joint_acc_thresh_ ) {
             limit_violated = true;
             safety_msg.joint_acceleration_limits = true;
-            ROS_ERROR_STREAM("Attention: the acceleration of joint " << i+1 << 
-                " (" << this->current_joint_values_.acc[i] << ") has violated the limit (" << this->joint_limits_.acc_max.data[i] << ").");
-        }     
+            if (this->violation_print_[3]) {
+                this->violation_print_[3] = false;
+                ROS_WARN_STREAM("Attention: the acceleration of joint " << i+1 << 
+                    " (" << this->current_joint_values_.acc[i] << ") is about to violate the limit (" << this->joint_limits_.acc_max.data[i] << ").");
+            }
+            
+        } else {
+            this->violation_print_[3] = true;
+        }
+
     }
 
     if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Finished checking the limits!");
