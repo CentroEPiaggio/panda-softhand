@@ -11,7 +11,7 @@ panda_softhand_safety:
   # Name of the tip
   tip_name: panda_link7
   # Joint position limit violation threshold
-  joint_pos_thresh: 0.1
+  joint_pos_thresh: 0.5
   # Joint velocity limit violation threshold
   joint_vel_thresh: 0.01
   # Joint acceleration limit violation threshold

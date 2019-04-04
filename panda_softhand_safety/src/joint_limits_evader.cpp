@@ -12,7 +12,8 @@
 #include <kdl/tree.hpp>
 #include <kdl_parser/kdl_parser.hpp>
 
-#define     DEBUG_JLE        0       // Prints out additional info
+#define     DEBUG_JLE           0       // Prints out additional info
+#define     DEBUG_VALUES        0       // Prints out additional info
 
 using namespace panda_softhand_safety;
 
@@ -144,6 +145,11 @@ void JointLimitsEvader::joints_callback(const sensor_msgs::JointState::ConstPtr 
         this->current_joint_values_.vel[i] = this->current_joints_.velocity[i];
         this->current_joint_values_.acc[i] = 
             (this->current_joint_values_.vel[i] - this->previous_joint_values_.vel[i]) / period_.toSec();
+        
+        if (DEBUG_VALUES){
+            ROS_INFO_STREAM("JointLimitsEvader: the vel of joint " << i+1 << " is " << this->current_joint_values_.vel[i] << " !");
+            ROS_INFO_STREAM("JointLimitsEvader: the acc of joint " << i+1 << " is " << this->current_joint_values_.acc[i] << " !");
+        } 
     }
 
     if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Finished saving the joints!");
