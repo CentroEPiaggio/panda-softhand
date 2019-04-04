@@ -10,5 +10,11 @@ panda_softhand_safety:
   root_name: panda_arm
   # Name of the tip
   tip_name: panda_arm
+  # Joint position limit violation threshold
+  joint_pos_thresh: 0.001
+  # Joint velocity limit violation threshold
+  joint_vel_thresh: 0.001
+  # Joint acceleration limit violation threshold
+  joint_acc_thresh: 0.001
   # Acceleration limit for the joints (same for all) (TODO : get the correct acceleration limits from Franka Documentation)
-  acceleration_limit: 0.025
+  acceleration_limit: 0.20
