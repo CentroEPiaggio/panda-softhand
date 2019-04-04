@@ -19,6 +19,7 @@ CollisionEvader::CollisionEvader(ros::NodeHandle& nh){
     this->first_joints_ = ros::topic::waitForMessage<sensor_msgs::JointState>(this->joints_topic_, ros::Duration(2.0));
     if (this->first_joints_ == NULL) {
         ROS_ERROR("Cannot contact the joint states topic! This is not safe anymore.");
+        this->ce_nh_.shutdown();
     }
     this->current_joints_ = *this->first_joints_;
 
@@ -30,6 +31,7 @@ CollisionEvader::CollisionEvader(ros::NodeHandle& nh){
     // Initializing the needed elements
     if (!this->initialize()) {
         ROS_FATAL("Failed to initialize some of the variables for collision check! This is not safe anymore.");
+        this->ce_nh_.shutdown();
     }
 
 }
