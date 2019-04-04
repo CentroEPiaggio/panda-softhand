@@ -15,10 +15,12 @@
 
 // MSG includes
 #include <sensor_msgs/JointState.h>
+#include "panda_softhand_safety/SafetyInfo.h"
 
 // KDL includes
 #include <kdl/kdl.hpp>
 #include <kdl/jntarray.hpp>
+#include <kdl/chain.hpp>
 
 namespace panda_softhand_safety {
 
@@ -31,7 +33,7 @@ class JointLimitsEvader {
         ~JointLimitsEvader();
 
         // Function that spins to check for joint limits violations
-        bool CheckLimitsViolations();
+        bool CheckLimitsViolations(panda_softhand_safety::SafetyInfo &safety_msg);
 
         // Callback to joint_states topic
         void joints_callback(const sensor_msgs::JointState::ConstPtr &msg);
@@ -56,7 +58,11 @@ class JointLimitsEvader {
         std::string joints_topic_ = "/joint_states";
 
         // Parsed variables
-        double acceleration_limit_;            // Maximum acceleration for each joint
+        
+        double joint_pos_thresh_;                // Joint position limit violation threshold
+        double joint_vel_thresh_;                // Joint velocity limit violation threshold
+        double joint_acc_thresh_;                // Joint acceleration limit violation threshold
+        double acceleration_limit_;             // Maximum acceleration for each joint
 
         // Joint limits structure
         struct limits_ {
@@ -68,6 +74,23 @@ class JointLimitsEvader {
             KDL::JntArray acc_max;
     
 		} joint_limits_;
+
+        // Present and past joint values
+        struct joint_values_ {
+
+			std::vector<double> pos;
+			std::vector<double> vel;
+            std::vector<double> acc;
+    
+		};
+
+        joint_values_ current_joint_values_;
+        joint_values_ previous_joint_values_;
+
+        // Time variables for computing acceleration
+        ros::Time time_now_;
+        ros::Time time_before_;
+        ros::Duration period_;
 
         // Other KDL stuff
         KDL::Chain kdl_chain_;

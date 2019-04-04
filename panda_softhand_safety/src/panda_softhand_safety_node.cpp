@@ -1,4 +1,6 @@
+
 #include "panda_softhand_safety/collision_evader.h"
+#include "panda_softhand_safety/joint_limits_evader.h"
 #include "panda_softhand_safety/SafetyInfo.h"
 
 #define     DEBUG_PSS       0       // Prints out debug info
@@ -16,6 +18,9 @@ int main(int argc, char** argv) {
     // Collision evader object
     panda_softhand_safety::CollisionEvader collision_evader(nh);
 
+    // Joint limits evader object
+    panda_softhand_safety::JointLimitsEvader joint_limits_evader(nh);
+
     // Starting to spin
     while (ros::ok()) {
         
@@ -32,6 +37,11 @@ int main(int argc, char** argv) {
         if (collision_evader.CheckCollision()){
             safety_info_msg.collision = true;
             if (DEBUG_PSS) ROS_ERROR("A collision found!");
+        }
+
+        // Checking for joint limits violations
+        if (joint_limits_evader.CheckLimitsViolations(safety_info_msg)){
+            if (DEBUG_PSS) ROS_ERROR("Joint limit violations found!");
         }
 
         // Publish the message
