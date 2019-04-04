@@ -15,6 +15,9 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_core
   moveit_ros_planning
   moveit_ros_planning_interface
+  urdf
+  kdl_parser
+  kdl_conversions
 )
 
 ## System dependencies are found with CMake's conventions
@@ -115,6 +118,8 @@ catkin_package(
     moveit_core
     moveit_ros_planning
     moveit_ros_planning_interface
+    urdf
+    kdl_parser
 #  DEPENDS system_lib
 )
 
@@ -142,6 +147,7 @@ include_directories(
 # Setting the class files
 set(OBJECT_SOURCE_FILES
   src/collision_evader.cpp
+  src/joint_limits_evader.cpp
 )
 
 # Declare a C++ executable
