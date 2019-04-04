@@ -28,6 +28,29 @@ JointLimitsEvader::JointLimitsEvader(ros::NodeHandle& nh){
     }
     this->current_joints_ = *this->first_joints_;
 
+    // Saving times and duration (initial)
+    this->time_before_ = ros::Time::now();
+    this->time_now_ = ros::Time::now();
+    this->period_ = this->time_now_ - this->time_before_;
+
+    // Resizing the vectors
+    this->previous_joint_values_.pos.resize(7);
+    this->previous_joint_values_.vel.resize(7);
+    this->previous_joint_values_.acc.resize(7);
+    this->current_joint_values_.pos.resize(7);
+    this->current_joint_values_.vel.resize(7);
+    this->current_joint_values_.acc.resize(7);
+
+    // Saving the joint state values
+    for (int i = 0; i < 7; i ++) {
+        this->previous_joint_values_.pos[i] = this->current_joints_.position[i];
+        this->previous_joint_values_.vel[i] = this->current_joints_.velocity[i];
+        this->previous_joint_values_.acc[i] = 0.0;
+        this->current_joint_values_.pos[i] = this->current_joints_.position[i];
+        this->current_joint_values_.vel[i] = this->current_joints_.velocity[i];
+        this->current_joint_values_.acc[i] = 0.0;
+    }
+
     // Getting necessary parameters for initializing
     if (!this->parse_parameters(this->jle_nh_)) {
         ROS_ERROR("Could not parse the needed parameters! Using default ones.");
@@ -46,13 +69,68 @@ JointLimitsEvader::~JointLimitsEvader(){
 
 }
 
+// Function that spins to check for joint limits violations
+bool JointLimitsEvader::CheckLimitsViolations(panda_softhand_safety::SafetyInfo &safety_msg){
 
+    // Checking if the limits are violated
+    bool limit_violated = false;
+    safety_msg.joint_position_limits = false;
+    safety_msg.joint_velocity_limits = false;
+    safety_msg.joint_acceleration_limits = false;
+
+    for (int i = 0; i < this->current_joint_values_.pos.size(); i++) {
+        if ( std::abs(this->joint_limits_.pos_max.data[i] - this->current_joint_values_.pos[i]) <= this->joint_pos_thresh_ ) {
+            limit_violated = true;
+            safety_msg.joint_position_limits = true;
+            ROS_ERROR_STREAM("Attention: the position of joint " << i+1 << 
+                " (" << this->current_joint_values_.pos[i] << ") has violated the upper limit (" << this->joint_limits_.pos_max.data[i] << ").");
+        }
+
+        if ( std::abs(this->current_joint_values_.pos[i] - this->joint_limits_.pos_min.data[i]) <= this->joint_pos_thresh_ ) {
+            limit_violated = true;
+            safety_msg.joint_position_limits = true;
+            ROS_ERROR_STREAM("Attention: the position of joint " << i+1 << 
+                " (" << this->current_joint_values_.pos[i] << ") has violated the lower limit (" << this->joint_limits_.pos_min.data[i] << ").");
+        }
+
+        if ( std::abs(this->joint_limits_.vel_max.data[i] - this->current_joint_values_.vel[i]) <= this->joint_vel_thresh_ ) {
+            limit_violated = true;
+            safety_msg.joint_velocity_limits = true;
+            ROS_ERROR_STREAM("Attention: the velocity of joint " << i+1 << 
+                " (" << this->current_joint_values_.vel[i] << ") has violated the limit (" << this->joint_limits_.vel_max.data[i] << ").");
+        }
+
+        if ( std::abs(this->joint_limits_.acc_max.data[i] - this->current_joint_values_.acc[i]) <= this->joint_acc_thresh_ ) {
+            limit_violated = true;
+            safety_msg.joint_acceleration_limits = true;
+            ROS_ERROR_STREAM("Attention: the acceleration of joint " << i+1 << 
+                " (" << this->current_joint_values_.acc[i] << ") has violated the limit (" << this->joint_limits_.acc_max.data[i] << ").");
+        }     
+    }
+
+    return limit_violated;
+
+}
 
 // Callback to joint_states topic
 void JointLimitsEvader::joints_callback(const sensor_msgs::JointState::ConstPtr &msg){
+
+    // Getting the present time and computing duration
+    this->time_now_ = ros::Time::now();
+    this->period_ = this->time_now_ - this->time_before_;
+    this->time_before_ = this->time_now_;
     
     // Saving the joints message
     this->current_joints_ = *msg;
+
+    // Saving the prevous joint values and the current ones
+    this->previous_joint_values_ = this->current_joint_values_;
+    for (int i = 0; i < 7; i ++) {
+        this->current_joint_values_.pos[i] = this->current_joints_.position[i];
+        this->current_joint_values_.vel[i] = this->current_joints_.velocity[i];
+        this->current_joint_values_.acc[i] = 
+            (this->current_joint_values_.vel[i] - this->previous_joint_values_.vel[i]) / period_.toSec();
+    }
 
 }
 
@@ -60,6 +138,24 @@ void JointLimitsEvader::joints_callback(const sensor_msgs::JointState::ConstPtr 
 bool JointLimitsEvader::parse_parameters(ros::NodeHandle& nh){
 
     bool success = true;
+
+    if(!ros::param::get("/panda_softhand_safety/joint_pos_thresh", this->joint_pos_thresh_)){
+		ROS_WARN("The param 'joint_pos_thresh' not found in param server! Using default.");
+		this->joint_pos_thresh_ = 0.001;
+		success = false;
+	}
+
+    if(!ros::param::get("/panda_softhand_safety/joint_vel_thresh", this->joint_vel_thresh_)){
+		ROS_WARN("The param 'joint_vel_thresh' not found in param server! Using default.");
+		this->joint_vel_thresh_ = 0.001;
+		success = false;
+	}
+
+    if(!ros::param::get("/panda_softhand_safety/joint_acc_thresh", this->joint_acc_thresh_)){
+		ROS_WARN("The param 'joint_acc_thresh' not found in param server! Using default.");
+		this->joint_acc_thresh_ = 0.001;
+		success = false;
+	}
 
     if(!ros::param::get("/panda_softhand_safety/acceleration_limit", this->acceleration_limit_)){
 		ROS_WARN("The param 'acceleration_limit' not found in param server! Using default.");
@@ -152,7 +248,7 @@ bool JointLimitsEvader::initialize(){
     this->joint_limits_.vel_max.resize(this->kdl_chain_.getNrOfJoints());
     this->joint_limits_.acc_max.resize(this->kdl_chain_.getNrOfJoints());
 
-    // Getting the position and velocity limits (the acceleration limits are now all the same)
+    // Getting the position and velocity limits (the acceleration limits are for now all the same)
     int index;
     for (int i = 0; i < this->kdl_chain_.getNrOfJoints() && link_; i++) {
         joint_ = model.getJoint(link_->parent_joint->name);  
