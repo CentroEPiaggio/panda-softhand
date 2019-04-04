@@ -7,13 +7,13 @@ panda_softhand_safety:
   # Collision distance threshold
   collision_threshold: 0.025
   # Name of the root
-  root_name: panda_arm
+  root_name: panda_link0
   # Name of the tip
-  tip_name: panda_arm
+  tip_name: panda_link7
   # Joint position limit violation threshold
-  joint_pos_thresh: 0.001
+  joint_pos_thresh: 0.1
   # Joint velocity limit violation threshold
-  joint_vel_thresh: 0.001
+  joint_vel_thresh: 0.01
   # Joint acceleration limit violation threshold
   joint_acc_thresh: 0.001
   # Acceleration limit for the joints (same for all) (TODO : get the correct acceleration limits from Franka Documentation)
