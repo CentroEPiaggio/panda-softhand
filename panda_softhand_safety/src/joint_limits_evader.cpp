@@ -93,55 +93,56 @@ bool JointLimitsEvader::CheckLimitsViolations(panda_softhand_safety::SafetyInfo 
         if ( std::abs(this->joint_limits_.pos_max.data[i] - this->current_joint_values_.pos[i]) <= this->joint_pos_thresh_ ) {
             limit_violated = true;
             safety_msg.joint_position_limits = true;
-            if (this->violation_print_[0]) {
-                this->violation_print_[0] = false;
+            if (this->violation_print_map.at(i)[0]) {
+                this->violation_print_map.at(i)[0] = false;
                 ROS_WARN_STREAM("Attention: the position of joint " << i+1 << 
                     " (" << this->current_joint_values_.pos[i] << ") is about to violate the upper limit (" << this->joint_limits_.pos_max.data[i] << ").");
-            }          
+            }
+
         } else {
-            this->violation_print_[0] = true;
+            this->violation_print_map.at(i)[0] = true;
         }
 
         // Checking for min joint position violation and in that case printing only once
         if ( std::abs(this->current_joint_values_.pos[i] - this->joint_limits_.pos_min.data[i]) <= this->joint_pos_thresh_ ) {
             limit_violated = true;
             safety_msg.joint_position_limits = true;
-            if (this->violation_print_[1]) {
-                this->violation_print_[1] = false;
+            if (this->violation_print_map.at(i)[1]) {
+                this->violation_print_map.at(i)[1] = false;
                 ROS_WARN_STREAM("Attention: the position of joint " << i+1 << 
                     " (" << this->current_joint_values_.pos[i] << ") is about to violate the lower limit (" << this->joint_limits_.pos_min.data[i] << ").");
             }
             
         } else {
-            this->violation_print_[1] = true;
+            this->violation_print_map.at(i)[1] = true;
         }
 
         // Checking for joint velocity violation and in that case printing only once
         if ( std::abs(this->joint_limits_.vel_max.data[i] - std::abs(this->current_joint_values_.vel[i])) <= this->joint_vel_thresh_ ) {
             limit_violated = true;
             safety_msg.joint_velocity_limits = true;
-            if (this->violation_print_[2]) {
-                this->violation_print_[2] = false;
+            if (this->violation_print_map.at(i)[2]) {
+                this->violation_print_map.at(i)[2] = false;
                 ROS_WARN_STREAM("Attention: the velocity of joint " << i+1 << 
                     " (" << this->current_joint_values_.vel[i] << ") is about to violate the limit (" << this->joint_limits_.vel_max.data[i] << ").");
             }
             
         } else {
-            this->violation_print_[2] = true;
+            this->violation_print_map.at(i)[2] = true;
         }
 
         // Checking for joint acceleration violation and in that case printing only once
         if ( std::abs(this->joint_limits_.acc_max.data[i] - std::abs(this->current_joint_values_.acc[i])) <= this->joint_acc_thresh_ ) {
             limit_violated = true;
             safety_msg.joint_acceleration_limits = true;
-            if (this->violation_print_[3]) {
-                this->violation_print_[3] = false;
+            if (this->violation_print_map.at(i)[3]) {
+                this->violation_print_map.at(i)[3] = false;
                 ROS_WARN_STREAM("Attention: the acceleration of joint " << i+1 << 
                     " (" << this->current_joint_values_.acc[i] << ") is about to violate the limit (" << this->joint_limits_.acc_max.data[i] << ").");
             }
             
         } else {
-            this->violation_print_[3] = true;
+            this->violation_print_map.at(i)[3] = true;
         }
 
     }
@@ -325,6 +326,12 @@ bool JointLimitsEvader::initialize(){
     }
 
     // TODO : get the correct acceleration limits from a yaml file (from Franka Documentation)
+
+    // Filling up the std map of violation print
+    std::vector<bool> violation_print = {true, true, true, true};
+    for (int i = 0; i < 7; i++) {
+        this->violation_print_map.insert(std::pair<int, std::vector<bool>>(i, violation_print));
+    }
 
     return true;
 }
