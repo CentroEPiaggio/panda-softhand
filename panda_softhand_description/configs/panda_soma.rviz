@@ -29,6 +29,8 @@ Panels:
     SyncSource: ""
   - Class: rviz_visual_tools/RvizVisualToolsGui
     Name: RvizVisualToolsGui
+Toolbars:
+  toolButtonStyle: 2
 Visualization Manager:
   Class: ""
   Displays:
@@ -540,6 +542,8 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
+        object:
+          Value: true
         panda_EE:
           Value: false
         panda_K:
@@ -647,6 +651,8 @@ Visualization Manager:
       Show Names: true
       Tree:
         world:
+          object:
+            {}
           panda_link0:
             panda_link1:
               panda_link2:
@@ -946,7 +952,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-      Loop Animation: true
+      Loop Animation: false
       Name: Trajectory
       Robot Alpha: 0.5
       Robot Color: 150; 50; 150
@@ -998,7 +1004,7 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.290398717
+      Pitch: 0.285398722
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
       Yaw: 5.31855869
