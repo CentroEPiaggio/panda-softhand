@@ -11,29 +11,29 @@
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/robot_state/conversions.h>
 
-#include <sdf/sdf.hh>
+#include <ignition/math/Vector3.hh>
 
 using namespace std;
 
 /* ******************************************************************************************** */
-void setObjectProperties(string name, sdf::Vector3 loc, sdf::Vector3 dim, 
+void setObjectProperties(string name, ignition::math::Vector3d loc, ignition::math::Vector3d dim,
 		moveit_msgs::CollisionObject& object) {
 
 	// Set the name of the object and its link to the world
 	object.id = name;
 
 	// Set the location
-	object.primitive_poses.back().position.x = loc.x;
-	object.primitive_poses.back().position.y = loc.y;
-	object.primitive_poses.back().position.z = loc.z;
+        object.primitive_poses.back().position.x = loc.X();
+        object.primitive_poses.back().position.y = loc.Y();
+        object.primitive_poses.back().position.z = loc.Z();
 	object.primitive_poses.back().orientation.x = 0;
 	object.primitive_poses.back().orientation.y = 0;
 	object.primitive_poses.back().orientation.z = 0;
 
 	// Set the dimensions
-	object.primitives.back().dimensions[0] = dim.x;
-	object.primitives.back().dimensions[1] = dim.y;
-	object.primitives.back().dimensions[2] = dim.z;
+        object.primitives.back().dimensions[0] = dim.X();
+        object.primitives.back().dimensions[1] = dim.Y();
+        object.primitives.back().dimensions[2] = dim.Z();
 }
 
 /* ******************************************************************************************** */
