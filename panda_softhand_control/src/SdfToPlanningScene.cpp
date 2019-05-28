@@ -12,6 +12,8 @@
 #include <moveit/robot_state/conversions.h>
 
 #include <ignition/math/Vector3.hh>
+#include <sdf/sdf.hh>
+
 
 using namespace std;
 
@@ -111,7 +113,8 @@ int main(int argc, char **argv) {
 	//cout << "THE PARSED SDF OF SdfToPlanningScene IS: " << sdfParsed->ToString() << endl;
 
 	// Print the objects
-	sdf::ElementPtr e = sdfParsed->root;
+	
+	sdf::ElementPtr e = sdfParsed->Root();
 	cout << e->GetDescription() << endl;
 	sdf::ElementPtr world = e->GetElement("world");
 	sdf::ElementPtr model = world->GetFirstElement();
@@ -158,10 +161,13 @@ int main(int argc, char **argv) {
 		// Get the pose
 		sdf::ElementPtr poseElem = model->GetElement("pose");
 		assert(poseElem != NULL && "No pose information in model!");
-		sdf::Pose pose;
+		// ignition::math::Pose3d pose;
+        ignition::math::v4::Pose3<double> pose;
+		// sdf::Pose pose;
 		stringstream ss_pose (poseElem->GetValue()->GetAsString());
 		ss_pose >> pose;
 		cout << "Pose: " << pose << endl;
+	
 		
 
 		// Check that the collision object is a box
@@ -178,12 +184,13 @@ int main(int argc, char **argv) {
 		sdf::ElementPtr sizeElem = boxElem->GetElement("size");
 		assert(sizeElem != NULL && "No size element in box!");
 		stringstream ss_size (sizeElem->GetValue()->GetAsString());
-		sdf::Vector3 size;
+		ignition::math::Vector3d size;
+		// sdf::Vector3 size;
 		ss_size >> size;
 		cout << "Box dims: " << size << endl;
-		
 		// Fill the object pose and dimensions into the planning_scene message
-		setObjectProperties(name, pose.pos, size, object);
+		// setObjectProperties(name, pose.pos, size, object);
+	    setObjectProperties(name, pose.Pos(), size, object);
 		planning_scene.world.collision_objects.clear();
 		planning_scene.world.collision_objects.push_back(object);
 
