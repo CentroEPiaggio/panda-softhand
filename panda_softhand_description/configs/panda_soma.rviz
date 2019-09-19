@@ -542,8 +542,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        object:
-          Value: true
         panda_EE:
           Value: false
         panda_K:
@@ -651,8 +649,6 @@ Visualization Manager:
       Show Names: true
       Tree:
         world:
-          object:
-            {}
           panda_link0:
             panda_link1:
               panda_link2:
@@ -989,7 +985,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.39199197
+      Distance: 1.39338398
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -1004,10 +1000,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.285398722
+      Pitch: 0.190203846
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.31855869
+      Yaw: 5.45856047
     Saved: ~
 Window Geometry:
   Displays:
@@ -1030,4 +1026,4 @@ Window Geometry:
     collapsed: false
   Width: 1863
   X: 57
-  Y: 24
+  Y: 1104
