@@ -18,7 +18,7 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     }
 
     // Initializing the object subscriber and waiting (TODO: parse the topic name)
-    this->object_topic_name = "/object_pose";
+    this->object_topic_name = "/irim_demo/chosen_object";
     this->object_sub = this->nh.subscribe(this->object_topic_name, 1, &TaskSequencer::get_object_pose, this);
     ros::topic::waitForMessage<geometry_msgs::Pose>(this->object_topic_name, ros::Duration(2.0));
 
@@ -250,6 +250,9 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
     geometry_msgs::Pose pre_grasp_pose; geometry_msgs::Pose grasp_pose;
     tf::poseEigenToMsg(object_pose_aff * grasp_transform_aff * pre_grasp_transform_aff, pre_grasp_pose);
     tf::poseEigenToMsg(object_pose_aff * grasp_transform_aff, grasp_pose);
+
+    // Couting object pose for debugging
+    std::cout << "Object position is \n" << object_pose_aff.translation() << std::endl;
 
     // 2) Going to pregrasp pose
     if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose, false) || !this->franka_ok){

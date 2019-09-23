@@ -14,7 +14,7 @@ task_sequencer:
   # The joint configuration for home
   home_joints: [-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110] 
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
-  grasp_transform: [0.0, 0.0, 0.030, -3.1415, 0.0, 0.0]
+  grasp_transform: [0.0, 0.0, 0.150, -3.1415, 0.0, 0.0]
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform: [0.0, 0.0, -0.1, 0.0, 0.0, 0.0]
   # The joint configuration for handover
