@@ -20,7 +20,7 @@ task_sequencer:
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform: [0.0, 0.0, -0.1, 0.0, 0.0, 0.0]
   # The joint configuration for place
-  place_joints: [-0.101, 0.161, 0.159, -1.651, 2.023, 2.419, -0.006]
+  place_joints: [-0.136, 0.794, -0.115, -1.337, 0.250, 2.217, -0.479]
   # The joint configuration for handover
   handover_joints: [-0.101, 0.161, 0.159, -1.651, 2.023, 2.419, -0.006]
   # The threshold on tau_ext for handover hand opening

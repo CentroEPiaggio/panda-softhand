@@ -86,7 +86,7 @@ bool TaskSequencer::parse_task_params(){
 
     if(!ros::param::get("/task_sequencer/object_topic_name", this->object_topic_name)){
 		ROS_WARN("The param 'object_topic_name' not found in param server! Using default.");
-		this->object_topic_name = "cartesian_impedance_controller_softbots_stiff_matrix";
+		this->object_topic_name = "/irim_demo/chosen_object";
 		success = false;
 	}
 
@@ -124,7 +124,7 @@ bool TaskSequencer::parse_task_params(){
 
     if(!ros::param::get("/task_sequencer/place_joints", this->place_joints)){
 		ROS_WARN("The param 'place_joints' not found in param server! Using default.");
-		this->place_joints = {-0.101, 0.161, 0.159, -1.651, 2.023, 2.419, -0.006};
+		this->place_joints = {-0.136, 0.794, -0.115, -1.337, 0.250, 2.217, -0.479};
 		success = false;
 	}
 
