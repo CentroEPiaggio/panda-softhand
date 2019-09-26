@@ -63,9 +63,38 @@
 			</link>
     </model>
 
+	<!-- box (like a wall behind) -->
+    <model name="wall_behind">
+			<pose> -0.50 0 0.5 0 0 0</pose>
+			<static>true</static>
+			<link name='linkWallBehind'>
+				<pose>0 0 0 0 0 0</pose>
+				
+				<collision name="my_collisionWallBehind">
+		 			<pose>0 0 0 0 0 0</pose>
+					<geometry>
+		        <box>
+		          <size>0.05 1 1</size>
+		        </box>
+		      </geometry>
+	      </collision>
+				
+				<visual name="my_visualWallBehind">
+					<geometry>
+		        <box>
+					<size>0.05 1 1</size>
+		        </box>
+		      </geometry>
+	      </visual>
+				
+				<self_collide>0</self_collide>		
+				<gravity>1</gravity>
+			</link>
+    </model>
+
 	<!-- box (like a wall near the camera) -->
     <model name="wall_camera">
-			<pose> 0.55 -0.55 0.2 0 0 0</pose>
+			<pose> 0.50 -0.55 0.2 0 0 0</pose>
 			<static>true</static>
 			<link name='linkWallCamera'>
 				<pose>0 0 0 0 0 0</pose>
@@ -74,7 +103,7 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>0.5 0.02 1</size>
+		          <size>1 0.02 1</size>
 		        </box>
 		      </geometry>
 	      </collision>
@@ -82,7 +111,7 @@
 				<visual name="my_visualWallCamera">
 					<geometry>
 		        <box>
-					<size>0.5 0.02 1</size>
+					<size>1 0.02 1</size>
 		        </box>
 		      </geometry>
 	      </visual>
@@ -94,7 +123,7 @@
 
 	<!-- box (like a wall near the control pc) -->
     <model name="wall_pc">
-			<pose> 0 0.55 0.2 0 0 0</pose>
+			<pose> 0.50 0.55 0.2 0 0 0</pose>
 			<static>true</static>
 			<link name='linkWallPc'>
 				<pose>0 0 0 0 0 0</pose>
@@ -103,7 +132,7 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>0.5 0.02 0.5</size>
+		          <size>1 0.02 1</size>
 		        </box>
 		      </geometry>
 	      </collision>
@@ -111,7 +140,7 @@
 				<visual name="my_visualWallPc">
 					<geometry>
 		        <box>
-					<size>0.5 0.02 0.5</size>
+					<size>1 0.02 1</size>
 		        </box>
 		      </geometry>
 	      </visual>
@@ -132,7 +161,7 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>0.35 0.27 0.08</size>
+		          <size>0.37 0.29 0.1</size>
 		        </box>
 		      </geometry>
 	      </collision>
@@ -140,7 +169,7 @@
 				<visual name="my_visualBoxContainer">
 					<geometry>
 		        <box>
-					<size>0.35 0.27 0.08</size>
+					<size>0.37 0.29 0.1</size>
 		        </box>
 		      </geometry>
 	      </visual>
