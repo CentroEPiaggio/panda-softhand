@@ -12,6 +12,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "std_msgs/Bool.h"
 #include "std_srvs/SetBool.h"
 #include "panda_softhand_control/set_object.h"
+#include "panda_softhand_control/complex_grasp.h"
 #include "geometry_msgs/Pose.h"
 #include <controller_manager_msgs/SwitchController.h>
 #include <franka_msgs/FrankaState.h>
@@ -56,6 +57,9 @@ class TaskSequencer {
         // Callback for simple grasp task service
         bool call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
+        // Callback for complex grasp task service (goes to specified pose)
+        bool call_complex_grasp_task(panda_softhand_control::complex_grasp::Request &req, panda_softhand_control::complex_grasp::Response &res);
+
         // Callback for simple place task service
         bool call_simple_place_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
@@ -96,6 +100,7 @@ class TaskSequencer {
         // Service names
         std::string franka_state_topic_name = "/franka_state_controller/franka_states";
         std::string grasp_task_service_name;
+        std::string complex_grasp_task_service_name;
         std::string place_task_service_name;
         std::string home_task_service_name;
         std::string handover_task_service_name;
@@ -103,6 +108,7 @@ class TaskSequencer {
 
         // Service Servers
         ros::ServiceServer grasp_task_server;
+        ros::ServiceServer complex_grasp_task_server;
         ros::ServiceServer place_task_server;
         ros::ServiceServer home_task_server;
         ros::ServiceServer handover_task_server;

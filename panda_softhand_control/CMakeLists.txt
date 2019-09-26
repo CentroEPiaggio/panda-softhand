@@ -35,6 +35,7 @@ add_service_files(FILES
   pose_control.srv
   joint_control.srv
   set_object.srv
+  complex_grasp.srv
 )
 
 generate_messages(DEPENDENCIES

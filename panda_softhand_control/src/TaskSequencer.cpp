@@ -34,6 +34,7 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
 
     // Setting the task service names
     this->grasp_task_service_name = "grasp_task_service";
+    this->complex_grasp_task_service_name = "complex_grasp_task_service";
     this->place_task_service_name = "place_task_service";
     this->home_task_service_name = "home_task_service";
     this->handover_task_service_name = "handover_task_service";
@@ -41,6 +42,7 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
 
     // Advertising the services
     this->grasp_task_server = this->nh.advertiseService(this->grasp_task_service_name, &TaskSequencer::call_simple_grasp_task, this);
+    this->complex_grasp_task_server = this->nh.advertiseService(this->complex_grasp_task_service_name, &TaskSequencer::call_complex_grasp_task, this);
     this->place_task_server = this->nh.advertiseService(this->place_task_service_name, &TaskSequencer::call_simple_place_task, this);
     this->home_task_server = this->nh.advertiseService(this->home_task_service_name, &TaskSequencer::call_simple_home_task, this);
     this->handover_task_server = this->nh.advertiseService(this->handover_task_service_name, &TaskSequencer::call_simple_handover_task, this);
@@ -308,6 +310,77 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
     res.message = "The service call_simple_grasp_task was correctly performed!";
     return true;
 }
+
+// Callback for complex grasp task service (goes to specified pose)
+bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_grasp::Request &req, panda_softhand_control::complex_grasp::Response &res){
+
+    // Checking the request for correctness
+    if(!req.data){
+        ROS_WARN("Did you really want to call the complex grasp task service with data = false?");
+        res.success = true;
+        res.message = "The service call_complex_grasp_task done correctly with false request!";
+        return true;
+    }
+
+    // 1) Going to home configuration
+    if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified home joint configuration.");
+        res.success = false;
+        res.message = "The service call_complex_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    // Computing the grasp and pregrasp pose and converting to geometry_msgs Pose
+    Eigen::Affine3d object_pose_aff; tf::poseMsgToEigen(req.object_pose, object_pose_aff);
+    Eigen::Affine3d grasp_transform_aff; tf::poseMsgToEigen(this->grasp_T, grasp_transform_aff);
+    Eigen::Affine3d pre_grasp_transform_aff; tf::poseMsgToEigen(this->pre_grasp_T, pre_grasp_transform_aff);
+
+    geometry_msgs::Pose pre_grasp_pose; geometry_msgs::Pose grasp_pose;
+    tf::poseEigenToMsg(object_pose_aff * grasp_transform_aff * pre_grasp_transform_aff, pre_grasp_pose);
+    tf::poseEigenToMsg(object_pose_aff * grasp_transform_aff, grasp_pose);
+
+    // Couting object pose for debugging
+    std::cout << "Object position is \n" << object_pose_aff.translation() << std::endl;
+
+    // 2) Going to pregrasp pose
+    if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose, false) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified pre grasp pose.");
+        res.success = false;
+        res.message = "The service call_complex_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    // 3) Going to grasp pose
+    if(!this->panda_softhand_client.call_slerp_service(grasp_pose, false) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified grasp pose.");
+        res.success = false;
+        res.message = "The service call_complex_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    // 4) Performing complex grasp
+    if(!this->panda_softhand_client.call_hand_service(1.0, 2.0) || !this->franka_ok){
+        ROS_ERROR("Could not perform the complex grasp.");
+        res.success = false;
+        res.message = "The service call_complex_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    // 4) Lifting the grasped? object
+    if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
+        ROS_ERROR("Could not lift to the specified pose.");
+        res.success = false;
+        res.message = "The service call_complex_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    // Now, everything finished well
+    res.success = true;
+    res.message = "The service call_complex_grasp_task was correctly performed!";
+    return true;
+
+}
+
 
 // Callback for simple place task service
 bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
