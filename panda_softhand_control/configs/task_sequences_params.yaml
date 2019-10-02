@@ -10,13 +10,18 @@ task_sequencer:
   pos_controller: position_joint_trajectory_controller
   # Impedance controller
   imp_controller: cartesian_impedance_controller_softbots_stiff_matrix
+  # Name of the topic where the object pose is published
+  object_topic_name: /irim_demo/chosen_object
 
   # The joint configuration for home
   home_joints: [-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110] 
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
-  grasp_transform: [0.0, 0.0, 0.030, -3.1415, 0.0, 0.0]
+  # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default)
+  grasp_transform: [-0.06, -0.04, 0.025, -3.039, -0.185, -0.166]
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform: [0.0, 0.0, -0.1, 0.0, 0.0, 0.0]
+  # The joint configuration for place
+  place_joints: [-0.068, 0.152, 0.193, -2.352, 0.0405, 2.519, 0.117]
   # The joint configuration for handover
   handover_joints: [-0.101, 0.161, 0.159, -1.651, 2.023, 2.419, -0.006]
   # The threshold on tau_ext for handover hand opening
@@ -24,9 +29,9 @@ task_sequencer:
 
   # The personalized grasp pose maps for different objects
   poses_map:
-    "kettle" : [0.066, 0.012, 0.203, -2.973, 0.620, -0.032]
-    "teddy" : [0.046, -0.238, 0.106, 3.131, -0.052, -0.400]
-    "ball" : [-0.055, 0.113, 0.07, -3.104, 0.122, -0.241]
-    "two_cubes" : [-0.055, 0.113, 0.061, -3.104, 0.122, -0.241]
-    "bottle" : [0.068, 0.077, 0.019, -2.455, -0.249, 0.409]
-    "helmet" : [0.120, -0.039, 0.179, 3.007, 0.200, 0.247]
+    "object1" : [-0.06, -0.04, 0.025, -3.039, -0.185, -0.166]
+    "object2" : [-0.06, -0.04, 0.025, -3.039, -0.185, -0.166]
+    "object3" : [-0.06, -0.04, 0.025, -3.039, -0.185, -0.166]
+    "object4" : [-0.06, -0.04, 0.025, -3.039, -0.185, -0.166]
+    "object5" : [-0.06, -0.04, 0.025, -3.039, -0.185, -0.166]
+    "object6" : [-0.06, -0.04, 0.025, -3.039, -0.185, -0.166]
