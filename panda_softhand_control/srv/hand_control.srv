@@ -1,4 +1,3 @@
-float64 goal_syn
-float64 goal_duration
+trajectory_msgs/JointTrajectory computed_trajectory
 ---
 bool answer

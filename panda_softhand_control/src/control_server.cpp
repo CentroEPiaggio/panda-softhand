@@ -6,6 +6,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "ros/ros.h"
 
 // Object Includes
+#include "panda_softhand_control/HandPlan.h"
 #include "panda_softhand_control/HandControl.h"
 #include "panda_softhand_control/SlerpControl.h"
 #include "panda_softhand_control/PoseControl.h"
@@ -35,9 +36,9 @@ int main(int argc, char **argv)
 
     SlerpControl slerp_control_obj(nh_, "panda_arm", "right_hand_ee_link", 60, arm_client_ptr_);
 
-    ROS_INFO("Creating the hand control object");
-
-    HandControl hand_control_obj(nh_, 20, "right_hand_synergy_joint", hand_client_ptr_);
+    ROS_INFO("Creating the hand plan and control objects");
+    HandPlan hand_plan_obj(nh_, 20, "right_hand_synergy_joint");
+    HandControl hand_control_obj(nh_, hand_client_ptr_);
 
     ROS_INFO("Creating the pose control object");
 
@@ -50,6 +51,7 @@ int main(int argc, char **argv)
     ROS_INFO("Advertising the services");
 
     ros::ServiceServer slerp_service = nh_.advertiseService("slerp_control_service", &SlerpControl::call_slerp_control, &slerp_control_obj);
+    ros::ServiceServer hand_plan_service = nh_.advertiseService("hand_plan_service", &HandPlan::call_hand_plan, &hand_plan_obj);
     ros::ServiceServer hand_service = nh_.advertiseService("hand_control_service", &HandControl::call_hand_control, &hand_control_obj);
     ros::ServiceServer pose_service = nh_.advertiseService("pose_control_service", &PoseControl::call_pose_control, &pose_control_obj);
     ros::ServiceServer joint_service = nh_.advertiseService("joint_control_service", &JointControl::call_joint_control, &joint_control_obj);

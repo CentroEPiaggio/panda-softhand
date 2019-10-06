@@ -30,6 +30,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 add_service_files(FILES
+  hand_plan.srv
   slerp_control.srv
   hand_control.srv
   pose_control.srv
@@ -42,6 +43,7 @@ generate_messages(DEPENDENCIES
   std_msgs
   tf
   geometry_msgs
+  trajectory_msgs
 )
 
 find_package(SDFormat REQUIRED)
@@ -54,6 +56,7 @@ catkin_package(
 
 set(OBJECTS_SOURCE_FILES
   src/utils/parsing_utilities.cpp
+  src/HandPlan.cpp 
   src/SlerpControl.cpp 
   src/HandControl.cpp 
   src/PoseControl.cpp
