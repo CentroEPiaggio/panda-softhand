@@ -32,8 +32,11 @@ class PandaSoftHandClient {
         // Initializing function
         bool initialize(ros::NodeHandle& nh_);
 
+        // Service call function for hand plan
+        bool call_hand_plan_service(double goal_syn, double goal_duration);
+
         // Service call function for hand control
-        bool call_hand_service(double goal_syn, double goal_duration);
+        bool call_hand_control_service(double goal_syn, double goal_duration);
 
         // Service call function for joint control
         bool call_joint_service(std::vector<double> joint_goal);
@@ -49,13 +52,15 @@ class PandaSoftHandClient {
 		ros::NodeHandle nh;
 
         // Service names
-        std::string hand_service_name;
+        std::string hand_plan_service_name;
+        std::string hand_control_service_name;
         std::string joint_service_name;
         std::string pose_service_name;
         std::string slerp_service_name;
 
         // Service clients
-        ros::ServiceClient hand_client;                     // Client for hand control service
+        ros::ServiceClient hand_plan_client;                // Client for hand plan service
+        ros::ServiceClient hand_control_client;             // Client for hand control service
         ros::ServiceClient joint_client;                    // Client for joint control service
         ros::ServiceClient pose_client;                     // Client for pose control service
         ros::ServiceClient slerp_client;                    // Client for slerp control service
