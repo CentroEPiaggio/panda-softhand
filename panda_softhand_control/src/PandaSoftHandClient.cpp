@@ -4,6 +4,7 @@ Authors: George Jose Pollayil - Mathew Jose Pollayil
 Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 #include "panda_softhand_control/PandaSoftHandClient.h"
+#include <std_msgs/Duration.h>
 
 PandaSoftHandClient::PandaSoftHandClient(){
 
@@ -33,7 +34,7 @@ bool PandaSoftHandClient::initialize(ros::NodeHandle& nh_){
     // Initializing the service names (TODO: Change the hard coded names of the services and parse them from same yaml file of main_server)
     this->hand_plan_service_name = "hand_plan_service";
     this->hand_control_service_name = "hand_control_service";
-    this->hand_wait_sevice_name = "hand_wait_service";
+    this->hand_wait_service_name = "hand_wait_service";
     this->joint_service_name = "joint_control_service";
     this->pose_service_name = "pose_control_service";
     this->slerp_service_name = "slerp_control_service";
@@ -100,7 +101,9 @@ bool PandaSoftHandClient::call_hand_wait_service(ros::Duration wait_time){
 
     // Creating and filling up the request
     panda_softhand_control::hand_wait hand_wait_srv;
-    hand_wait_srv.request.wait_duration = wait_time;
+    std_msgs::Duration wait_duration_msg;
+    wait_duration_msg.data = wait_time;
+    hand_wait_srv.request.wait_duration = wait_duration_msg;
 
     // Calling the service
     if(!this->hand_wait_client.call(hand_wait_srv)){

@@ -4,6 +4,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 // Basic includes
 #include <ros/service.h>
+#include "ros/ros.h"
 
 // ROS msg includes
 #include <trajectory_msgs/JointTrajectory.h>

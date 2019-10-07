@@ -12,6 +12,8 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 // Custom msg and srv includes
 #include "panda_softhand_control/hand_control.h"
+#include "panda_softhand_control/hand_plan.h"
+#include "panda_softhand_control/hand_wait.h"
 
 // ROS action includes
 #include <actionlib/client/simple_action_client.h>

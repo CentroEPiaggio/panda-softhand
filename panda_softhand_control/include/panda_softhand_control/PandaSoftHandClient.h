@@ -11,6 +11,8 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <trajectory_msgs/JointTrajectory.h>
 
 // Custom msg and srv includes
+#include "panda_softhand_control/hand_plan.h"
+#include "panda_softhand_control/hand_wait.h"
 #include "panda_softhand_control/hand_control.h"
 #include "panda_softhand_control/joint_control.h"
 #include "panda_softhand_control/pose_control.h"
