@@ -33,6 +33,7 @@ bool PandaSoftHandClient::initialize(ros::NodeHandle& nh_){
     // Initializing the service names (TODO: Change the hard coded names of the services and parse them from same yaml file of main_server)
     this->hand_plan_service_name = "hand_plan_service";
     this->hand_control_service_name = "hand_control_service";
+    this->hand_wait_sevice_name = "hand_wait_service";
     this->joint_service_name = "joint_control_service";
     this->pose_service_name = "pose_control_service";
     this->slerp_service_name = "slerp_control_service";
@@ -43,6 +44,9 @@ bool PandaSoftHandClient::initialize(ros::NodeHandle& nh_){
 
     if(!ros::service::waitForService(this->hand_control_service_name, ros::Duration(1.0))) return false;
     this->hand_control_client = this->nh.serviceClient<panda_softhand_control::hand_control>(this->hand_control_service_name);
+
+    if(!ros::service::waitForService(this->hand_wait_service_name, ros::Duration(1.0))) return false;
+    this->hand_wait_client = this->nh.serviceClient<panda_softhand_control::hand_wait>(this->hand_wait_service_name);
 
     if(!ros::service::waitForService(this->joint_service_name, ros::Duration(1.0))) return false;
     this->joint_client = this->nh.serviceClient<panda_softhand_control::joint_control>(this->joint_service_name);
@@ -58,7 +62,7 @@ bool PandaSoftHandClient::initialize(ros::NodeHandle& nh_){
 }
 
 // Service call function for hand plan
-bool PandaSoftHandClient::call_hand_plan_service(double goal_syn, double goal_duration){
+bool PandaSoftHandClient::call_hand_plan_service(double goal_syn, double goal_duration, trajectory_msgs::JointTrajectory& computed_trajectory){
 
     // Creating and filling up the request
     panda_softhand_control::hand_plan hand_plan_srv;
@@ -71,24 +75,40 @@ bool PandaSoftHandClient::call_hand_plan_service(double goal_syn, double goal_du
         return false;
     }
 
+    computed_trajectory = hand_plan_srv.response.computed_trajectory;
     return hand_plan_srv.response.answer;
 }
 
 // Service call function for hand control
-bool PandaSoftHandClient::call_hand_control_service(double goal_syn, double goal_duration){
+bool PandaSoftHandClient::call_hand_control_service(trajectory_msgs::JointTrajectory& computed_trajectory){
 
     // Creating and filling up the request
     panda_softhand_control::hand_control hand_control_srv;
-    hand_control_srv.request.goal_syn = goal_syn;
-    hand_control_srv.request.goal_duration = goal_duration;
+    hand_control_srv.request.computed_trajectory = computed_trajectory;
 
     // Calling the service
-    if(!this->hand_client.call(hand_control_srv)){
+    if(!this->hand_control_client.call(hand_control_srv)){
         ROS_ERROR("Failed to contact the hand control server. Returning...");
         return false;
     }
 
     return hand_control_srv.response.answer;
+}
+
+// Service call function for hand wait
+bool PandaSoftHandClient::call_hand_wait_service(ros::Duration wait_time){
+
+    // Creating and filling up the request
+    panda_softhand_control::hand_wait hand_wait_srv;
+    hand_wait_srv.request.wait_duration = wait_time;
+
+    // Calling the service
+    if(!this->hand_wait_client.call(hand_wait_srv)){
+        ROS_ERROR("Failed to contact the hand wait server. Returning...");
+        return false;
+    }
+
+    return hand_wait_srv.response.answer;
 }
 
 // Service call function for joint control

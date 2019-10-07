@@ -35,6 +35,9 @@ class HandControl {
 		// Sends trajectory to the hand joint trajectory controller
 		bool sendHandTrajectory(trajectory_msgs::JointTrajectory trajectory);
 
+        // Waits for the completion of the execution by hand joint trajectory controller
+		bool call_hand_wait(panda_softhand_control::hand_wait::Request &req, panda_softhand_control::hand_wait::Response &res);
+
 	/// private variables -------------------------------------------------------------------------
 	private:
 		ros::NodeHandle nh;

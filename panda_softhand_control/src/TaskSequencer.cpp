@@ -3,6 +3,7 @@ Authors: George Jose Pollayil - Mathew Jose Pollayil
 Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 #include "sensor_msgs/JointState.h"
+#include "trajectory_msgs/JointTrajectory.h"
 
 #include "utils/parsing_utilities.h"
 #include "panda_softhand_control/TaskSequencer.h"
@@ -289,13 +290,28 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
-    // 4) Performing simple grasp
-    if(!this->panda_softhand_client.call_hand_service(1.0, 2.0) || !this->franka_ok){
+    // 4) Performing simple grasp with planning, executing and waiting
+    trajectory_msgs::JointTrajectory tmp_traj;
+
+    if(!this->panda_softhand_client.call_hand_plan_service(1.0, 2.0, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not perform the simple grasp.");
         res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand plan.";
         return false;
     }
+    if(!this->panda_softhand_client.call_hand_control_service(tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not perform the simple grasp.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
+        return false;
+    }
+    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+        ROS_ERROR("Could not perform the simple grasp.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand wait.";
+        return false;
+    }
+
 
     // 4) Lifting the grasped? object
     if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
@@ -358,11 +374,25 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_gras
         return false;
     }
 
-    // 4) Performing complex grasp
-    if(!this->panda_softhand_client.call_hand_service(1.0, 2.0) || !this->franka_ok){
+    // 4) Performing complex grasp with planning, executing and waiting
+    trajectory_msgs::JointTrajectory tmp_traj;
+
+    if(!this->panda_softhand_client.call_hand_plan_service(1.0, 2.0, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not perform the complex grasp.");
         res.success = false;
-        res.message = "The service call_complex_grasp_task was NOT performed correctly!";
+        res.message = "The service call_complex_grasp_task was NOT performed correctly! Error plan in hand plan.";
+        return false;
+    }
+    if(!this->panda_softhand_client.call_hand_control_service(tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not perform the complex grasp.");
+        res.success = false;
+        res.message = "The service call_complex_grasp_task was NOT performed correctly! Error plan in hand control.";
+        return false;
+    }
+    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+        ROS_ERROR("Could not perform the complex grasp.");
+        res.success = false;
+        res.message = "The service call_complex_grasp_task was NOT performed correctly! Error plan in hand wait.";
         return false;
     }
 
@@ -402,10 +432,24 @@ bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_
     }
 
     // 2) Opening hand 
-    if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
-        ROS_ERROR("Could not open the hand.");
+    trajectory_msgs::JointTrajectory tmp_traj;
+
+    if(!this->panda_softhand_client.call_hand_plan_service(0.0, 2.0, tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not perform the simple place.");
         res.success = false;
-        res.message = "The service call_simple_place_task was NOT performed correctly!";
+        res.message = "The service call_simple_place_task was NOT performed correctly! Error plan in hand plan.";
+        return false;
+    }
+    if(!this->panda_softhand_client.call_hand_control_service(tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not perform the simple place.");
+        res.success = false;
+        res.message = "The service call_simple_place_task was NOT performed correctly! Error plan in hand control.";
+        return false;
+    }
+    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+        ROS_ERROR("Could not perform the simple place.");
+        res.success = false;
+        res.message = "The service call_simple_place_task was NOT performed correctly! Error plan in hand wait.";
         return false;
     }
 
@@ -436,10 +480,24 @@ bool TaskSequencer::call_simple_home_task(std_srvs::SetBool::Request &req, std_s
     }
 
     // 2) Opening hand 
-    if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
-        ROS_ERROR("Could not open the hand.");
+    trajectory_msgs::JointTrajectory tmp_traj;
+
+    if(!this->panda_softhand_client.call_hand_plan_service(0.0, 2.0, tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not perform the simple home.");
         res.success = false;
-        res.message = "The service call_simple_home_task was NOT performed correctly!";
+        res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand plan.";
+        return false;
+    }
+    if(!this->panda_softhand_client.call_hand_control_service(tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not perform the simple home.");
+        res.success = false;
+        res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand control.";
+        return false;
+    }
+    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+        ROS_ERROR("Could not perform the simple home.");
+        res.success = false;
+        res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand wait.";
         return false;
     }
 
@@ -490,10 +548,24 @@ bool TaskSequencer::call_simple_handover_task(std_srvs::SetBool::Request &req, s
     }
 
     // 3) Opening hand 
-    if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
-        ROS_ERROR("Could not open the hand.");
+    trajectory_msgs::JointTrajectory tmp_traj;
+
+    if(!this->panda_softhand_client.call_hand_plan_service(0.0, 2.0, tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not perform the simple handover.");
         res.success = false;
-        res.message = "The service call_simple_handover_task was NOT performed correctly!";
+        res.message = "The service call_simple_handover_task was NOT performed correctly! Error plan in hand plan.";
+        return false;
+    }
+    if(!this->panda_softhand_client.call_hand_control_service(tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not perform the simple handover.");
+        res.success = false;
+        res.message = "The service call_simple_handover_task was NOT performed correctly! Error plan in hand control.";
+        return false;
+    }
+    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+        ROS_ERROR("Could not perform the simple handover.");
+        res.success = false;
+        res.message = "The service call_simple_handover_task was NOT performed correctly! Error plan in hand wait.";
         return false;
     }
 

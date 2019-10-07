@@ -51,10 +51,19 @@ bool HandControl::sendHandTrajectory(trajectory_msgs::JointTrajectory trajectory
 
     this->hand_client_ptr->sendGoal(goalmsg);
 
-    if(!this->hand_client_ptr->waitForResult(ros::Duration(20, 0))){
+    // Not waiting for result here as it would be blocking
+
+    return true;
+}
+
+// Waits for the completion of the execution by hand joint trajectory controller
+bool HandControl::call_hand_wait(panda_softhand_control::hand_wait::Request &req, panda_softhand_control::hand_wait::Response &res){
+    if(!this->hand_client_ptr->waitForResult(req.wait_duration){
         ROS_ERROR("The hand client is taking too to complete goal execution. Returning...");
+        res.answer = false;
         return false;
     }
 
+    res.answer = true;
     return true;
 }

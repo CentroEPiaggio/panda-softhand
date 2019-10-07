@@ -31,6 +31,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_service_files(FILES
   hand_plan.srv
+  hand_wait.srv
   slerp_control.srv
   hand_control.srv
   pose_control.srv

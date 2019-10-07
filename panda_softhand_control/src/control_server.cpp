@@ -52,6 +52,7 @@ int main(int argc, char **argv)
 
     ros::ServiceServer slerp_service = nh_.advertiseService("slerp_control_service", &SlerpControl::call_slerp_control, &slerp_control_obj);
     ros::ServiceServer hand_plan_service = nh_.advertiseService("hand_plan_service", &HandPlan::call_hand_plan, &hand_plan_obj);
+    ros::ServiceServer hand_plan_service = nh_.advertiseService("hand_wait_service", &HandControl::call_hand_wait, &hand_control_obj);
     ros::ServiceServer hand_service = nh_.advertiseService("hand_control_service", &HandControl::call_hand_control, &hand_control_obj);
     ros::ServiceServer pose_service = nh_.advertiseService("pose_control_service", &PoseControl::call_pose_control, &pose_control_obj);
     ros::ServiceServer joint_service = nh_.advertiseService("joint_control_service", &JointControl::call_joint_control, &joint_control_obj);
