@@ -20,7 +20,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 #include "panda_softhand_control/joint_control.h"
 #include "panda_softhand_control/pose_control.h"
-#include "panda_softhand_control/slerp_control.h"
+#include "panda_softhand_control/slerp_plan.h"
 
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
@@ -60,8 +60,8 @@ class PandaSoftHandClient {
         // Service call function for pose control
         bool call_pose_service(geometry_msgs::Pose goal_pose, bool is_goal_relative);
 
-        // Service call function for slerp control
-        bool call_slerp_service(geometry_msgs::Pose goal_pose, bool is_goal_relative);
+        // Service call function for slerp plan
+        bool call_slerp_service(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory& computed_trajectory);
 
 	/// private variables -------------------------------------------------------------------------
 	private:

@@ -35,7 +35,7 @@ add_service_files(FILES
   hand_control.srv
   arm_wait.srv
   arm_control.srv
-  slerp_control.srv
+  slerp_plan.srv
   pose_control.srv
   joint_control.srv
   set_object.srv
@@ -59,10 +59,10 @@ catkin_package(
 
 set(OBJECTS_SOURCE_FILES
   src/utils/parsing_utilities.cpp
+  src/HandPlan.cpp
+  src/HandControl.cpp
   src/ArmControl.cpp
-  src/HandPlan.cpp 
-  src/SlerpControl.cpp 
-  src/HandControl.cpp 
+  src/SlerpPlan.cpp 
   src/PoseControl.cpp
   src/JointControl.cpp
   src/PandaSoftHandClient.cpp

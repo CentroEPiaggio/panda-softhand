@@ -7,14 +7,13 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <sstream>
 #include <string>
 
-#include "panda_softhand_control/SlerpControl.h"
+#include "panda_softhand_control/SlerpPlan.h"
 
 #include <moveit_visual_tools/moveit_visual_tools.h>
 
-SlerpControl::SlerpControl(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_,  int n_wp_,
-    boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> arm_client_ptr_){
+SlerpPlan::SlerpPlan(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_,  int n_wp_){
         
-        ROS_INFO("Starting to create SlerpControl object");
+        ROS_INFO("Starting to create SlerpPlan object");
 
         // Initializing node handle
         this->nh = nh_;
@@ -26,49 +25,40 @@ SlerpControl::SlerpControl(ros::NodeHandle& nh_, std::string group_name_, std::s
         // Setting number of waypoints 
         this->n_wp = n_wp_;
 
-        // Initializing the arm client
-        this->arm_client_ptr = arm_client_ptr_;
-
-        ROS_INFO("Finished creating SlerpControl object");
+        ROS_INFO("Finished creating SlerpPlan object");
 }
 
-SlerpControl::~SlerpControl(){
+SlerpPlan::~SlerpPlan(){
     
     // Nothing to do here yet
 }
 
-// This is the callback function of the slerp control service
-bool SlerpControl::call_slerp_control(panda_softhand_control::slerp_control::Request &req, panda_softhand_control::slerp_control::Response &res){
+// This is the callback function of the slerp plan service
+bool SlerpPlan::call_slerp_plan(panda_softhand_control::slerp_plan::Request &req, panda_softhand_control::slerp_plan::Response &res){
 
     // Setting up things
-    if(!this->initialize(req.goal_pose, req.is_goal_relative)){
-        ROS_ERROR("Could not initialize SlerpControl object. Returning...");
+    if(!this->initialize(req.goal_pose, req.start_pose, req.is_goal_relative)){
+        ROS_ERROR("Could not initialize SlerpPlan object. Returning...");
         res.answer = false;
         return false;
     }
 
 	// Perform motion plan towards the goal pose
     if(!this->performMotionPlan()){
-        ROS_ERROR("Could not perform motion planning in SlerpControl object. Returning...");
+        ROS_ERROR("Could not perform motion planning in SlerpPlan object. Returning...");
         res.answer = false;
         return false;
     }
 
-    // Send computed joint motion
-    if(!this->sendJointTrajectory(this->computed_trajectory)){
-        ROS_ERROR("Could not send computed trajectory from SlerpControl object. Returning...");
-        res.answer = false;
-        return false;
-    }
-
-    // At this point everything is completed, return true
+    // At this point all is fine, return the computed trajectory
+    res.computed_trajectory = this->computed_trajectory;
     res.answer = true;
     return true;
 }
 
 
 // Initialize the things for motion planning. Is called by the callback
-bool SlerpControl::initialize(geometry_msgs::Pose goal_pose, bool is_goal_relative){
+bool SlerpPlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative){
 
     // Getting the current ee transform
     try {
@@ -87,15 +77,21 @@ bool SlerpControl::initialize(geometry_msgs::Pose goal_pose, bool is_goal_relati
 	if(DEBUG) ROS_INFO_STREAM("Endeffector current Translation: " << this->end_effector_state.translation());
 	if(DEBUG) ROS_INFO_STREAM("Endeffector current Rotation: " << this->end_effector_state.rotation());
 
-	// Setting the start pose 
-	this->startAff = this->end_effector_state;
-
+	// Setting the start pose
+    if (this->is_really_null_pose(start_pose)){
+        ROS_WARN("The start pose is NULL! PLANNING FROM CURRENT POSE!");
+        this->startAff = this->end_effector_state;
+    } else {
+        tf::poseMsgToEigen(start_pose, this->startAff);
+    }
+	
 	// Setting the goal pose
     tf::poseMsgToEigen(goal_pose, this->goalAff);
 
-	// If the goal is relative, get the global goal pose by multiplying it with ee pose (end_effector_state)
+	// If the goal is relative, get the global goal and start poses by multiplying it with ee pose (end_effector_state)
 	if(is_goal_relative){
-		this->goalAff = this->end_effector_state * this->goalAff;
+        this->goalAff = this->end_effector_state * this->goalAff;
+		this->startAff = this->end_effector_state * this->startAff;
 	}
 
     // Print the goal end-effector pose
@@ -106,7 +102,7 @@ bool SlerpControl::initialize(geometry_msgs::Pose goal_pose, bool is_goal_relati
 }
 
 // Performs motion planning for the end-effector towards goal
-bool SlerpControl::performMotionPlan(){
+bool SlerpPlan::performMotionPlan(){
 
     // Move group interface
     moveit::planning_interface::MoveGroupInterface group(this->group_name);
@@ -167,7 +163,7 @@ bool SlerpControl::performMotionPlan(){
 }
 
 // Computes waypoints using SLERP from two poses
-void SlerpControl::computeWaypointsFromPoses(const Eigen::Affine3d& start_pose, const Eigen::Affine3d& goal_pose, std::vector<geometry_msgs::Pose>& waypoints){
+void SlerpPlan::computeWaypointsFromPoses(const Eigen::Affine3d& start_pose, const Eigen::Affine3d& goal_pose, std::vector<geometry_msgs::Pose>& waypoints){
     
     // Compute waypoints as linear interpolation (SLERP for rotations) between the two poses
 	Eigen::Affine3d wp_eigen;
@@ -199,26 +195,4 @@ void SlerpControl::computeWaypointsFromPoses(const Eigen::Affine3d& start_pose, 
 		    std::cout << "WP t: \n" << wp_eigen.translation() << std::endl;
         }
     }
-}
-
-// Sends trajectory to the joint_traj controller
-bool SlerpControl::sendJointTrajectory(trajectory_msgs::JointTrajectory trajectory){
-    
-    // Waiting for the arm server to be ready
-    if(!this->arm_client_ptr->waitForServer(ros::Duration(1,0))){
-        ROS_ERROR("The arm client is taking too much to get ready. Returning...");
-        return false;
-    }
-
-	// Send the message and wait for the result
-	control_msgs::FollowJointTrajectoryGoal goalmsg;
-	goalmsg.trajectory = trajectory;
-
-    this->arm_client_ptr->sendGoal(goalmsg);
-
-    if(!this->arm_client_ptr->waitForResult(ros::Duration(60, 0))){
-        ROS_WARN("The arm client is taking too to complete goal execution. Is it a really long motion???");
-    }
-
-    return true;
 }

@@ -15,34 +15,29 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <control_msgs/FollowJointTrajectoryAction.h>
 
 // Custom msg and srv includes
-#include "panda_softhand_control/slerp_control.h"
+#include "panda_softhand_control/slerp_plan.h"
 
 // MoveIt! includes
 #include <moveit/move_group_interface/move_group_interface.h>
-
-// ROS action includes
-#include <actionlib/client/simple_action_client.h>
-#include <actionlib/client/terminal_state.h>
 
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
 #define     VISUAL          // Publishes visual info on RViz
 // #define     PROMPT          // Waits for confermation in RViz before execution
 
-class SlerpControl {
+class SlerpPlan {
 
     /// public variables and functions ------------------------------------------------------------
 	public:
-		SlerpControl(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_, int n_wp_,
-            boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> arm_client_ptr_);
+		SlerpPlan(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_, int n_wp_);
 
-        ~SlerpControl();
+        ~SlerpPlan();
 
-        // This is the callback function of the slerp control service
-	  	bool call_slerp_control(panda_softhand_control::slerp_control::Request &req, panda_softhand_control::slerp_control::Response &res);
+        // This is the callback function of the slerp plan service
+	  	bool call_slerp_plan(panda_softhand_control::slerp_plan::Request &req, panda_softhand_control::slerp_plan::Response &res);
 
 	  	// Initialize the things for motion planning. It is called by the callback
-	  	bool initialize(geometry_msgs::Pose goal_pose, bool is_goal_relative);
+	  	bool initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative);
 
 		// Performs motion planning for the end-effector towards goal
 		bool performMotionPlan();
@@ -50,8 +45,6 @@ class SlerpControl {
 		// Computes waypoints using SLERP from two poses
 		void computeWaypointsFromPoses(const Eigen::Affine3d& start_pose, const Eigen::Affine3d& goal_pose, std::vector<geometry_msgs::Pose>& waypoints);
 
-		// Sends trajectory to the joint_traj controller
-		bool sendJointTrajectory(trajectory_msgs::JointTrajectory trajectory);
 
 	/// private variables -------------------------------------------------------------------------
 	private:
@@ -65,9 +58,6 @@ class SlerpControl {
         int n_wp;                                               // Number of wp to be used for a translation of 1 meter
         int real_n_wp;                                          // Number of wp for requested motion (proportional to n_wp)
 
-        // The arm action client
-        boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> arm_client_ptr;
-
         // Tf listener and transform and the tmp eigen
 	    tf::TransformListener tf_listener;
         tf::StampedTransform stamp_ee_transform;
@@ -78,6 +68,20 @@ class SlerpControl {
 	  	Eigen::Affine3d goalAff; 								// The goal pose given by service call
 
         // Joint trajectory computed to be sent to robot
-        trajectory_msgs::JointTrajectory computed_trajectory;  
+        trajectory_msgs::JointTrajectory computed_trajectory; 
+
+        // INLINE PRIVATE FUCTIONS
+        // Needed to check if the start pose has been arbitrarily chosen as null pose (this means to plan from present position)
+        inline bool is_really_null_pose(geometry_msgs::Pose pose){
+            geometry_msgs::Point pos = pose.position;
+            geometry_msgs::Quaternion quat = pose.orientation;
+
+            if (pos.x == 0.0 && pos.y == 0.0 && pos.z == 0.0 &&
+                quat.x == 0.0 && quat.y == 0.0 && quat.z == 0.0 && quat.w == 1.0) {
+                    return true;
+            }
+
+            return false;
+        }
 	
 };
