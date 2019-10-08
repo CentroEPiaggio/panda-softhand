@@ -114,6 +114,40 @@ bool PandaSoftHandClient::call_hand_wait_service(ros::Duration wait_time){
     return hand_wait_srv.response.answer;
 }
 
+// Service call function for arm control
+bool PandaSoftHandClient::call_arm_control_service(trajectory_msgs::JointTrajectory& computed_trajectory){
+
+    // Creating and filling up the request
+    panda_softhand_control::arm_control arm_control_srv;
+    arm_control_srv.request.computed_trajectory = computed_trajectory;
+
+    // Calling the service
+    if(!this->arm_control_client.call(arm_control_srv)){
+        ROS_ERROR("Failed to contact the arm control server. Returning...");
+        return false;
+    }
+
+    return arm_control_srv.response.answer;
+}
+
+// Service call function for arm wait
+bool PandaSoftHandClient::call_arm_wait_service(ros::Duration wait_time){
+
+    // Creating and filling up the request
+    panda_softhand_control::arm_wait arm_wait_srv;
+    std_msgs::Duration wait_duration_msg;
+    wait_duration_msg.data = wait_time;
+    arm_wait_srv.request.wait_duration = wait_duration_msg;
+
+    // Calling the service
+    if(!this->arm_wait_client.call(arm_wait_srv)){
+        ROS_ERROR("Failed to contact the arm wait server. Returning...");
+        return false;
+    }
+
+    return arm_wait_srv.response.answer;
+}
+
 // Service call function for joint control
 bool PandaSoftHandClient::call_joint_service(std::vector<double> joint_goal){
 

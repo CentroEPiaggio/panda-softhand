@@ -32,8 +32,10 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(FILES
   hand_plan.srv
   hand_wait.srv
-  slerp_control.srv
   hand_control.srv
+  arm_wait.srv
+  arm_control.srv
+  slerp_control.srv
   pose_control.srv
   joint_control.srv
   set_object.srv
@@ -57,6 +59,7 @@ catkin_package(
 
 set(OBJECTS_SOURCE_FILES
   src/utils/parsing_utilities.cpp
+  src/ArmControl.cpp
   src/HandPlan.cpp 
   src/SlerpControl.cpp 
   src/HandControl.cpp 
