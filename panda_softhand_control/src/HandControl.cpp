@@ -45,6 +45,9 @@ bool HandControl::sendHandTrajectory(trajectory_msgs::JointTrajectory trajectory
         return false;
     }
 
+    // Setting the most recent time to the trajectory header
+    trajectory.header.stamp = ros::Time::now();
+
 	// Send the message and wait for the result
 	control_msgs::FollowJointTrajectoryGoal goalmsg;
 	goalmsg.trajectory = trajectory;
