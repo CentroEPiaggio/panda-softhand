@@ -33,6 +33,16 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     // Initializing Panda SoftHand Client (TODO: Return error if initialize returns false)
     this->panda_softhand_client.initialize(this->nh);
 
+    // Moveit names
+    this->group_name = "panda_arm";
+    this->end_effector_name = "right_hand_ee_link";
+
+    // Initializing other moveit stuff (robot model, kinematic model and state)
+    this->robot_model_loader_ptr.reset(new robot_model_loader::RobotModelLoader("robot_description"));
+    this->kinematic_model = this->robot_model_loader_ptr->getModel();
+    ROS_INFO("Model frame: %s", this->kinematic_model->getModelFrame().c_str());
+    this->kinematic_state.reset(new robot_state::RobotState(this->kinematic_model));
+
     // Setting the task service names
     this->grasp_task_service_name = "grasp_task_service";
     this->complex_grasp_task_service_name = "complex_grasp_task_service";
@@ -254,6 +264,10 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return true;
     }
 
+    // THE TEMPORARY TRAJ MESSAGE AND DURATION USED IN SEVERAL CALLS
+    trajectory_msgs::JointTrajectory tmp_traj;
+    ros::Duration waiting_time(5.0);
+
     // 1) Going to home configuration
     if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
         ROS_ERROR("Could not go to the specified home joint configuration.");
@@ -274,23 +288,36 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
     // Couting object pose for debugging
     std::cout << "Object position is \n" << object_pose_aff.translation() << std::endl;
 
-    // 2) Going to pregrasp pose
-    if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose, false) || !this->franka_ok){
+    // Getting the present end effector pose with FK
+    geometry_msgs::Pose present_pose = this->performFK(this->home_joints);
+
+    // 2) Going to pregrasp pose (TO BE CHANGED WITH IK AND FK OF MOVEIT)
+    if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose, present_pose, false, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not go to the specified pre grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
         return false;
     }
 
-    // THE TEMPORARY TRAJ MESSAGE AND DURATION USED IN SEVERAL CALLS
-    trajectory_msgs::JointTrajectory tmp_traj;
-    ros::Duration waiting_time(5.0);
+    if(!this->panda_softhand_client.call_arm_control_service(tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not go to pre grasp pose.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
+        return false;
+    }
 
     // 3) Going to grasp pose
     if(!this->panda_softhand_client.call_slerp_service(grasp_pose, pre_grasp_pose, false, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    if(!this->panda_softhand_client.call_arm_wait_service(waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre grasp from home joints");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
         return false;
     }
 
@@ -403,6 +430,10 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_gras
         return true;
     }
 
+    // THE TEMPORARY TRAJ MESSAGE AND DURATION USED IN SEVERAL CALLS
+    trajectory_msgs::JointTrajectory tmp_traj;
+    ros::Duration waiting_time(5.0);
+
     // 1) Going to home configuration
     if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
         ROS_ERROR("Could not go to the specified home joint configuration.");
@@ -423,23 +454,36 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_gras
     // Couting object pose for debugging
     std::cout << "Object position is \n" << object_pose_aff.translation() << std::endl;
 
-    // 2) Going to pregrasp pose
-    if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose, false) || !this->franka_ok){
+    // Getting the present end effector pose with FK
+    geometry_msgs::Pose present_pose = this->performFK(this->home_joints);
+
+    // 2) Going to pregrasp pose (TO BE CHANGED WITH IK AND FK OF MOVEIT)
+    if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose, present_pose, false, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not go to the specified pre grasp pose.");
         res.success = false;
         res.message = "The service call_complex_grasp_task was NOT performed correctly!";
         return false;
     }
 
-    // THE TEMPORARY TRAJ MESSAGE AND DURATION USED IN SEVERAL CALLS
-    trajectory_msgs::JointTrajectory tmp_traj;
-    ros::Duration waiting_time(5.0);
+    if(!this->panda_softhand_client.call_arm_control_service(tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not go to pre grasp pose.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
+        return false;
+    }
 
     // 3) Going to grasp pose
     if(!this->panda_softhand_client.call_slerp_service(grasp_pose, pre_grasp_pose, false, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    if(!this->panda_softhand_client.call_arm_wait_service(waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre grasp from home joints");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
         return false;
     }
 
@@ -678,4 +722,40 @@ bool TaskSequencer::call_set_object(panda_softhand_control::set_object::Request 
     ROS_INFO_STREAM("Grasp pose changed. Object set to " << req.object_name << ".");
     res.result = true;
     return res.result;
+}
+
+
+// FK and IK Functions which makes use of MoveIt
+geometry_msgs::Pose TaskSequencer::performFK(std::vector<double> joints_in){
+    const robot_state::JointModelGroup* joint_model_group = this->kinematic_model->getJointModelGroup(this->group_name);
+    this->kinematic_state->setJointGroupPositions(joint_model_group, joints_in);
+    const Eigen::Affine3d& end_effector_eigen = this->kinematic_state->getGlobalLinkTransform(this->end_effector_name);
+    geometry_msgs::Pose end_effector_pose;
+    tf::poseEigenToMsg(end_effector_eigen, end_effector_pose);
+    return end_effector_pose;
+}
+
+bool TaskSequencer::performIK(geometry_msgs::Pose pose_in, double timeout, std::vector<double>& joints_out){
+    Eigen::Isometry3d end_effector_state;
+    tf::poseMsgToEigen(pose_in, end_effector_state);
+    const robot_state::JointModelGroup* joint_model_group = this->kinematic_model->getJointModelGroup(this->group_name);
+    bool found_ik = this->kinematic_state->setFromIK(joint_model_group, end_effector_state, timeout);
+
+    if (!found_ik){
+        ROS_ERROR("Could not find IK solution in TaskSequencer...");
+        return false;
+    }
+
+    const std::vector<std::string>& joint_names = joint_model_group->getVariableNames();
+    kinematic_state->copyJointGroupPositions(joint_model_group, joints_out);
+    this->kinematic_state->copyJointGroupPositions(joint_model_group, joints_out);
+
+    if (DEBUG){
+        ROS_INFO("Found an IK solution in TaskSequencer: ");
+        for (std::size_t i = 0; i < joint_names.size(); ++i){
+            ROS_INFO("Joint %s: %f", joint_names[i].c_str(), joints_out[i]);
+        }
+    }
+
+    return true;
 }

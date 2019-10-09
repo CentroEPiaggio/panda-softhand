@@ -22,6 +22,11 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <XmlRpcValue.h>
 #include <XmlRpcException.h>
 
+// MoveIt
+#include <moveit/robot_model_loader/robot_model_loader.h>
+#include <moveit/robot_model/robot_model.h>
+#include <moveit/robot_state/robot_state.h>
+
 // Custom Includes
 #include "PandaSoftHandClient.h"
 
@@ -133,5 +138,16 @@ class TaskSequencer {
         double handover_thresh;
 
         std::map<std::string, std::vector<double>> poses_map;     // The map containing the notable poses
+
+        // MoveIt stuff and functions for FK and IK
+        std::string group_name;
+        std::string end_effector_name;
+        std::shared_ptr<robot_model_loader::RobotModelLoader> robot_model_loader_ptr;
+        robot_model::RobotModelPtr kinematic_model;
+        robot_state::RobotStatePtr kinematic_state;
+
+        // FK and IK Functions which makes use of MoveIt
+        geometry_msgs::Pose performFK(std::vector<double> joints_in);
+        bool performIK(geometry_msgs::Pose pose_in, double timeout, std::vector<double>& joints_out);
 
 };
