@@ -268,11 +268,21 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
     trajectory_msgs::JointTrajectory tmp_traj;
     ros::Duration waiting_time(5.0);
 
-    // 1) Going to home configuration
-    if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
-        ROS_ERROR("Could not go to the specified home joint configuration.");
+    // Creating null joints in order to make joint plan form present joints
+    std::vector<double> null_joints(7, 0.0);
+
+    // 1) Going to home configuration from present joints
+    if(!this->panda_softhand_client.call_joint_service(this->home_joints, null_joints, tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not plan to the specified home joint configuration.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    if(!this->panda_softhand_client.call_arm_control_service(tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not go to home joint configuration.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
         return false;
     }
 
@@ -293,16 +303,23 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
 
     // 2) Going to pregrasp pose (TO BE CHANGED WITH IK AND FK OF MOVEIT)
     if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose, present_pose, false, tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not go to the specified pre grasp pose.");
+        ROS_ERROR("Could not plan to the specified pre grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    if(!this->panda_softhand_client.call_arm_wait_service(waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to home joints");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
         return false;
     }
 
     if(!this->panda_softhand_client.call_arm_control_service(tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not go to pre grasp pose.");
         res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
         return false;
     }
 
@@ -317,86 +334,59 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
     if(!this->panda_softhand_client.call_arm_wait_service(waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
         ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre grasp from home joints");
         res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
         return false;
     }
 
     if(!this->panda_softhand_client.call_arm_control_service(tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not go to grasp pose.");
         res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
         return false;
     }
-
-    /* TRIAL ********************** */
-
-    // 3) Going to again to pregrasp
-    if(!this->panda_softhand_client.call_slerp_service(pre_grasp_pose, grasp_pose, false, tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not plan back to pregrasp.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
-        return false;
-    }
-
-    if(!this->panda_softhand_client.call_arm_wait_service(waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
-        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to grasp pose from pre grasp");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
-        return false;
-    }
-
-    if(!this->panda_softhand_client.call_arm_control_service(tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not return back to pregrasp.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
-        return false;
-    }
-
-    // 3) Going to grasp pose
-    if(!this->panda_softhand_client.call_slerp_service(grasp_pose, pre_grasp_pose, false, tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not plan to the specified grasp pose.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
-        return false;
-    }
-
-    if(!this->panda_softhand_client.call_arm_wait_service(waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
-        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to grasp pose from pre grasp");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
-        return false;
-    }
-
-    if(!this->panda_softhand_client.call_arm_control_service(tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not go to grasp pose.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
-        return false;
-    }
-
-    if(!this->panda_softhand_client.call_arm_wait_service(waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
-        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to grasp pose from pre grasp");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
-        return false;
-    }
-
-    /* END TRIAL ********************** */
 
     // 4) Performing simple grasp with planning, executing and waiting
 
     if(!this->panda_softhand_client.call_hand_plan_service(1.0, 2.0, tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not perform the simple grasp.");
+        ROS_ERROR("Could not plan the simple grasp.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand plan.";
         return false;
     }
+
+    if(!this->panda_softhand_client.call_arm_wait_service(waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to grasp pose");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    }
+
     if(!this->panda_softhand_client.call_hand_control_service(tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not perform the simple grasp.");
+        ROS_ERROR("Could not perform the grasping.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
         return false;
     }
+
+    // Getting current joints
+    std::vector<double> now_joints;
+    double timeout = 3.0;
+    bool found_ik_now = this->performIK(grasp_pose, timeout, now_joints);
+    if (!found_ik_now){
+        ROS_ERROR("Could not perform IK.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    }
+
+    // 4) Lifting the grasped? object
+    if(!this->panda_softhand_client.call_joint_service(this->home_joints, now_joints, tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not lift to the specified pose.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
     if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
         ROS_ERROR("Could not perform the simple grasp.");
         res.success = false;
@@ -404,12 +394,17 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
-
-    // 4) Lifting the grasped? object
-    if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
-        ROS_ERROR("Could not lift to the specified pose.");
+    if(!this->panda_softhand_client.call_arm_control_service(tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not go to grasp pose.");
         res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
+        return false;
+    }
+
+    if(!this->panda_softhand_client.call_arm_wait_service(waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to grasp pose");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
         return false;
     }
 
@@ -434,8 +429,11 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_gras
     trajectory_msgs::JointTrajectory tmp_traj;
     ros::Duration waiting_time(5.0);
 
+    // Creating null joints in order to make joint plan form present joints
+    std::vector<double> null_joints(7, 0.0);
+
     // 1) Going to home configuration
-    if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_joint_service(this->home_joints, null_joints, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not go to the specified home joint configuration.");
         res.success = false;
         res.message = "The service call_complex_grasp_task was NOT performed correctly!";
@@ -522,7 +520,7 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_gras
     }
 
     // 4) Lifting the grasped? object
-    if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_joint_service(this->home_joints, null_joints, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not lift to the specified pose.");
         res.success = false;
         res.message = "The service call_complex_grasp_task was NOT performed correctly!";
@@ -548,17 +546,22 @@ bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_
         return true;
     }
 
+    // THE TEMPORARY TRAJ MESSAGE AND DURATION USED IN SEVERAL CALLS
+    trajectory_msgs::JointTrajectory tmp_traj;
+    ros::Duration waiting_time(5.0);
+
+    // Creating null joints in order to make joint plan form present joints
+    std::vector<double> null_joints(7, 0.0);
+
     // 1) Going to place joint config
-    if(!this->panda_softhand_client.call_joint_service(this->place_joints) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_joint_service(this->place_joints, null_joints, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not go to the specified place joint config.");
         res.success = false;
         res.message = "The service call_simple_place_task was NOT performed correctly!";
         return false;
     }
 
-    // 2) Opening hand 
-    trajectory_msgs::JointTrajectory tmp_traj;
-
+    // 2) Opening hand
     if(!this->panda_softhand_client.call_hand_plan_service(0.0, 2.0, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not perform the simple place.");
         res.success = false;
@@ -596,17 +599,22 @@ bool TaskSequencer::call_simple_home_task(std_srvs::SetBool::Request &req, std_s
         return true;
     }
 
+    // THE TEMPORARY TRAJ MESSAGE AND DURATION USED IN SEVERAL CALLS
+    trajectory_msgs::JointTrajectory tmp_traj;
+    ros::Duration waiting_time(5.0);
+
+    // Creating null joints in order to make joint plan form present joints
+    std::vector<double> null_joints(7, 0.0);
+
     // 1) Going to home joint config
-    if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_joint_service(this->home_joints, null_joints, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not go to the specified home joint config.");
         res.success = false;
         res.message = "The service call_simple_home_task was NOT performed correctly!";
         return false;
     }
 
-    // 2) Opening hand 
-    trajectory_msgs::JointTrajectory tmp_traj;
-
+    // 2) Opening hand
     if(!this->panda_softhand_client.call_hand_plan_service(0.0, 2.0, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not perform the simple home.");
         res.success = false;
@@ -644,8 +652,15 @@ bool TaskSequencer::call_simple_handover_task(std_srvs::SetBool::Request &req, s
         return true;
     }
 
+    // THE TEMPORARY TRAJ MESSAGE AND DURATION USED IN SEVERAL CALLS
+    trajectory_msgs::JointTrajectory tmp_traj;
+    ros::Duration waiting_time(5.0);
+
+    // Creating null joints in order to make joint plan form present joints
+    std::vector<double> null_joints(7, 0.0);
+
     // 1) Going to handover joint config
-    if(!this->panda_softhand_client.call_joint_service(this->handover_joints) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_joint_service(this->handover_joints, null_joints, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not go to the specified handover joint config.");
         res.success = false;
         res.message = "The service call_simple_handover_task was NOT performed correctly!";
@@ -672,9 +687,7 @@ bool TaskSequencer::call_simple_handover_task(std_srvs::SetBool::Request &req, s
         }
     }
 
-    // 3) Opening hand 
-    trajectory_msgs::JointTrajectory tmp_traj;
-
+    // 3) Opening hand
     if(!this->panda_softhand_client.call_hand_plan_service(0.0, 2.0, tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not perform the simple handover.");
         res.success = false;
