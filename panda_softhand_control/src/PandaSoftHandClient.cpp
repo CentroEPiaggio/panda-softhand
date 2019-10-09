@@ -40,7 +40,7 @@ bool PandaSoftHandClient::initialize(ros::NodeHandle& nh_){
     this->arm_wait_service_name = "arm_wait_service";
 
     this->joint_service_name = "joint_control_service";
-    this->pose_service_name = "pose_control_service";
+    this->pose_service_name = "pose_plan_service";
     this->slerp_service_name = "slerp_plan_service";
 
     // Initializing service clients after waiting
@@ -63,7 +63,7 @@ bool PandaSoftHandClient::initialize(ros::NodeHandle& nh_){
     this->joint_client = this->nh.serviceClient<panda_softhand_control::joint_control>(this->joint_service_name);
 
     if(!ros::service::waitForService(this->pose_service_name, ros::Duration(1.0))) return false;
-    this->pose_client = this->nh.serviceClient<panda_softhand_control::pose_control>(this->pose_service_name);
+    this->pose_client = this->nh.serviceClient<panda_softhand_control::pose_plan>(this->pose_service_name);
 
     if(!ros::service::waitForService(this->slerp_service_name, ros::Duration(1.0))) return false;
     this->slerp_client = this->nh.serviceClient<panda_softhand_control::slerp_plan>(this->slerp_service_name);
@@ -175,20 +175,22 @@ bool PandaSoftHandClient::call_joint_service(std::vector<double> joint_goal){
 }
 
 // Service call function for pose control
-bool PandaSoftHandClient::call_pose_service(geometry_msgs::Pose goal_pose, bool is_goal_relative){
+bool PandaSoftHandClient::call_pose_service(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory& computed_trajectory){
 
     // Creating and filling up the request
-    panda_softhand_control::pose_control pose_control_srv;
-    pose_control_srv.request.goal_pose = goal_pose;
-    pose_control_srv.request.is_goal_relative = is_goal_relative;
+    panda_softhand_control::pose_plan pose_plan_srv;
+    pose_plan_srv.request.goal_pose = goal_pose;
+    pose_plan_srv.request.start_pose = start_pose;
+    pose_plan_srv.request.is_goal_relative = is_goal_relative;
 
     // Calling the service
-    if(!this->pose_client.call(pose_control_srv)){
-        ROS_ERROR("Failed to contact the pose control server. Returning...");
+    if(!this->pose_client.call(pose_plan_srv)){
+        ROS_ERROR("Failed to contact the pose plan server. Returning...");
         return false;
     }
 
-    return pose_control_srv.response.answer;
+    computed_trajectory = pose_plan_srv.response.computed_trajectory;
+    return pose_plan_srv.response.answer;
 }
 
 // Service call function for slerp plan

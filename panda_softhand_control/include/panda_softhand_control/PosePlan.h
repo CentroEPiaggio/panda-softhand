@@ -12,43 +12,35 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 // ROS msg includes
 #include <geometry_msgs/Pose.h>
 #include <trajectory_msgs/JointTrajectory.h>
-#include <control_msgs/FollowJointTrajectoryAction.h>
 
 // Custom msg and srv includes
-#include "panda_softhand_control/pose_control.h"
+#include "panda_softhand_control/pose_plan.h"
 
 // MoveIt! includes
 #include <moveit/move_group_interface/move_group_interface.h>
-
-// ROS action includes
-#include <actionlib/client/simple_action_client.h>
-#include <actionlib/client/terminal_state.h>
 
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
 #define     VISUAL          // Publishes visual info on RViz
 // #define     PROMPT          // Waits for confermation in RViz before execution
 
-class PoseControl {
+class PosePlan {
 
     /// public variables and functions ------------------------------------------------------------
 	public:
-		PoseControl(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_,
-            boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> arm_client_ptr_);
+		PosePlan(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_);
 
-        ~PoseControl();
+        ~PosePlan();
 
-        // This is the callback function of the pose control service
-	  	bool call_pose_control(panda_softhand_control::pose_control::Request &req, panda_softhand_control::pose_control::Response &res);
+        // This is the callback function of the pose plan service
+	  	bool call_pose_plan(panda_softhand_control::pose_plan::Request &req, panda_softhand_control::pose_plan::Response &res);
 
 	  	// Initialize the things for motion planning. It is called by the callback
-	  	bool initialize(geometry_msgs::Pose goal_pose, bool is_goal_relative);
+	  	bool initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative);
 
 		// Performs motion planning for the end-effector towards goal
 		bool performMotionPlan();
 
-		// Sends trajectory to the joint_traj controller
-		bool sendJointTrajectory(trajectory_msgs::JointTrajectory trajectory);
 
 	/// private variables -------------------------------------------------------------------------
 	private:
@@ -58,9 +50,6 @@ class PoseControl {
         std::string end_effector_name;                          // Name of the end-effector link
         std::string group_name;                                 // Name of the MoveIt group
 
-        // The arm action client
-        boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> arm_client_ptr;
-
         // Tf listener and transform and the tmp eigen
 	    tf::TransformListener tf_listener;
         tf::StampedTransform stamp_ee_transform;
@@ -69,8 +58,24 @@ class PoseControl {
         // The goal pose
 	  	geometry_msgs::Pose goalPose; 								// The goal pose given by service call
         Eigen::Affine3d goalPoseAff;                                // The same as Eigen Affine
+        Eigen::Affine3d startAff;                                   // The staring pose of plan as Eigen Affine
 
         // Joint trajectory computed to be sent to robot
-        trajectory_msgs::JointTrajectory computed_trajectory;  
+        trajectory_msgs::JointTrajectory computed_trajectory;
+
+
+        // INLINE PRIVATE FUCTIONS
+        // Needed to check if the start pose has been arbitrarily chosen as null pose (this means to plan from present position)
+        inline bool is_really_null_pose(geometry_msgs::Pose pose){
+            geometry_msgs::Point pos = pose.position;
+            geometry_msgs::Quaternion quat = pose.orientation;
+
+            if (pos.x == 0.0 && pos.y == 0.0 && pos.z == 0.0 &&
+                quat.x == 0.0 && quat.y == 0.0 && quat.z == 0.0 && quat.w == 1.0) {
+                    return true;
+            }
+
+            return false;
+        }
 	
 };

@@ -36,7 +36,7 @@ add_service_files(FILES
   arm_wait.srv
   arm_control.srv
   slerp_plan.srv
-  pose_control.srv
+  pose_plan.srv
   joint_control.srv
   set_object.srv
   complex_grasp.srv
@@ -63,7 +63,7 @@ set(OBJECTS_SOURCE_FILES
   src/HandControl.cpp
   src/ArmControl.cpp
   src/SlerpPlan.cpp 
-  src/PoseControl.cpp
+  src/PosePlan.cpp
   src/JointControl.cpp
   src/PandaSoftHandClient.cpp
   src/TaskSequencer.cpp

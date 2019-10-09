@@ -7,14 +7,13 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <sstream>
 #include <string>
 
-#include "panda_softhand_control/PoseControl.h"
+#include "panda_softhand_control/PosePlan.h"
 
 #include <moveit_visual_tools/moveit_visual_tools.h>
 
-PoseControl::PoseControl(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_,
-    boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> arm_client_ptr_){
+PosePlan::PosePlan(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_){
         
-        ROS_INFO("Starting to create PoseControl object");
+        ROS_INFO("Starting to create PosePlan object");
 
         // Initializing node handle
         this->nh = nh_;
@@ -23,49 +22,40 @@ PoseControl::PoseControl(ros::NodeHandle& nh_, std::string group_name_, std::str
         this->end_effector_name = end_effector_name_;
         this->group_name = group_name_;
 
-        // Initializing the arm client
-        this->arm_client_ptr = arm_client_ptr_;
-
-        ROS_INFO("Finished creating PoseControl object");
+        ROS_INFO("Finished creating PosePlan object");
 }
 
-PoseControl::~PoseControl(){
+PosePlan::~PosePlan(){
     
     // Nothing to do here yet
 }
 
-// This is the callback function of the pose control service
-bool PoseControl::call_pose_control(panda_softhand_control::pose_control::Request &req, panda_softhand_control::pose_control::Response &res){
+// This is the callback function of the pose plan service
+bool PosePlan::call_pose_plan(panda_softhand_control::pose_plan::Request &req, panda_softhand_control::pose_plan::Response &res){
 
     // Setting up things
-    if(!this->initialize(req.goal_pose, req.is_goal_relative)){
-        ROS_ERROR("Could not initialize PoseControl object. Returning...");
+    if(!this->initialize(req.goal_pose, req.start_pose, req.is_goal_relative)){
+        ROS_ERROR("Could not initialize PosePlan object. Returning...");
         res.answer = false;
         return false;
     }
 
 	// Perform motion plan towards the goal pose
     if(!this->performMotionPlan()){
-        ROS_ERROR("Could not perform motion planning in PoseControl object. Returning...");
+        ROS_ERROR("Could not perform motion planning in PosePlan object. Returning...");
         res.answer = false;
         return false;
     }
 
-    // Send computed joint motion
-    if(!this->sendJointTrajectory(this->computed_trajectory)){
-        ROS_ERROR("Could not send computed trajectory from PoseControl object. Returning...");
-        res.answer = false;
-        return false;
-    }
-
-    // At this point everything is completed, return true
+    // At this point all is fine, return the computed trajectory
+    res.computed_trajectory = this->computed_trajectory;
     res.answer = true;
     return true;
 }
 
 
 // Initialize the things for motion planning. Is called by the callback
-bool PoseControl::initialize(geometry_msgs::Pose goal_pose, bool is_goal_relative){
+bool PosePlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative){
 
     // Getting the current ee transform
     try {
@@ -84,12 +74,21 @@ bool PoseControl::initialize(geometry_msgs::Pose goal_pose, bool is_goal_relativ
 	if(DEBUG) ROS_INFO_STREAM("Endeffector current Translation: \n" << this->end_effector_state.translation());
 	if(DEBUG) ROS_INFO_STREAM("Endeffector current Rotation: \n" << this->end_effector_state.rotation());
 
+    // Setting the start pose
+    if (this->is_really_null_pose(start_pose)){
+        ROS_WARN("The start pose is NULL! PLANNING FROM CURRENT POSE!");
+        this->startAff = this->end_effector_state;
+    } else {
+        tf::poseMsgToEigen(start_pose, this->startAff);
+    }
+
 	// Setting the goal pose
     tf::poseMsgToEigen(goal_pose, this->goalPoseAff);
 
 	// If the goal is relative, get the global goal pose by multiplying it with ee pose (end_effector_state)
 	if(is_goal_relative){
 		this->goalPoseAff = this->end_effector_state * this->goalPoseAff;
+        this->startAff = this->end_effector_state * this->startAff;
 	}
 
     // Reconvert to geometry_msgs Pose
@@ -103,7 +102,7 @@ bool PoseControl::initialize(geometry_msgs::Pose goal_pose, bool is_goal_relativ
 }
 
 // Performs motion planning for the end-effector towards goal
-bool PoseControl::performMotionPlan(){
+bool PosePlan::performMotionPlan(){
 
     // Move group interface
     moveit::planning_interface::MoveGroupInterface group(this->group_name);
@@ -134,6 +133,13 @@ bool PoseControl::performMotionPlan(){
 
     if(DEBUG) ROS_INFO("Done setting the target pose in MoveIt Group.");
 
+    // Setting the start state in the moveit group
+    robot_state::RobotState start_state(*group.getCurrentState());
+    geometry_msgs::Pose starting_pose;
+    tf::poseEigenToMsg(this->startAff, starting_pose);
+    start_state.setFromIK(joint_model_group, starting_pose);
+    group.setStartState(start_state);
+
     // Planning to Pose
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
     bool success = (group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
@@ -158,27 +164,5 @@ bool PoseControl::performMotionPlan(){
 
     // Saving the computed trajectory and returning true
     this->computed_trajectory = my_plan.trajectory_.joint_trajectory;
-    return true;
-}
-
-// Sends trajectory to the joint_traj controller
-bool PoseControl::sendJointTrajectory(trajectory_msgs::JointTrajectory trajectory){
-    
-    // Waiting for the arm server to be ready
-    if(!this->arm_client_ptr->waitForServer(ros::Duration(1,0))){
-        ROS_ERROR("The arm client is taking too much to get ready. Returning...");
-        return false;
-    }
-
-	// Send the message and wait for the result
-	control_msgs::FollowJointTrajectoryGoal goalmsg;
-	goalmsg.trajectory = trajectory;
-
-    this->arm_client_ptr->sendGoal(goalmsg);
-
-    if(!this->arm_client_ptr->waitForResult(ros::Duration(60, 0))){
-        ROS_WARN("The arm client is taking too to complete goal execution. Is it a really long motion???");
-    }
-
     return true;
 }
