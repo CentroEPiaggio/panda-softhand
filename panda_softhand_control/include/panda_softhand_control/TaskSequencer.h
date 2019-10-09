@@ -137,7 +137,7 @@ class TaskSequencer {
         std::vector<double> handover_joints;
         double handover_thresh;
 
-        std::map<std::string, std::vector<double>> poses_map;     // The map containing the notable poses
+        std::map<std::string, std::vector<double>> poses_map;       // The map containing the notable poses
 
         // MoveIt stuff and functions for FK and IK
         std::string group_name;
@@ -149,5 +149,10 @@ class TaskSequencer {
         // FK and IK Functions which makes use of MoveIt
         geometry_msgs::Pose performFK(std::vector<double> joints_in);
         bool performIK(geometry_msgs::Pose pose_in, double timeout, std::vector<double>& joints_out);
+
+        // Other execution vars
+        ros::Duration waiting_time;
+        trajectory_msgs::JointTrajectory tmp_traj;
+        std::vector<double> null_joints;                            // null joints in order to make joint plan from present joints
 
 };
