@@ -1,0 +1,5 @@
+float64[] joint_goal
+float64[] joint_start
+---
+bool answer
+trajectory_msgs/JointTrajectory computed_trajectory

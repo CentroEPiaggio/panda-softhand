@@ -18,7 +18,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "panda_softhand_control/arm_wait.h"
 #include "panda_softhand_control/arm_control.h"
 
-#include "panda_softhand_control/joint_control.h"
+#include "panda_softhand_control/joint_plan.h"
 #include "panda_softhand_control/pose_plan.h"
 #include "panda_softhand_control/slerp_plan.h"
 
@@ -54,10 +54,10 @@ class PandaSoftHandClient {
         // Service call function for arm wait
         bool call_arm_wait_service(ros::Duration wait_time);
 
-        // Service call function for joint control
-        bool call_joint_service(std::vector<double> joint_goal);
+        // Service call function for joint plan
+        bool call_joint_service(std::vector<double> joint_goal, std::vector<double> joint_start, trajectory_msgs::JointTrajectory& computed_trajectory);
 
-        // Service call function for pose control
+        // Service call function for pose plan
         bool call_pose_service(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory& computed_trajectory);
 
         // Service call function for slerp plan

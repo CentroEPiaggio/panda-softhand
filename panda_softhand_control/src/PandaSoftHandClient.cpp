@@ -39,7 +39,7 @@ bool PandaSoftHandClient::initialize(ros::NodeHandle& nh_){
     this->arm_control_service_name = "arm_control_service";
     this->arm_wait_service_name = "arm_wait_service";
 
-    this->joint_service_name = "joint_control_service";
+    this->joint_service_name = "joint_plan_service";
     this->pose_service_name = "pose_plan_service";
     this->slerp_service_name = "slerp_plan_service";
 
@@ -60,7 +60,7 @@ bool PandaSoftHandClient::initialize(ros::NodeHandle& nh_){
     this->arm_wait_client = this->nh.serviceClient<panda_softhand_control::arm_wait>(this->arm_wait_service_name);
 
     if(!ros::service::waitForService(this->joint_service_name, ros::Duration(1.0))) return false;
-    this->joint_client = this->nh.serviceClient<panda_softhand_control::joint_control>(this->joint_service_name);
+    this->joint_client = this->nh.serviceClient<panda_softhand_control::joint_plan>(this->joint_service_name);
 
     if(!ros::service::waitForService(this->pose_service_name, ros::Duration(1.0))) return false;
     this->pose_client = this->nh.serviceClient<panda_softhand_control::pose_plan>(this->pose_service_name);
@@ -158,23 +158,25 @@ bool PandaSoftHandClient::call_arm_wait_service(ros::Duration wait_time){
     return arm_wait_srv.response.answer;
 }
 
-// Service call function for joint control
-bool PandaSoftHandClient::call_joint_service(std::vector<double> joint_goal){
+// Service call function for joint plan
+bool PandaSoftHandClient::call_joint_service(std::vector<double> joint_goal, std::vector<double> joint_start, trajectory_msgs::JointTrajectory& computed_trajectory){
 
     // Creating and filling up the request
-    panda_softhand_control::joint_control joint_control_srv;
-    joint_control_srv.request.joint_goal = joint_goal;
+    panda_softhand_control::joint_plan joint_plan_srv;
+    joint_plan_srv.request.joint_goal = joint_goal;
+    joint_plan_srv.request.joint_start = joint_start;
 
     // Calling the service
-    if(!this->joint_client.call(joint_control_srv)){
-        ROS_ERROR("Failed to contact the joint control server. Returning...");
+    if(!this->joint_client.call(joint_plan_srv)){
+        ROS_ERROR("Failed to contact the joint plan server. Returning...");
         return false;
     }
 
-    return joint_control_srv.response.answer;
+    computed_trajectory = joint_plan_srv.response.computed_trajectory;
+    return joint_plan_srv.response.answer;
 }
 
-// Service call function for pose control
+// Service call function for pose plan
 bool PandaSoftHandClient::call_pose_service(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory& computed_trajectory){
 
     // Creating and filling up the request

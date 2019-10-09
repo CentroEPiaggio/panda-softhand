@@ -7,14 +7,13 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <sstream>
 #include <string>
 
-#include "panda_softhand_control/JointControl.h"
+#include "panda_softhand_control/JointPlan.h"
 
 #include <moveit_visual_tools/moveit_visual_tools.h>
 
-JointControl::JointControl(ros::NodeHandle& nh_, std::string group_name_,
-    boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> arm_client_ptr_){
+JointPlan::JointPlan(ros::NodeHandle& nh_, std::string group_name_){
         
-        ROS_INFO("Starting to create JointControl object");
+        ROS_INFO("Starting to create JointPlan object");
 
         // Initializing node handle
         this->nh = nh_;
@@ -22,52 +21,44 @@ JointControl::JointControl(ros::NodeHandle& nh_, std::string group_name_,
         // Initializing names
         this->group_name = group_name_;
 
-        // Initializing the arm client
-        this->arm_client_ptr = arm_client_ptr_;
-
-        ROS_INFO("Finished creating JointControl object");
+        ROS_INFO("Finished creating JointPlan object");
 }
 
-JointControl::~JointControl(){
+JointPlan::~JointPlan(){
     
     // Nothing to do here yet
 }
 
-// This is the callback function of the joint control service
-bool JointControl::call_joint_control(panda_softhand_control::joint_control::Request &req, panda_softhand_control::joint_control::Response &res){
+// This is the callback function of the joint plan service
+bool JointPlan::call_joint_plan(panda_softhand_control::joint_plan::Request &req, panda_softhand_control::joint_plan::Response &res){
 
     // Setting up things
     if(!this->initialize(req)){
-        ROS_ERROR("Could not initialize JointControl object. Returning...");
+        ROS_ERROR("Could not initialize JointPlan object. Returning...");
         res.answer = false;
         return false;
     }
 
 	// Perform motion plan towards the goal joint
     if(!this->performMotionPlan()){
-        ROS_ERROR("Could not perform motion planning in JointControl object. Returning...");
+        ROS_ERROR("Could not perform motion planning in JointPlan object. Returning...");
         res.answer = false;
         return false;
     }
 
-    // Send computed joint motion
-    if(!this->sendJointTrajectory(this->computed_trajectory)){
-        ROS_ERROR("Could not send computed trajectory from JointControl object. Returning...");
-        res.answer = false;
-        return false;
-    }
-
-    // At this point everything is completed, return true
+    // At this point all is fine, return the computed trajectory
+    res.computed_trajectory = this->computed_trajectory;
     res.answer = true;
     return true;
 }
 
 
 // Initialize the things for motion planning. Is called by the callback
-bool JointControl::initialize(panda_softhand_control::joint_control::Request &req){
+bool JointPlan::initialize(panda_softhand_control::joint_plan::Request &req){
 
     // Converting the float array of request to std vector
-    this->joint_goal = req.joint_goal;  
+    this->joint_goal = req.joint_goal;
+    this->joint_now = req.joint_start;  
     
     // Print the goal end-effector pose
     if(DEBUG){
@@ -80,7 +71,7 @@ bool JointControl::initialize(panda_softhand_control::joint_control::Request &re
 }
 
 // Performs motion planning for the joints towards goal
-bool JointControl::performMotionPlan(){
+bool JointPlan::performMotionPlan(){
 
     // Move group interface
     moveit::planning_interface::MoveGroupInterface group(this->group_name);
@@ -89,7 +80,11 @@ bool JointControl::performMotionPlan(){
     ros::spinOnce();                                    // May not be necessary
     moveit::core::RobotStatePtr current_state = group.getCurrentState();
     const robot_state::JointModelGroup* joint_model_group = group.getCurrentState()->getJointModelGroup(this->group_name);
-    current_state->copyJointGroupPositions(joint_model_group, this->joint_now);
+
+    if (this->is_really_null_config(this->joint_now)) {
+        ROS_WARN("The start pose is NULL! PLANNING FROM CURRENT POSE!");
+        current_state->copyJointGroupPositions(joint_model_group, this->joint_now);
+    }
 
     // Checking if the dimensions of the request are correct
     if(this->joint_now.size() != this->joint_goal.size()){
@@ -140,27 +135,5 @@ bool JointControl::performMotionPlan(){
 
     // Saving the computed trajectory and returning true
     this->computed_trajectory = my_plan.trajectory_.joint_trajectory;
-    return true;
-}
-
-// Sends trajectory to the joint_traj controller
-bool JointControl::sendJointTrajectory(trajectory_msgs::JointTrajectory trajectory){
-    
-    // Waiting for the arm server to be ready
-    if(!this->arm_client_ptr->waitForServer(ros::Duration(1,0))){
-        ROS_ERROR("The arm client is taking too much to get ready. Returning...");
-        return false;
-    }
-
-	// Send the message and wait for the result
-	control_msgs::FollowJointTrajectoryGoal goalmsg;
-	goalmsg.trajectory = trajectory;
-
-    this->arm_client_ptr->sendGoal(goalmsg);
-
-    if(!this->arm_client_ptr->waitForResult(ros::Duration(60, 0))){
-        ROS_WARN("The arm client is taking too to complete goal execution. Is it a really long motion???");
-    }
-
     return true;
 }

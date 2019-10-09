@@ -11,43 +11,35 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 // ROS msg includes
 #include <trajectory_msgs/JointTrajectory.h>
-#include <control_msgs/FollowJointTrajectoryAction.h>
 
 // Custom msg and srv includes
-#include "panda_softhand_control/joint_control.h"
+#include "panda_softhand_control/joint_plan.h"
 
 // MoveIt! includes
 #include <moveit/move_group_interface/move_group_interface.h>
-
-// ROS action includes
-#include <actionlib/client/simple_action_client.h>
-#include <actionlib/client/terminal_state.h>
 
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
 #define     VISUAL          // Publishes visual info on RViz
 // #define     PROMPT          // Waits for confermation in RViz before execution
 
-class JointControl {
+class JointPlan {
 
     /// public variables and functions ------------------------------------------------------------
 	public:
-		JointControl(ros::NodeHandle& nh_, std::string group_name_,
-            boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> arm_client_ptr_);
+		JointPlan(ros::NodeHandle& nh_, std::string group_name_);
 
-        ~JointControl();
+        ~JointPlan();
 
-        // This is the callback function of the joint control service
-	  	bool call_joint_control(panda_softhand_control::joint_control::Request &req, panda_softhand_control::joint_control::Response &res);
+        // This is the callback function of the joint plan service
+	  	bool call_joint_plan(panda_softhand_control::joint_plan::Request &req, panda_softhand_control::joint_plan::Response &res);
 
 	  	// Initialize the things for motion planning. It is called by the callback
-	  	bool initialize(panda_softhand_control::joint_control::Request &req);
+	  	bool initialize(panda_softhand_control::joint_plan::Request &req);
 
 		// Performs motion planning for the joints towards goal
 		bool performMotionPlan();
 
-		// Sends trajectory to the joint_traj controller
-		bool sendJointTrajectory(trajectory_msgs::JointTrajectory trajectory);
 
 	/// private variables -------------------------------------------------------------------------
 	private:
@@ -56,14 +48,23 @@ class JointControl {
         // Important names and values
         std::string group_name;                                 // Name of the MoveIt group
 
-        // The arm action client
-        boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> arm_client_ptr;
-
         // The present joint config and the goal joint config
 		std::vector<double> joint_now;							// The current joint config
 	  	std::vector<double> joint_goal;							// The goal joint config given by service call
 
         // Joint trajectory computed to be sent to robot
         trajectory_msgs::JointTrajectory computed_trajectory;  
+
+		// INLINE PRIVATE FUCTIONS
+        // Needed to check if the start joint config has been arbitrarily chosen as null (this means to plan from present joint position)
+        inline bool is_really_null_config(std::vector<double> joints){
+			bool all_zero = true;
+
+            for (int n : joints){
+				if (n == 0.0) all_zero = false;
+			}
+
+            return all_zero;
+        }
 	
 };
