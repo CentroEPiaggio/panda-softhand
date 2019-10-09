@@ -133,6 +133,13 @@ bool SlerpPlan::performMotionPlan(){
 	std::vector<geometry_msgs::Pose> cart_waypoints;
 	this->computeWaypointsFromPoses(this->startAff, this->goalAff, cart_waypoints);
 
+    // Setting the start state in the moveit group
+    robot_state::RobotState start_state(*group.getCurrentState());
+    geometry_msgs::Pose starting_pose;
+    tf::poseEigenToMsg(this->startAff, starting_pose);
+    start_state.setFromIK(joint_model_group, starting_pose);
+    group.setStartState(start_state);
+
 	// Planning for the waypoints path
 	moveit_msgs::RobotTrajectory trajectory;
 	double fraction = group.computeCartesianPath(cart_waypoints, 0.01, 0.0, trajectory);
