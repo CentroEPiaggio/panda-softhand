@@ -615,7 +615,7 @@ bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
-    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_wait_service(this->waiting_time) || !this->franka_ok){
         ROS_ERROR("Could not wait for the simple open.");
         res.success = false;
         res.message = "The service call_simple_place_task was NOT performed correctly! Error plan in hand wait.";
