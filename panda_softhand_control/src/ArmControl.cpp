@@ -58,7 +58,11 @@ bool ArmControl::sendJointTrajectory(trajectory_msgs::JointTrajectory trajectory
     }
 
     // Setting the most recent time to the trajectory header
-    trajectory.header.stamp = ros::Time::now();
+    std_msgs::Header empty_header;
+    trajectory.header.stamp = ros::Time::now() + ros::Duration(1.5);
+    trajectory.header = empty_header;
+    ROS_INFO_STREAM("In ArmControl::sendJointTrajectory, the traj header stamp is " << trajectory.header.stamp
+        << " and the time_from_start of first point is " << trajectory.points[1].time_from_start << ".");
 
 	// Send the message and wait for the result
 	control_msgs::FollowJointTrajectoryGoal goalmsg;
