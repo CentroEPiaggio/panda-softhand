@@ -37,7 +37,7 @@ class SlerpPlan {
 	  	bool call_slerp_plan(panda_softhand_control::slerp_plan::Request &req, panda_softhand_control::slerp_plan::Response &res);
 
 	  	// Initialize the things for motion planning. It is called by the callback
-	  	bool initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative);
+	  	bool initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory past_trajectory);
 
 		// Performs motion planning for the end-effector towards goal
 		bool performMotionPlan();
@@ -67,7 +67,8 @@ class SlerpPlan {
 	  	Eigen::Affine3d startAff; 								// The starting ee pose 
 	  	Eigen::Affine3d goalAff; 								// The goal pose given by service call
 
-        // Joint trajectory computed to be sent to robot
+        // Joint trajectory computed to be sent to robot and the past one
+        trajectory_msgs::JointTrajectory past_trajectory;
         trajectory_msgs::JointTrajectory computed_trajectory; 
 
         // INLINE PRIVATE FUCTIONS

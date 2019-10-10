@@ -60,7 +60,7 @@ class PosePlan {
         Eigen::Affine3d goalPoseAff;                                // The same as Eigen Affine
         Eigen::Affine3d startAff;                                   // The staring pose of plan as Eigen Affine
 
-        // Joint trajectory computed to be sent to robot
+        // Joint trajectory computed to be sent to robot and the past one
         trajectory_msgs::JointTrajectory past_trajectory;
         trajectory_msgs::JointTrajectory computed_trajectory;
 

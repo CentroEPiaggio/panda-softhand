@@ -198,13 +198,15 @@ bool PandaSoftHandClient::call_pose_service(geometry_msgs::Pose goal_pose, geome
 }
 
 // Service call function for slerp plan
-bool PandaSoftHandClient::call_slerp_service(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory& computed_trajectory){
+bool PandaSoftHandClient::call_slerp_service(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, 
+                                            trajectory_msgs::JointTrajectory& computed_trajectory, trajectory_msgs::JointTrajectory past_trajectory){
 
     // Creating and filling up the request
     panda_softhand_control::slerp_plan slerp_plan_srv;
     slerp_plan_srv.request.goal_pose = goal_pose;
     slerp_plan_srv.request.start_pose = start_pose;
     slerp_plan_srv.request.is_goal_relative = is_goal_relative;
+    slerp_plan_srv.request.past_trajectory = past_trajectory;
 
     // Calling the service
     if(!this->slerp_client.call(slerp_plan_srv)){
