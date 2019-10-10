@@ -321,8 +321,8 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
-    // 3) Going to grasp pose
-    if(!this->panda_softhand_client.call_slerp_service(grasp_pose, pre_grasp_pose, false, this->tmp_traj) || !this->franka_ok){
+    // 3) Going to grasp pose (TEMPORARILY CHANGED TO POSE FOR SOLVING SLERP JUMPS)
+    if(!this->panda_softhand_client.call_pose_service(grasp_pose, pre_grasp_pose, false, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
@@ -475,8 +475,8 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_gras
         return false;
     }
 
-    // 3) Going to grasp pose
-    if(!this->panda_softhand_client.call_slerp_service(grasp_pose, pre_grasp_pose, false, this->tmp_traj) || !this->franka_ok){
+    // 3) Going to grasp pose (TEMPORARILY CHANGED TO POSE FOR SOLVING SLERP JUMPS)
+    if(!this->panda_softhand_client.call_pose_service(grasp_pose, pre_grasp_pose, false, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
         res.message = "The service call_complex_grasp_task was NOT performed correctly!";
