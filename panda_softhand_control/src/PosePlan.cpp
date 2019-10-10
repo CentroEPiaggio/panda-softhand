@@ -34,7 +34,7 @@ PosePlan::~PosePlan(){
 bool PosePlan::call_pose_plan(panda_softhand_control::pose_plan::Request &req, panda_softhand_control::pose_plan::Response &res){
 
     // Setting up things
-    if(!this->initialize(req.goal_pose, req.start_pose, req.is_goal_relative)){
+    if(!this->initialize(req.goal_pose, req.start_pose, req.is_goal_relative, req.past_trajectory)){
         ROS_ERROR("Could not initialize PosePlan object. Returning...");
         res.answer = false;
         return false;
@@ -55,7 +55,7 @@ bool PosePlan::call_pose_plan(panda_softhand_control::pose_plan::Request &req, p
 
 
 // Initialize the things for motion planning. Is called by the callback
-bool PosePlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative){
+bool PosePlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory past_trajectory){
 
     // Getting the current ee transform
     try {
@@ -93,6 +93,9 @@ bool PosePlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose sta
 
     // Reconvert to geometry_msgs Pose
     tf::poseEigenToMsg(this->goalPoseAff, this->goalPose);
+
+    // Setting the past trajectory
+    this->past_trajectory = past_trajectory;
 
     // Print the goal end-effector pose
     if(DEBUG) ROS_INFO_STREAM("Endeffector goal Translation: \n" << this->goalPoseAff.translation());
@@ -135,9 +138,10 @@ bool PosePlan::performMotionPlan(){
 
     // Setting the start state in the moveit group
     robot_state::RobotState start_state(*group.getCurrentState());
-    geometry_msgs::Pose starting_pose;
-    tf::poseEigenToMsg(this->startAff, starting_pose);
-    start_state.setFromIK(joint_model_group, starting_pose);
+    std::vector<double> last_joints = this->past_trajectory.points.back().positions;
+    // geometry_msgs::Pose starting_pose;
+    // tf::poseEigenToMsg(this->startAff, starting_pose);
+    start_state.setJointGroupPositions(joint_model_group, last_joints);
     group.setStartState(start_state);
 
     // Planning to Pose

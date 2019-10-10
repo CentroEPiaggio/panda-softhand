@@ -36,7 +36,7 @@ class PosePlan {
 	  	bool call_pose_plan(panda_softhand_control::pose_plan::Request &req, panda_softhand_control::pose_plan::Response &res);
 
 	  	// Initialize the things for motion planning. It is called by the callback
-	  	bool initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative);
+	  	bool initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory past_trajectory);
 
 		// Performs motion planning for the end-effector towards goal
 		bool performMotionPlan();
@@ -61,6 +61,7 @@ class PosePlan {
         Eigen::Affine3d startAff;                                   // The staring pose of plan as Eigen Affine
 
         // Joint trajectory computed to be sent to robot
+        trajectory_msgs::JointTrajectory past_trajectory;
         trajectory_msgs::JointTrajectory computed_trajectory;
 
 
