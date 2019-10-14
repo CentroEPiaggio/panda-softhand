@@ -151,7 +151,7 @@
     </model>
 
 	<!-- box (like a container for placing) -->
-    <model name="box_container">
+    <!-- <model name="box_container">
 			<pose> 0.65 0.13 0.01 0 0 0</pose>
 			<static>true</static>
 			<link name='linkBoxContainer'>
@@ -177,7 +177,7 @@
 				<self_collide>0</self_collide>		
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model> -->
 
   </world>
   
