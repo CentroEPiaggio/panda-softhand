@@ -50,6 +50,7 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     this->home_task_service_name = "home_task_service";
     this->handover_task_service_name = "handover_task_service";
     this->set_object_service_name = "set_object_service";
+    this->set_place_service_name = "set_place_service";
 
     // Advertising the services
     this->grasp_task_server = this->nh.advertiseService(this->grasp_task_service_name, &TaskSequencer::call_simple_grasp_task, this);
@@ -58,6 +59,7 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     this->home_task_server = this->nh.advertiseService(this->home_task_service_name, &TaskSequencer::call_simple_home_task, this);
     this->handover_task_server = this->nh.advertiseService(this->handover_task_service_name, &TaskSequencer::call_simple_handover_task, this);
     this->set_object_server = this->nh.advertiseService(this->set_object_service_name, &TaskSequencer::call_set_object, this);
+    this->set_place_server = this->nh.advertiseService(this->set_place_service_name, &TaskSequencer::call_set_place, this);
 
     // Initializing other control values
     this->waiting_time = ros::Duration(10.0);

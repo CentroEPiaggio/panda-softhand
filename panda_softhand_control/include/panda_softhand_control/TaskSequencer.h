@@ -113,6 +113,7 @@ class TaskSequencer {
         std::string home_task_service_name;
         std::string handover_task_service_name;
         std::string set_object_service_name;
+        std::string set_place_service_name;
 
         // Service Servers
         ros::ServiceServer grasp_task_server;
@@ -121,6 +122,7 @@ class TaskSequencer {
         ros::ServiceServer home_task_server;
         ros::ServiceServer handover_task_server;
         ros::ServiceServer set_object_server;
+        ros::ServiceServer set_place_server;
 
         // The XmlRpc value for parsing complex params
         XmlRpc::XmlRpcValue task_seq_params;
