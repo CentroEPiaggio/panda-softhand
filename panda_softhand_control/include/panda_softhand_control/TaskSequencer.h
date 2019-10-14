@@ -77,6 +77,9 @@ class TaskSequencer {
         // Callback for set object service
         bool call_set_object(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
 
+        // Callback for set place joints service
+        bool call_set_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
+
 	/// private variables -------------------------------------------------------------------------
 	private:
 		ros::NodeHandle nh;
@@ -137,7 +140,9 @@ class TaskSequencer {
         std::vector<double> handover_joints;
         double handover_thresh;
 
-        std::map<std::string, std::vector<double>> poses_map;       // The map containing the notable poses
+        std::map<std::string, std::vector<double>> poses_map;               // The map containing the notable poses
+
+        std::map<std::string, std::vector<double>> place_joints_map;        // The map containing the notable place joints
 
         // MoveIt stuff and functions for FK and IK
         std::string group_name;

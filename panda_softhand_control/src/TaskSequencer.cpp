@@ -63,6 +63,9 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     this->waiting_time = ros::Duration(10.0);
     this->null_joints.resize(7);
     std::fill(this->null_joints.begin(), this->null_joints.end(), 0.0);
+    // trajectory_msgs::JointTrajectoryPoint empty_joints_point;
+    // empty_joints_point.positions = this->null_joints;
+    // this->tmp_traj.points.push_back(empty_joints_point);
 
     // Spinning once
     ros::spinOnce();
@@ -174,6 +177,22 @@ bool TaskSequencer::parse_task_params(){
         }
     }
 
+    if(!parseParameter(this->task_seq_params, this->place_joints_map, "place_joints_map")){
+        ROS_ERROR("Could not parse the poses map.");
+        success = false;
+    }
+
+    if(DEBUG){
+        ROS_INFO_STREAM("The place joints map is");
+        for(auto it : this->place_joints_map){
+            std::cout << it.first << " : [ ";
+            for(auto vec_it : it.second){
+                std::cout << vec_it << " ";
+            } 
+            std::cout << "]" << std::endl;     
+        }
+    }
+
     return success;
 }
 
@@ -269,19 +288,34 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return true;
     }
 
-    // 1) Going to home configuration from present joints
-    if(!this->panda_softhand_client.call_joint_service(this->home_joints, this->null_joints, this->tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not plan to the specified home joint configuration.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
-        return false;
-    }
+    // A boolean for checking if already in home (with Eigen)
+    // Eigen::VectorXd current_js(this->tmp_traj.points.back().positions.size());
+    // Eigen::VectorXd home_js(this->home_joints.size());
+    // for (int i = 0; i < this->home_joints.size(); i++) {
+    //     current_js(i) = this->tmp_traj.points.back().positions[i];
+    //     home_js(i) = this->home_joints[i];
+    // }
+    // bool already_homed = (current_js - home_js).isMuchSmallerThan(0.0001);
 
-    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not go to home joint configuration.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
-        return false;
+    bool already_homed = false;
+    
+    // 1) Going to home configuration from present joints
+    if (!already_homed){
+
+        if(!this->panda_softhand_client.call_joint_service(this->home_joints, this->null_joints, this->tmp_traj) || !this->franka_ok){
+            ROS_ERROR("Could not plan to the specified home joint configuration.");
+            res.success = false;
+            res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+            return false;
+        }
+
+        if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
+            ROS_ERROR("Could not go to home joint configuration.");
+            res.success = false;
+            res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
+            return false;
+        }
+
     }
 
     // Computing the grasp and pregrasp pose and converting to geometry_msgs Pose
@@ -423,19 +457,34 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_gras
         return true;
     }
 
-    // 1) Going to home configuration
-    if(!this->panda_softhand_client.call_joint_service(this->home_joints, this->null_joints, this->tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not go to the specified home joint configuration.");
-        res.success = false;
-        res.message = "The service call_complex_grasp_task was NOT performed correctly!";
-        return false;
-    }
+    // A boolean for checking if already in home (with Eigen)
+    // Eigen::VectorXd current_js(this->tmp_traj.points.back().positions.size());
+    // Eigen::VectorXd home_js(this->home_joints.size());
+    // for (int i = 0; i < this->home_joints.size(); i++) {
+    //     current_js(i) = this->tmp_traj.points.back().positions[i];
+    //     home_js(i) = this->home_joints[i];
+    // }
+    // bool already_homed = (current_js - home_js).isMuchSmallerThan(0.0001);
 
-    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not go to home joint configuration.");
-        res.success = false;
-        res.message = "The service call_complex_grasp_task was NOT performed correctly! Error in arm control.";
-        return false;
+    bool already_homed = false;
+
+    // 1) Going to home configuration
+    if (!already_homed){
+
+        if(!this->panda_softhand_client.call_joint_service(this->home_joints, this->null_joints, this->tmp_traj) || !this->franka_ok){
+            ROS_ERROR("Could not go to the specified home joint configuration.");
+            res.success = false;
+            res.message = "The service call_complex_grasp_task was NOT performed correctly!";
+            return false;
+        }   
+
+        if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
+            ROS_ERROR("Could not go to home joint configuration.");
+            res.success = false;
+            res.message = "The service call_complex_grasp_task was NOT performed correctly! Error in arm control.";
+            return false;
+        }
+
     }
 
     // Computing the grasp and pregrasp pose and converting to geometry_msgs Pose
@@ -779,7 +828,7 @@ bool TaskSequencer::call_set_object(panda_softhand_control::set_object::Request 
     // Checking if the parsed map contains the requested object
     auto search = this->poses_map.find(req.object_name);
     if(search == this->poses_map.end()){
-        ROS_WARN_STREAM("The object " << req.object_name << " is not present in my memory; using the previously used one or default... Did you spell it correctly? Is it in the yaml?");
+        ROS_WARN_STREAM("The object " << req.object_name << " is not present in my poses_map memory; using the previously used one or default... Did you spell it correctly? Is it in the yaml?");
         res.result = false;
         return res.result;
     }
@@ -794,6 +843,27 @@ bool TaskSequencer::call_set_object(panda_softhand_control::set_object::Request 
     ROS_INFO_STREAM("Grasp pose changed. Object set to " << req.object_name << ".");
     res.result = true;
     return res.result;
+}
+
+// Callback for set place joints service
+bool TaskSequencer::call_set_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res){
+
+    // Checking if the parsed map contains the requested object
+    auto search = this->place_joints_map.find(req.object_name);
+    if(search == this->place_joints_map.end()){
+        ROS_WARN_STREAM("The object " << req.object_name << " is not present in my place_joints_map memory; using the previously used one or default... Did you spell it correctly? Is it in the yaml?");
+        res.result = false;
+        return res.result;
+    }
+
+    // Setting the place joints as requested
+    this->place_joints = this->place_joints_map.at(req.object_name);
+
+    // Now, everything is ok
+    ROS_INFO_STREAM("Place joints changed. Object set to " << req.object_name << ".");
+    res.result = true;
+    return res.result;
+
 }
 
 
