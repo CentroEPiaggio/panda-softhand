@@ -17,7 +17,7 @@ task_sequencer:
   home_joints: [-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110] 
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
   # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default)
-  grasp_transform: [-0.105, 0.005, 0.025, -3.039, -0.185, -0.166]
+  grasp_transform: [-0.105, 0.005, 0.015, -3.039, -0.185, -0.166]
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform: [0.0, 0.0, -0.1, 0.0, 0.0, 0.0]
   # The joint configuration for place
@@ -29,12 +29,12 @@ task_sequencer:
 
   # The personalized grasp pose maps for different objects
   poses_map:
-    "red" : [-0.105, 0.005, 0.025, -3.039, -0.185, -0.166]
-    "green" : [-0.105, 0.005, 0.025, -3.039, -0.185, -0.166]
-    "blue" : [-0.105, 0.005, 0.025, -3.039, -0.185, -0.166]
-    "black" : [-0.105, 0.005, 0.025, -3.039, -0.185, -0.166]
-    "white" : [-0.105, 0.005, 0.025, -3.039, -0.185, -0.166]
-    "other" : [-0.105, 0.005, 0.025, -3.039, -0.185, -0.166]
+    "red" : [-0.105, 0.005, 0.015, -3.039, -0.185, -0.166]
+    "green" : [-0.105, 0.005, 0.015, -3.039, -0.185, -0.166]
+    "blue" : [-0.105, 0.005, 0.015, -3.039, -0.185, -0.166]
+    "black" : [-0.105, 0.005, 0.015, -3.039, -0.185, -0.166]
+    "white" : [-0.105, 0.005, 0.015, -3.039, -0.185, -0.166]
+    "other" : [-0.105, 0.005, 0.015, -3.039, -0.185, -0.166]
 
   # The personalized place joints maps for different objects
   place_joints_map:
