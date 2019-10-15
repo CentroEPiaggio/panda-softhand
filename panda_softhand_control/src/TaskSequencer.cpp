@@ -290,36 +290,6 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return true;
     }
 
-    // A boolean for checking if already in home (with Eigen)
-    // Eigen::VectorXd current_js(this->tmp_traj.points.back().positions.size());
-    // Eigen::VectorXd home_js(this->home_joints.size());
-    // for (int i = 0; i < this->home_joints.size(); i++) {
-    //     current_js(i) = this->tmp_traj.points.back().positions[i];
-    //     home_js(i) = this->home_joints[i];
-    // }
-    // bool already_homed = (current_js - home_js).isMuchSmallerThan(0.0001);
-
-    bool already_homed = false;
-    
-    // 1) Going to home configuration from present joints
-    if (!already_homed){
-
-        if(!this->panda_softhand_client.call_joint_service(this->home_joints, this->null_joints, this->tmp_traj) || !this->franka_ok){
-            ROS_ERROR("Could not plan to the specified home joint configuration.");
-            res.success = false;
-            res.message = "The service call_simple_grasp_task was NOT performed correctly!";
-            return false;
-        }
-
-        if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
-            ROS_ERROR("Could not go to home joint configuration.");
-            res.success = false;
-            res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
-            return false;
-        }
-
-    }
-
     // Computing the grasp and pregrasp pose and converting to geometry_msgs Pose
     Eigen::Affine3d object_pose_aff; tf::poseMsgToEigen(this->object_pose_T, object_pose_aff);
     Eigen::Affine3d grasp_transform_aff; tf::poseMsgToEigen(this->grasp_T, grasp_transform_aff);
@@ -332,21 +302,16 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
     // Couting object pose for debugging
     std::cout << "Object position is \n" << object_pose_aff.translation() << std::endl;
 
-    // Getting the present end effector pose with FK
-    geometry_msgs::Pose present_pose = this->performFK(this->home_joints);
+    // Setting zero pose as starting from present
+    geometry_msgs::Pose present_pose = geometry_msgs::Pose();
+    present_pose.position.x = 0.0; present_pose.position.y = 0.0; present_pose.position.z = 0.0;
+    present_pose.orientation.x = 0.0; present_pose.orientation.y = 0.0; present_pose.orientation.z = 0.0; present_pose.orientation.w = 1.0;
 
     // 2) Going to pregrasp pose
     if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose, present_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified pre grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
-        return false;
-    }
-
-    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
-        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to home joints");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
         return false;
     }
 
@@ -459,36 +424,6 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_gras
         return true;
     }
 
-    // A boolean for checking if already in home (with Eigen)
-    // Eigen::VectorXd current_js(this->tmp_traj.points.back().positions.size());
-    // Eigen::VectorXd home_js(this->home_joints.size());
-    // for (int i = 0; i < this->home_joints.size(); i++) {
-    //     current_js(i) = this->tmp_traj.points.back().positions[i];
-    //     home_js(i) = this->home_joints[i];
-    // }
-    // bool already_homed = (current_js - home_js).isMuchSmallerThan(0.0001);
-
-    bool already_homed = false;
-
-    // 1) Going to home configuration
-    if (!already_homed){
-
-        if(!this->panda_softhand_client.call_joint_service(this->home_joints, this->null_joints, this->tmp_traj) || !this->franka_ok){
-            ROS_ERROR("Could not go to the specified home joint configuration.");
-            res.success = false;
-            res.message = "The service call_complex_grasp_task was NOT performed correctly!";
-            return false;
-        }   
-
-        if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
-            ROS_ERROR("Could not go to home joint configuration.");
-            res.success = false;
-            res.message = "The service call_complex_grasp_task was NOT performed correctly! Error in arm control.";
-            return false;
-        }
-
-    }
-
     // Computing the grasp and pregrasp pose and converting to geometry_msgs Pose
     Eigen::Affine3d object_pose_aff; tf::poseMsgToEigen(req.object_pose, object_pose_aff);
     Eigen::Affine3d grasp_transform_aff; tf::poseMsgToEigen(this->grasp_T, grasp_transform_aff);
@@ -501,21 +436,16 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_gras
     // Couting object pose for debugging
     std::cout << "Object position is \n" << object_pose_aff.translation() << std::endl;
 
-    // Getting the present end effector pose with FK
-    geometry_msgs::Pose present_pose = this->performFK(this->home_joints);
+    // Setting zero pose as starting from present
+    geometry_msgs::Pose present_pose = geometry_msgs::Pose();
+    present_pose.position.x = 0.0; present_pose.position.y = 0.0; present_pose.position.z = 0.0;
+    present_pose.orientation.x = 0.0; present_pose.orientation.y = 0.0; present_pose.orientation.z = 0.0; present_pose.orientation.w = 1.0;
 
     // 2) Going to pregrasp pose
     if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose, present_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified pre grasp pose.");
         res.success = false;
         res.message = "The service call_complex_grasp_task was NOT performed correctly!";
-        return false;
-    }
-
-    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
-        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to home joints");
-        res.success = false;
-        res.message = "The service call_complex_grasp_task was NOT performed correctly! Error wait in arm control.";
         return false;
     }
 
