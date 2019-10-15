@@ -81,8 +81,10 @@ bool SlerpPlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose st
     if (this->is_really_null_pose(start_pose)){
         ROS_WARN("The start pose is NULL! PLANNING FROM CURRENT POSE!");
         this->startAff = this->end_effector_state;
+        this->was_really_null = true;
     } else {
         tf::poseMsgToEigen(start_pose, this->startAff);
+        this->was_really_null = false;
     }
 	
 	// Setting the goal pose
@@ -138,11 +140,13 @@ bool SlerpPlan::performMotionPlan(){
 
     // Setting the start state in the moveit group
     robot_state::RobotState start_state(*group.getCurrentState());
-    std::vector<double> last_joints = this->past_trajectory.points.back().positions;
-    // geometry_msgs::Pose starting_pose;
-    // tf::poseEigenToMsg(this->startAff, starting_pose);
-    start_state.setJointGroupPositions(joint_model_group, last_joints);
-    group.setStartState(start_state);
+    if (!this->was_really_null) {
+        std::vector<double> last_joints = this->past_trajectory.points.back().positions;
+        // geometry_msgs::Pose starting_pose;
+        // tf::poseEigenToMsg(this->startAff, starting_pose);
+        start_state.setJointGroupPositions(joint_model_group, last_joints);
+        group.setStartState(start_state);
+    }
 
 	// Planning for the waypoints path
 	moveit_msgs::RobotTrajectory trajectory;

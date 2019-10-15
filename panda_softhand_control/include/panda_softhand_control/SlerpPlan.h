@@ -69,7 +69,10 @@ class SlerpPlan {
 
         // Joint trajectory computed to be sent to robot and the past one
         trajectory_msgs::JointTrajectory past_trajectory;
-        trajectory_msgs::JointTrajectory computed_trajectory; 
+        trajectory_msgs::JointTrajectory computed_trajectory;
+
+        // Boolean which is set by is_reall_null_pose
+        bool was_really_null;
 
         // INLINE PRIVATE FUCTIONS
         // Needed to check if the start pose has been arbitrarily chosen as null pose (this means to plan from present position)
