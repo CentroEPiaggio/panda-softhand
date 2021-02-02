@@ -301,8 +301,9 @@ bool JointLimitsEvader::initialize(){
     if (DEBUG_JLE) ROS_INFO_STREAM("JointLimitsEvader: Going to resize the joint limits!");
     
     // Parsing joint limits from urdf model along kdl chain
-    boost::shared_ptr<const urdf::Link> link_ = model.getLink(tip_name);
-    boost::shared_ptr<const urdf::Joint> joint_;
+
+    urdf::LinkConstSharedPtr link_ = model.getLink(tip_name);
+    urdf::JointConstSharedPtr joint_;
     this->joint_limits_.pos_min.resize(this->kdl_chain_.getNrOfJoints());
     this->joint_limits_.pos_max.resize(this->kdl_chain_.getNrOfJoints());
     this->joint_limits_.pos_center.resize(this->kdl_chain_.getNrOfJoints());

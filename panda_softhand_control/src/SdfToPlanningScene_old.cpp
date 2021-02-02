@@ -1,4 +1,3 @@
-
 #include <ros/ros.h>
 #include <geometry_msgs/Pose.h>
 
@@ -13,30 +12,28 @@
 #include <moveit/robot_state/conversions.h>
 
 #include <sdf/sdf.hh>
-#include <ignition/math/Vector3.hh>
-#include <ignition/math/Pose3.hh>
 
 using namespace std;
 
 /* ******************************************************************************************** */
-void setObjectProperties(string name, ignition::math::Vector3d loc, ignition::math::Vector3d dim, 
+void setObjectProperties(string name, sdf::Vector3 loc, sdf::Vector3 dim, 
 		moveit_msgs::CollisionObject& object) {
 
 	// Set the name of the object and its link to the world
 	object.id = name;
 
 	// Set the location
-	object.primitive_poses.back().position.x = loc.X();
-	object.primitive_poses.back().position.y = loc.Y();
-	object.primitive_poses.back().position.z = loc.Z();
+	object.primitive_poses.back().position.x = loc.x;
+	object.primitive_poses.back().position.y = loc.y;
+	object.primitive_poses.back().position.z = loc.z;
 	object.primitive_poses.back().orientation.x = 0;
 	object.primitive_poses.back().orientation.y = 0;
 	object.primitive_poses.back().orientation.z = 0;
 
 	// Set the dimensions
-	object.primitives.back().dimensions[0] = dim.X();
-	object.primitives.back().dimensions[1] = dim.Y();
-	object.primitives.back().dimensions[2] = dim.Z();
+	object.primitives.back().dimensions[0] = dim.x;
+	object.primitives.back().dimensions[1] = dim.y;
+	object.primitives.back().dimensions[2] = dim.z;
 }
 
 /* ******************************************************************************************** */
@@ -50,11 +47,15 @@ int main(int argc, char **argv) {
 	ros::NodeHandle node_handle;
 
 	if(argc < 2) {
-		ROS_ERROR("Usage: rosrun panda_gripper_manipulation sdf_to_planning_scene <world>");
+		ROS_ERROR("Usage: rosrun adaptive_grasp_controller SdfToPlanningScene <world> <optional: --skipIfco>");
 	}
 	ROS_INFO("%s: Sleeping to allow other nodes to start\n", ros::this_node::getName().c_str());
 	ROS_INFO("%s: Input world: '%s'\n", ros::this_node::getName().c_str(), argv[1]);
 	sleep(2); 
+
+
+	bool skipIfco = false;
+	if(argc > 2 && strcmp(argv[2], "--skipIfco") == 0) skipIfco = true;
 
 	// ------------------------------------------------------------
 	// Define the attached object message
@@ -110,7 +111,7 @@ int main(int argc, char **argv) {
 	//cout << "THE PARSED SDF OF SdfToPlanningScene IS: " << sdfParsed->ToString() << endl;
 
 	// Print the objects
-	sdf::ElementPtr e = sdfParsed->Root();
+	sdf::ElementPtr e = sdfParsed->root;
 	cout << e->GetDescription() << endl;
 	sdf::ElementPtr world = e->GetElement("world");
 	sdf::ElementPtr model = world->GetFirstElement();
@@ -137,6 +138,12 @@ int main(int argc, char **argv) {
 		cout << param->GetKey() << " " << param->GetAsString() << endl;
 		string name = param->GetAsString();
 
+		// Skip if ifco
+		if(skipIfco && name.find("ifco") != string::npos) {
+			model = model->GetNextElement();
+			continue;
+		}
+
 		// Get the static property 
 		sdf::ElementPtr staticElem = model->GetElement("static");
 		assert(staticElem != NULL && "No static information in model!");
@@ -151,7 +158,7 @@ int main(int argc, char **argv) {
 		// Get the pose
 		sdf::ElementPtr poseElem = model->GetElement("pose");
 		assert(poseElem != NULL && "No pose information in model!");
-		ignition::math::Pose3d pose;
+		sdf::Pose pose;
 		stringstream ss_pose (poseElem->GetValue()->GetAsString());
 		ss_pose >> pose;
 		cout << "Pose: " << pose << endl;
@@ -171,12 +178,12 @@ int main(int argc, char **argv) {
 		sdf::ElementPtr sizeElem = boxElem->GetElement("size");
 		assert(sizeElem != NULL && "No size element in box!");
 		stringstream ss_size (sizeElem->GetValue()->GetAsString());
-		ignition::math::Vector3d size;
+		sdf::Vector3 size;
 		ss_size >> size;
 		cout << "Box dims: " << size << endl;
 		
 		// Fill the object pose and dimensions into the planning_scene message
-		setObjectProperties(name, pose.Pos(), size, object);
+		setObjectProperties(name, pose.pos, size, object);
 		planning_scene.world.collision_objects.clear();
 		planning_scene.world.collision_objects.push_back(object);
 
@@ -193,3 +200,4 @@ int main(int argc, char **argv) {
 
 	return EXIT_SUCCESS;
 }
+/* ******************************************************************************************** */
