@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+
+	<!-- Launch arguments -->
+	<arg name="grasp_params" default="$(find panda_softhand_control)/configs/grasp_params.yaml"/>
+	
+	<!-- Loading config file to param server -->
+	<rosparam command="load" file="$(arg grasp_params)"/>
+
+	<!-- Load main node -->
+  	<node name="grasp_node" pkg="panda_softhand_control" type="grasp" output="screen"/>	
+
+</launch>
