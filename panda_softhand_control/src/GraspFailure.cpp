@@ -40,12 +40,12 @@ GraspFailure::GraspFailure(ros::NodeHandle& nh_){
     // Setting the task service names
     std::cout << "Starting to advertise!!!" << std::endl;
     this->grasp_task_service_name = "/grasp_task_service";
-    ros::ServiceServer grasp_task_server = this->nh.advertiseService(this->grasp_task_service_name, &GraspFailure::call_simple_grasp_task, this);
+    this->grasp_task_server = this->nh.advertiseService(this->grasp_task_service_name, &GraspFailure::call_simple_grasp_task, this);
     std::cout << "Finished to advertise!!!" << std::endl;
 
     // Initializing other control values
-    this->waiting_time = ros::Duration(5.0);
-    this->waiting_time2 = ros::Duration(2.0);
+    this->waiting_time = ros::Duration(10.0);
+    this->waiting_time2 = ros::Duration(10.0);
     this->null_joints.resize(7);
     std::fill(this->null_joints.begin(), this->null_joints.end(), 0.0);
     // trajectory_msgs::JointTrajectoryPoint empty_joints_point;
@@ -258,7 +258,7 @@ bool GraspFailure::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_s
     }
 
     // 4) Returning to pre grasp pose
-    if(!this->panda_softhand_client.call_slerp_service(pre_grasp_pose, grasp_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_slerp_service(pre_grasp_pose, present_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";

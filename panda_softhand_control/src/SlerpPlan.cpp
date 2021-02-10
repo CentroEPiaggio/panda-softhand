@@ -121,7 +121,7 @@ bool SlerpPlan::performMotionPlan(){
     const robot_state::JointModelGroup* joint_model_group = group.getCurrentState()->getJointModelGroup(this->group_name);
 
     // Visual tools
-    moveit_visual_tools::MoveItVisualTools visual_tools("world");
+    moveit_visual_tools::MoveItVisualTools visual_tools("world", "/rviz_visual_tools");
     visual_tools.deleteAllMarkers();
 
     // Loading the remote control for visual tools and promting a message
@@ -137,6 +137,15 @@ bool SlerpPlan::performMotionPlan(){
 	// Calling the waypoint creator with start and goal poses
 	std::vector<geometry_msgs::Pose> cart_waypoints;
 	this->computeWaypointsFromPoses(this->startAff, this->goalAff, cart_waypoints);
+
+    #ifdef VISUAL
+
+    for (auto it : cart_waypoints) {
+        visual_tools.publishAxis(it);
+    }
+    visual_tools.trigger();
+
+    #endif
 
     // Setting the start state in the moveit group
     robot_state::RobotState start_state(*group.getCurrentState());

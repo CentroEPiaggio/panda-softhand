@@ -95,5 +95,5 @@ class GraspFailure {
        ros::Duration waiting_time;
        ros::Duration waiting_time2;
        std::vector<double> null_joints;                            // null joints in order to make joint plan from present joints
-
+       ros::ServiceServer grasp_task_server;
 };
