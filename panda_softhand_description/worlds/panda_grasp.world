@@ -1,0 +1,69 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+  <!-- We use a custom world for the panda + softhand. -->
+  <!-- One can change this world to his needs or use another one. -->
+  
+  <world name="default">
+
+	<!-- box (like a robot base) -->
+    <!-- <model name="rob_base">
+			<pose> -0.08 0 -0.06 0 0 0</pose>
+			<static>true</static>
+			<link name='linkRobBase'>
+				<pose>0 0 0 0 0 0</pose>
+				
+				<collision name="my_collisionRobBase">
+		 			<pose>0 0 0 0 0 0</pose>
+					<geometry>
+		        <box>
+		          <size>0.30 1 0.04</size>
+		        </box>
+		      </geometry>
+	      </collision>
+				
+				<visual name="my_visualRobBase">
+					<geometry>
+		        <box>
+					<size>0.30 1 0.04</size>
+		        </box>
+		      </geometry>
+	      </visual>
+				
+				<self_collide>0</self_collide>		
+				<gravity>1</gravity>
+			</link>
+    </model> -->
+	
+	<!-- box (like a table) -->
+    <model name="table">
+			<pose> 0.7 0 -0.04 0 0 0</pose>
+			<static>true</static>
+			<link name='linkTable'>
+				<pose>0 0 0 0 0 0</pose>
+				
+				<collision name="my_collisionTable">
+		 			<pose>0 0 0 0 0 0</pose>
+					<geometry>
+		        <box>
+		          <size>1.2 1 0.03</size>
+		        </box>
+		      </geometry>
+	      </collision>
+				
+				<visual name="my_visualTable">
+					<geometry>
+		        <box>
+					<size>1.2 1 0.03</size>
+		        </box>
+		      </geometry>
+	      </visual>
+				
+				<self_collide>0</self_collide>		
+				<gravity>1</gravity>
+			</link>
+    </model>
+
+
+  </world>
+  
+</sdf>
