@@ -67,6 +67,7 @@ set(OBJECTS_SOURCE_FILES
   src/JointPlan.cpp
   src/PandaSoftHandClient.cpp
   src/TaskSequencer.cpp
+  src/GraspFailure.cpp
 )
 
 include_directories(

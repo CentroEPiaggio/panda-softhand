@@ -3,8 +3,8 @@
 
 	<!-- Temporarily publishing the object pose and tf. TODO: comment out when using vision -->
 	<node name="rostopic_object_pose_node" pkg="rostopic" type="rostopic" args="pub -r 10 /irim_demo/chosen_object geometry_msgs/Pose 
-	'{position: {x: 0.627, y: -0.200, z: 0.049}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 0.0}}'"/>
+	'{position: {x: 0.627, y: -0.200, z: 0.069}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 0.0}}'"/>
 
-	<node name="world_to_object" pkg="tf" type="static_transform_publisher" args="0.627 -0.200 0.049 0.0 0.0 0.0 world object 100"/>
+	<node name="world_to_object" pkg="tf" type="static_transform_publisher" args="0.627 -0.200 0.069 0.0 0.0 0.0 world object 100"/>
 
 </launch>
