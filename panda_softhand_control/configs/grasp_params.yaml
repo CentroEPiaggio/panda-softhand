@@ -14,18 +14,16 @@ grasp_params:
   object_topic_name: /grasp/chosen_object
 
   # The joint configuration for home
-  home_joints: [-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110] 
+  home_joints: [0.00996, -0.7360, -0.0044, -2.0562, -0.0173, 1.4542, 0.03390] 
 
-  # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
-  # grasp_transform1: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default)
-  grasp_transform: [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
-  # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
-  # grasp_transform2: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default)
-  grasp_transform2: [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
+  #1)
+  # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT) 
+  #grasp_transform: [-0.143, 0.008, 0.227, 2.707, 0.426, 0.208] #presa verticale sfera
 
-  # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy) CENTRALE
-  pre_grasp_transform: [0.0, 0.0, -0.3, 0.0, 0.0, 0.0]
-  # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy) LATERALE DX
-  pre_grasp_transform2: [0.0, 0.0, -0.3, 0.0, 0.0, 0.0]
- # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy) LATERALE DX
-  pre_grasp_transform3: [0.0, 0.0, -0.3, 0.0, 0.0, 0.0]
+  # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy) CENTRALE 
+  #pre_grasp_transform: [-0.2, 0.2, -0.3, 0.0, 0.0, 0.0] #centrale
+  #pre_grasp_transform: [0, -0.1, -0.3, 0.0, 0.0, 0.0] #destro
+
+  #2)
+  grasp_transform: [-0.212, -0.049, 0.133, -1.774, 0.134, -0.292]
+  pre_grasp_transform: [0, -0.3, 0, 0.0, 0.0, 0.0] #centrale

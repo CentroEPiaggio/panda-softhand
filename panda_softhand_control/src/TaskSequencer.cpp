@@ -274,7 +274,8 @@ void TaskSequencer::get_franka_state(const franka_msgs::FrankaState::ConstPtr &m
     this->tau_ext_norm = std::sqrt(this->tau_ext_norm);
 
     // Publishing norm
-    std_msgs::Float64 norm_msg; norm_msg.data = this->tau_ext_norm;
+    std_msgs::Float64 norm_msg; 
+    norm_msg.data = this->tau_ext_norm;
     this->pub_tau_ext_norm.publish(norm_msg);
     
 }

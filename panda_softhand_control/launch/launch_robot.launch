@@ -101,13 +101,13 @@
             <rosparam command="load" file="$(find soft_hand_controllers)/config/hand_names.yaml" />
 
             <!-- load the hardware interface for hand in current namespace -->
-            <include file="$(find soft_hand_qb_ros_control)/launch/soft_hand_qb_hw.launch"></include>
+            <!-- <include file="$(find soft_hand_qb_ros_control)/launch/soft_hand_qb_hw.launch"></include> -->
 
         </group>
 
         <!-- load the hand controllers in current namespace -->
-        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller joint_trajectory_controller"/>
-        <node name="controller_stopper" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="--stopped velocity_controller"/>
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller"/>
+        <node name="controller_stopper" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="--stopped velocity_controller joint_trajectory_controller"/>
 
     </group>
 

@@ -27,6 +27,7 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_core
   franka_msgs
   franka_control
+  qb_interface
 )
 
 add_service_files(FILES
@@ -53,7 +54,7 @@ find_package(SDFormat REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
-  CATKIN_DEPENDS actionlib_msgs moveit_ros_planning_interface message_runtime std_msgs std_srvs
+  CATKIN_DEPENDS actionlib_msgs moveit_ros_planning_interface message_runtime std_msgs std_srvs qb_interface
   LIBRARIES ${PROJECT_NAME}_lib
 )
 
@@ -102,6 +103,11 @@ target_link_libraries(task_server ${catkin_LIBRARIES} ${ROS_LIBRARIES})
 add_executable(grasp src/grasp.cpp ${OBJECTS_SOURCE_FILES})
 add_dependencies(grasp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(grasp ${catkin_LIBRARIES} ${ROS_LIBRARIES})
+
+add_executable(hello src/hello.cpp ${OBJECTS_SOURCE_FILES})
+add_dependencies(hello ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(hello ${catkin_LIBRARIES} ${ROS_LIBRARIES})
+
 
 # NODE: Utility to publish collision objects to planning scene from world file
 add_executable(world_to_planning_scene_node src/SdfToPlanningScene.cpp)

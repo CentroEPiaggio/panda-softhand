@@ -5,6 +5,8 @@
 
 // ROS Service and Message Includes
 #include "std_msgs/Float64.h"
+#include <iostream>
+#include <vector>
 #include "std_msgs/Bool.h"
 #include "std_srvs/SetBool.h"
 #include "panda_softhand_control/set_object.h"
@@ -25,6 +27,9 @@
 
 // Custom Includes
 #include "panda_softhand_control/PandaSoftHandClient.h"
+
+
+#include "qb_class.h"
 
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
@@ -57,14 +62,21 @@ class GraspFailure {
        ros::NodeHandle nh;
 
      // Subscriber to object pose and the pose
-        //ros::Subscriber object_sub;
+       
         geometry_msgs::Pose object_pose_T;
 
         // Subscriber to franka_states for getting tau_ext on joints and other info and Publisher of its norm
-        //ros::Subscriber franka_state_sub;
+   
         franka_msgs::FrankaState latest_franka_state;
         bool franka_ok = true;
    
+        
+        // Open and Close pub
+
+        ros::Publisher handRef_pub;
+        std::vector<float> v1{16000};
+        std::vector<float> v2{0};
+        
         // The Panda SoftHand Client
         PandaSoftHandClient panda_softhand_client;
    // Service names
@@ -82,7 +94,7 @@ class GraspFailure {
        geometry_msgs::Pose grasp_T;
        std::vector<double> pre_grasp_transform;
        geometry_msgs::Pose pre_grasp_T;
-
+     
        // MoveIt stuff and functions for FK and IK
        std::string group_name;
        std::string end_effector_name;

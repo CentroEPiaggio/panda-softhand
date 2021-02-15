@@ -153,6 +153,14 @@ bool PosePlan::performMotionPlan(){
     bool success = (group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
     ROS_INFO("Motion Plan towards goal pose %s.", success ? "SUCCEDED" : "FAILED");
 
+    #ifdef VISUAL
+
+    ROS_INFO("Visualizing the Goal.");
+    visual_tools.publishAxisLabeled(this->goalPose, "goal pose");
+    visual_tools.trigger();
+
+    #endif
+
     // If complete path is not achieved return false, true otherwise
 	if(!success) return false;
 

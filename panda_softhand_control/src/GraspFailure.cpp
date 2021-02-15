@@ -23,7 +23,9 @@ GraspFailure::GraspFailure(ros::NodeHandle& nh_){
     // Initializing the franka_state_sub subscriber and waiting
     ros::Subscriber franka_state_sub = this->nh.subscribe("/" + this->robot_name + this->franka_state_topic_name, 1, &GraspFailure::get_franka_state, this);
     ros::topic::waitForMessage<franka_msgs::FrankaState>("/" + this->robot_name + this->franka_state_topic_name, ros::Duration(2.0));
-
+    
+    this->handRef_pub = this->nh.advertise<qb_interface::handRef>("/qb_class/hand_ref",1);
+    
     // Initializing Panda SoftHand Client (TODO: Return error if initialize returns false)
     this->panda_softhand_client.initialize(this->nh);
 
@@ -44,13 +46,16 @@ GraspFailure::GraspFailure(ros::NodeHandle& nh_){
     std::cout << "Finished to advertise!!!" << std::endl;
 
     // Initializing other control values
-    this->waiting_time = ros::Duration(10.0);
-    this->waiting_time2 = ros::Duration(10.0);
+    this->waiting_time = ros::Duration(40.0);
+    this->waiting_time2 = ros::Duration(40.0);
     this->null_joints.resize(7);
     std::fill(this->null_joints.begin(), this->null_joints.end(), 0.0);
-    // trajectory_msgs::JointTrajectoryPoint empty_joints_point;
-    // empty_joints_point.positions = this->null_joints;
-    // this->tmp_traj.points.push_back(empty_joints_point);
+    //Open and Close msg
+    
+    
+    //this->v1[1]=0;
+    
+    
 
     // Spinning once
     ros::spinOnce();
@@ -191,7 +196,22 @@ bool GraspFailure::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_s
     tf::poseEigenToMsg(object_pose_aff * grasp_transform_aff, grasp_pose);
 
     // Couting object pose for debugging
+    
+    
+    
+
+
     std::cout << "Object position is \n" << object_pose_aff.translation() << std::endl;
+    
+    
+    qb_interface::handRef close_msg; 
+    qb_interface::handRef open_msg; 
+    close_msg.closure = this->v1;
+    open_msg.closure = this->v2;
+     
+
+
+
 
     // Setting zero pose as starting from present
     geometry_msgs::Pose present_pose = geometry_msgs::Pose();
@@ -235,40 +255,24 @@ bool GraspFailure::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_s
         return false;
     }
 
-    // 3) Performing simple grasp with planning, executing and waiting
-    if(!this->panda_softhand_client.call_hand_plan_service(0.8, 2.0, this->tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not plan the simple grasp.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand plan.";
-        return false;
-    }
-
     if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
         ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to grasp pose");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
         return false;
     }
+    
+    //sleep(1.0);
+    
+    this->handRef_pub.publish(close_msg);
+    sleep(3.0);
 
-    if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not perform the grasping.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
-        return false;
-    }
-
+    
     // 4) Returning to pre grasp pose
     if(!this->panda_softhand_client.call_slerp_service(pre_grasp_pose, present_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
-        return false;
-    }
-
-    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
-        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre grasp from home joints");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
         return false;
     }
 
@@ -279,36 +283,16 @@ bool GraspFailure::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_s
         return false;
     }
 
-    // 5) Performing simple grasp with planning, executing and waiting
-    if(!this->panda_softhand_client.call_hand_plan_service(0, 2.0, this->tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not plan the simple grasp.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand plan.";
-        return false;
-    }
-
-    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+     if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
         ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to grasp pose");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
         return false;
-
-    }
-    //NEW WAIT BEFORE OPENING HAND
-    if(!this->panda_softhand_client.call_hand_wait_service(this->waiting_time2) || !this->franka_ok){
-        ROS_ERROR("Could not perform the simple grasp.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand wait.";
-        return false;
     }
 
-    if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not perform the grasping.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
-        return false;
-    }
-
+    sleep(3.0);
+    this->handRef_pub.publish(open_msg);
+    sleep(2.0);
 
     // Getting current joints
     std::vector<double> now_joints;
@@ -342,6 +326,7 @@ bool GraspFailure::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_s
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
         return false;
     }
+    
 
     // Now, everything finished well
     res.success = true;
