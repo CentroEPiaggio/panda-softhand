@@ -8,12 +8,12 @@
 
     <!-- Panda params -->
     <arg name="panda_arm_enabled" default="true"/>
-    <arg name="robot_ip" default="172.16.0.3"/>
+    <arg name="robot_ip" default="172.16.0.2"/>
     <arg name="load_gripper" default="false"/>
 
     <!-- Hand/Glove params -->
     <arg name="right_hand_enabled" default="true"/>
-    <arg name="launch_qb_interface" default="true"/>
+    <arg name="launch_qb_interface" default="false"/>
     <arg name="use_imu" default="true"/>
 
     <!-- Utilities -->
@@ -53,7 +53,7 @@
 
         <!-- Panda controllers -->
         <rosparam command="load" file="$(find franka_control)/config/default_controllers.yaml" />
-        <rosparam command="load" file="$(find panda_controllers)/config/panda_controllers.yaml" />
+        <rosparam command="load" file="$(find panda_softhand_moveit_config)/config/panda_controllers.yaml" />
         <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="franka_state_controller"/>
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="position_joint_trajectory_controller"/>
         <node name="controller_stopper" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="--stopped cartesian_velocity_controller"/>
@@ -107,7 +107,7 @@
 
         <!-- load the hand controllers in current namespace -->
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller"/>
-        <node name="controller_stopper" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="--stopped velocity_controller joint_trajectory_controller"/>
+        <node name="controller_stopper" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="--stopped joint_trajectory_controller"/>
 
     </group>
 

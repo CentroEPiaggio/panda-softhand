@@ -46,8 +46,8 @@ GraspFailure::GraspFailure(ros::NodeHandle& nh_){
     std::cout << "Finished to advertise!!!" << std::endl;
 
     // Initializing other control values
-    this->waiting_time = ros::Duration(40.0);
-    this->waiting_time2 = ros::Duration(40.0);
+    this->waiting_time = ros::Duration(50.0);
+    this->waiting_time2 = ros::Duration(50.0);
     this->null_joints.resize(7);
     std::fill(this->null_joints.begin(), this->null_joints.end(), 0.0);
     //Open and Close msg
@@ -192,7 +192,7 @@ bool GraspFailure::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_s
     Eigen::Affine3d pre_grasp_transform_aff; tf::poseMsgToEigen(this->pre_grasp_T, pre_grasp_transform_aff);
 
     geometry_msgs::Pose pre_grasp_pose; geometry_msgs::Pose grasp_pose;
-    tf::poseEigenToMsg(object_pose_aff * grasp_transform_aff * pre_grasp_transform_aff, pre_grasp_pose);
+    tf::poseEigenToMsg(object_pose_aff * pre_grasp_transform_aff, pre_grasp_pose);
     tf::poseEigenToMsg(object_pose_aff * grasp_transform_aff, grasp_pose);
 
     // Couting object pose for debugging
@@ -290,7 +290,7 @@ bool GraspFailure::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_s
         return false;
     }
 
-    sleep(3.0);
+    sleep(5.0);
     this->handRef_pub.publish(open_msg);
     sleep(2.0);
 

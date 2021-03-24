@@ -74,7 +74,7 @@ class GraspFailure {
         // Open and Close pub
 
         ros::Publisher handRef_pub;
-        std::vector<float> v1{16000};
+        std::vector<float> v1{15000};
         std::vector<float> v2{0};
         
         // The Panda SoftHand Client
