@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 
     ROS_INFO("Creating the arm client pointer");
 
-    std::string arm_jt_topic = "/panda_arm/position_joint_trajectory_controller/follow_joint_trajectory/";
+    std::string arm_jt_topic = "/panda_arm_1/position_joint_trajectory_controller/follow_joint_trajectory/";
     boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> arm_client_ptr_(new actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>(arm_jt_topic, true));
 
     ROS_INFO("Creating the hand client pointer");
@@ -41,13 +41,13 @@ int main(int argc, char **argv)
     ArmControl arm_control_obj(nh_, arm_client_ptr_);
 
     ROS_INFO("Creating the slerp plan object");
-    SlerpPlan slerp_plan_obj(nh_, "panda_arm", "right_hand_ee_link", 60);
+    SlerpPlan slerp_plan_obj(nh_, "panda_arm_1", "right_hand_ee_link", 60);
 
     ROS_INFO("Creating the pose plan object");
-    PosePlan pose_plan_obj(nh_, "panda_arm", "right_hand_ee_link");
+    PosePlan pose_plan_obj(nh_, "panda_arm_1", "right_hand_ee_link");
 
     ROS_INFO("Creating the joint plan object");
-    JointPlan joint_plan_obj(nh_, "panda_arm");
+    JointPlan joint_plan_obj(nh_, "panda_arm_1");
     
     ROS_INFO("Advertising the services");
 

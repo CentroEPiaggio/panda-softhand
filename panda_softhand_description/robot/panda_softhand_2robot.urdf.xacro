@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="panda_softhand">
+  <xacro:arg name="arm_id_1" default="panda_arm_1" />
+  <xacro:arg name="arm_id_2" default="panda_arm_2" />
+  
+  <xacro:include filename="$(find franka_description)/robots/panda_arm.xacro"/>
+  <xacro:include filename="$(find soft_hand_description)/model/soft_hand_soma_panda.urdf.xacro"/> <!-- HAND-->
+  <xacro:include filename="$(find franka_description)/robots/hand.xacro"/> <!-- GRIPPER-->
+
+  <!-- right arm with gripper -->
+  <xacro:panda_arm arm_id="$(arg arm_id_1)"/>
+  <!-- WORLD -->
+  <link name="world"/> 
+
+  <joint name="world_to_panda_joint_1" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="world" />
+    <child link="$(arg arm_id_1)_link0" />
+  </joint>
+
+  
+  
+  <!-- RIGHT SOFTHAND -->
+  <xacro:soft_hand_soma_panda parent="$(arg arm_id_1)_link8" name="right_hand" left="false" withAdaptiveTransmission="true" useMimicTag="true">
+    <origin xyz="0 0 0" rpy="0 0 3.1415"/>
+  </xacro:soft_hand_soma_panda>
+
+  <!-- EXTRA ENDEFFECTOR -->
+  <joint name="right_hand_ee_joint" type="fixed">
+    <origin xyz="0.130 0.000 0.035" rpy="0 0 0"/>
+    <parent link="$(arg arm_id_1)_link8" />
+    <child link="right_hand_ee_link" />
+  </joint>
+
+  <link name="right_hand_ee_link">
+  </link>
+
+  <!-- left arm with gripper -->
+  <xacro:panda_arm arm_id="$(arg arm_id_2)" connected_to="world"  xyz="0 -0.7 0" safety_distance="0.03"/>
+  <xacro:hand ns="gripper" rpy="0 0 ${-pi/4}" connected_to="$(arg arm_id_2)_link8" safety_distance="0.03"/>
+
+</robot>

@@ -1,0 +1,58 @@
+# Simulation settings for using moveit_sim_controllers
+moveit_sim_hw_interface:
+  joint_model_group: panda_arm_1
+  joint_model_group_pose: todo_no_pose_selected
+# Settings for ros_control_boilerplate control loop
+generic_hw_control_loop:
+  loop_hz: 300
+  cycle_time_error_threshold: 0.01
+# Settings for ros_control hardware interface
+hardware_interface:
+  joints:
+    - panda_arm_2_joint1
+    - panda_arm_2_joint2
+    - panda_arm_2_joint3
+    - panda_arm_2_joint4
+    - panda_arm_2_joint5
+    - panda_arm_2_joint6
+    - panda_arm_2_joint7
+    - gripper_finger_joint1
+    - panda_arm_1_joint1
+    - panda_arm_1_joint2
+    - panda_arm_1_joint3
+    - panda_arm_1_joint4
+    - panda_arm_1_joint5
+    - panda_arm_1_joint6
+    - panda_arm_1_joint7
+    - right_hand_synergy_joint
+  sim_control_mode: 1  # 0: position, 1: velocity
+# Publish all joint states
+# Creates the /joint_states topic necessary in ROS
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50
+controller_list:
+  - name: position_joint_trajectory_controller_1
+    action_ns: follow_joint_trajectory
+    default: True
+    type: FollowJointTrajectory
+    joints:
+      - panda_arm_1_joint1
+      - panda_arm_1_joint2
+      - panda_arm_1_joint3
+      - panda_arm_1_joint4
+      - panda_arm_1_joint5
+      - panda_arm_1_joint6
+      - panda_arm_1_joint7
+  - name: position_joint_trajectory_controller_2
+    action_ns: follow_joint_trajectory
+    default: True
+    type: FollowJointTrajectory
+    joints:
+      - panda_arm_2_joint1
+      - panda_arm_2_joint2
+      - panda_arm_2_joint3
+      - panda_arm_2_joint4
+      - panda_arm_2_joint5
+      - panda_arm_2_joint6
+      - panda_arm_2_joint7

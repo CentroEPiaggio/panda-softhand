@@ -1,11 +1,12 @@
 <package>
+
   <name>panda_softhand_moveit_config</name>
-  <version>1.0.0</version>
+  <version>0.3.0</version>
   <description>
-     A package, based on panda_softhand_moveit_config, with all the configuration and launch files for using the Panda and Pisa/IIT SoftHand with MoveIt!
+     An automatically generated package with all the configuration and launch files for using the panda_softhand with the MoveIt! Motion Planning Framework
   </description>
-  <author email="georgejose.pollayil@phd.unipi.it">George Jose Pollayil</author>
-  <maintainer email="mathewjose.pollayil@phd.unipi.it">Mathew Jose Pollayil</maintainer>
+  <author email="i.valda@hotmail.it">PAOLOCARO</author>
+  <maintainer email="i.valda@hotmail.it">PAOLOCARO</maintainer>
 
   <license>BSD</license>
 
@@ -15,19 +16,19 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>panda_softhand_description</build_depend>
-
-  <run_depend>panda_softhand_description</run_depend>
   <run_depend>moveit_ros_move_group</run_depend>
   <run_depend>moveit_fake_controller_manager</run_depend>
   <run_depend>moveit_kinematics</run_depend>
   <run_depend>moveit_planners_ompl</run_depend>
   <run_depend>moveit_ros_visualization</run_depend>
+  <run_depend>moveit_setup_assistant</run_depend>
   <run_depend>joint_state_publisher</run_depend>
   <run_depend>robot_state_publisher</run_depend>
   <run_depend>xacro</run_depend>
-  <run_depend>topic_tools</run_depend>
-  <!-- This package is referenced in the warehouse launch files, but does not build out of the box at the moment.
-       Commented the dependency until this works. -->
+  <!-- This package is referenced in the warehouse launch files, but does not build out of the box at the moment. Commented the dependency until this works. -->
   <!-- <run_depend>warehouse_ros_mongo</run_depend> -->
+  <build_depend>panda_softhand_description</build_depend>
+  <run_depend>panda_softhand_description</run_depend>
+
+
 </package>

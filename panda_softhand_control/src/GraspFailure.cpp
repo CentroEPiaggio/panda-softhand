@@ -30,7 +30,7 @@ GraspFailure::GraspFailure(ros::NodeHandle& nh_){
     this->panda_softhand_client.initialize(this->nh);
 
     // Moveit names
-    this->group_name = "panda_arm";
+    this->group_name = "panda_arm_1";
     this->end_effector_name = "right_hand_ee_link";
 
     // Initializing other moveit stuff (robot model, kinematic model and state)
@@ -72,13 +72,13 @@ bool GraspFailure::parse_task_params(){
 
     if(!ros::param::get("/grasp_params/robot_name", this->robot_name)){
 		ROS_WARN("The param 'robot_name' not found in param server! Using default.");
-		this->robot_name = "panda_arm";
+		this->robot_name = "panda_arm_1";
 		success = false;
 	}
 
     if(!ros::param::get("/grasp_params/robot_joints_name", this->robot_joints_name)){
 		ROS_WARN("The param 'robot_joints_name' not found in param server! Using default.");
-		this->robot_joints_name = "panda_joint";
+		this->robot_joints_name = "panda_1_joint";
 		success = false;
 	}
 
