@@ -6,79 +6,79 @@ joint_limits:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   gripper_finger_joint2:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_1_joint1:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_1_joint2:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_1_joint3:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_1_joint4:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_1_joint5:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_1_joint6:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_1_joint7:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_2_joint1:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_2_joint2:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_2_joint3:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_2_joint4:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_2_joint5:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_2_joint6:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0
   panda_arm_2_joint7:
     has_velocity_limits: true
     max_velocity: 0.2
     has_acceleration_limits: false
-    max_acceleration: 1
+    max_acceleration: 0

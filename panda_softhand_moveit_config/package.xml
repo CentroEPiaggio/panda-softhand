@@ -5,8 +5,8 @@
   <description>
      An automatically generated package with all the configuration and launch files for using the panda_softhand with the MoveIt! Motion Planning Framework
   </description>
-  <author email="i.valda@hotmail.it">PAOLOCARO</author>
-  <maintainer email="i.valda@hotmail.it">PAOLOCARO</maintainer>
+  <author email="i.valda@hotmail.it">irepaolo</author>
+  <maintainer email="i.valda@hotmail.it">irepaolo</maintainer>
 
   <license>BSD</license>
 

@@ -32,7 +32,7 @@ joint_state_controller:
   type: joint_state_controller/JointStateController
   publish_rate: 50
 controller_list:
-  - name: position_joint_trajectory_controller_1
+  - name: position_joint_trajectory_controller1
     action_ns: follow_joint_trajectory
     default: True
     type: FollowJointTrajectory
@@ -44,7 +44,7 @@ controller_list:
       - panda_arm_1_joint5
       - panda_arm_1_joint6
       - panda_arm_1_joint7
-  - name: position_joint_trajectory_controller_2
+  - name: position_joint_trajectory_controller2
     action_ns: follow_joint_trajectory
     default: True
     type: FollowJointTrajectory

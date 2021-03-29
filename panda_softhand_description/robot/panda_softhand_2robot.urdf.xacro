@@ -17,8 +17,7 @@
     <parent link="world" />
     <child link="$(arg arm_id_1)_link0" />
   </joint>
-
-  
+   
   
   <!-- RIGHT SOFTHAND -->
   <xacro:soft_hand_soma_panda parent="$(arg arm_id_1)_link8" name="right_hand" left="false" withAdaptiveTransmission="true" useMimicTag="true">
@@ -37,6 +36,6 @@
 
   <!-- left arm with gripper -->
   <xacro:panda_arm arm_id="$(arg arm_id_2)" connected_to="world"  xyz="0 -0.7 0" safety_distance="0.03"/>
-  <xacro:hand ns="gripper" rpy="0 0 ${-pi/4}" connected_to="$(arg arm_id_2)_link8" safety_distance="0.03"/>
+  <xacro:hand ns="gripper" rpy="0 0 ${+pi}" connected_to="$(arg arm_id_2)_link8" safety_distance="0.03"/>
 
 </robot>

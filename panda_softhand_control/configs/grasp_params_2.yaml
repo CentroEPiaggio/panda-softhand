@@ -30,7 +30,7 @@ grasp_params:
 
 #1) PRESA VERTICALE CILINDRO
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT) 
-  grasp_transform: [-0.150, 0.002, 0.185, 3.108, 0.360, -0.162] #presa verticale sfera
+  grasp_transform: [-0.150, 0.002, 0.2285, 3.108, 0.360, -0.162] #presa verticale sfera
 
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy) CENTRALE 
   pre_grasp_transform: [-0.160, 0.002, 0.538, 3.108, 0.360, -0.162] #laterale, se voglio centale y=0.0

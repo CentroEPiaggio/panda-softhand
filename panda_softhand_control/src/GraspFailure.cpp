@@ -269,7 +269,7 @@ bool GraspFailure::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_s
 
     
     // 4) Returning to pre grasp pose
-    if(!this->panda_softhand_client.call_slerp_service(pre_grasp_pose, present_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_slerp_service(pre_grasp_pose, grasp_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
