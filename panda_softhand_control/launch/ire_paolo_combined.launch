@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <launch>
     <!-- Utilities -->
-    <arg name="load_gripper" default="true"/>
+    <arg name="load_gripper" default="false"/>
     <arg name="use_joint_state_publisher" default="true"/>
 
     <arg name="environment_name" default="panda_grasp"/>
@@ -33,10 +33,10 @@
   <rosparam command="load" file="$(find panda_softhand_moveit_config)/config/panda_controllers.yaml" />
 
   <!-- The space separated list of controllers to start in this launch files. The controllers should be known from the controllers_file -->
-  <arg name="controllers_to_start" default="panda_arm_1_state_controller panda_arm_2_state_controller"/>
+  <arg name="controllers_to_start" default="/panda_arm_1/position_joint_trajectory_controller /panda_arm_2/position_joint_trajctory_controller"/>
 
   <!-- The list of the joint_states topics of all combined robots to fuse to a complete topic -->
-  <arg name="joint_states_source_list" default="[panda_arm_1_state_controller/joint_states, panda_arm_2_state_controller/joint_states, panda_arm_1/right_hand/joint_states, panda_arm_2/gripper/joint_states]"/>
+  <arg name="joint_states_source_list" default="[/panda_arm_1/position_joint_trajectory_controller/joint_states, /panda_arm_2/position_joint_trajctory_controller/joint_states, panda_arm_1/right_hand/joint_states, panda_arm_2/gripper/joint_states]"/>
 
   <node name="$(arg robot_id)" pkg="franka_control" type="franka_combined_control_node" output="screen" required="true" >
     <rosparam command="load" file="$(arg hw_config_file)" />
@@ -44,7 +44,8 @@
     <rosparam subst_value="True">$(arg robot_ips)</rosparam>
     <param name="robot_description" command="xacro --inorder $(arg robot) $(arg args)" />
   </node>
-
+  
+  <!-- Group combined_panda -->
   <group ns="$(arg robot_id)">
 
     <!-- A copy of robot description -->
@@ -53,17 +54,26 @@
 
     <rosparam command="load" file="$(find franka_control)/config/default_combined_controllers.yaml" />
     <rosparam command="load" file="$(find panda_softhand_moveit_config)/config/panda_controllers.yaml" />
-    <!-- <node name="hw_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="$(arg controllers_to_start)"/> -->
-    <!--<node name="controller_stopper" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="stopped cartesian_velocity_controller"/> -->
-
+    <node name="hw_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="$(arg controllers_to_start)"/> 
+    <node name="controller_stopper" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="stopped cartesian_velocity_controller"/>
 
 
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
+    
     <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
       <param name="robot_description" command="xacro --inorder $(arg robot) $(arg args)" />
       <rosparam param="source_list"  subst_value="true">$(arg joint_states_source_list)</rosparam>
       <param name="rate" value="30"/>
     </node>
+
+    <node name="joint_state_desired_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
+      <param name="robot_description" command="xacro --inorder $(arg robot) $(arg args)" />
+      <rosparam param="source_list"  subst_value="true">$(arg joint_states_source_list)</rosparam>
+      <param name="rate" value="30"/>
+      <remap from="/panda_arm_1/position_joint_trajectory_controller/joint_states" to="/panda_arm_1/position_joint_trajectory_controller/joint_states_desired" />
+      <remap from="/panda_arm_2/position_joint_trajectory_controller/joint_states" to="/panda_arm_2/position_joint_trajectory_controller/joint_states_desired" />
+    </node>
+
 
   </group>
 
@@ -81,6 +91,7 @@
 
   <!-- Load collision objects into the planning scene -->
   <node name="world_to_planning_scene" pkg="panda_softhand_control" type="world_to_planning_scene_node" args="$(find panda_softhand_description)/worlds/$(arg environment_name).world --skipIfco" output="screen"/>
- <rosparam command="load" file="$(find soft_hand_controllers)/config/controllers.yaml" />
+  
+  <rosparam command="load" file="$(find soft_hand_controllers)/config/controllers.yaml" />
 
 </launch>

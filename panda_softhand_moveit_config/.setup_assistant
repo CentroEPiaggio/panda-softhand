@@ -6,6 +6,6 @@ moveit_setup_assistant_config:
   SRDF:
     relative_path: config/panda_softhand.srdf
   CONFIG:
-    author_name: irepaolo
-    author_email: i.valda@hotmail.it
-    generated_timestamp: 1617021144
+    author_name: paolino
+    author_email: paolocheli95@gmail.com
+    generated_timestamp: 1617178766

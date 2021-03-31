@@ -1,28 +1,32 @@
-panda_arm_1_controller:
-  action_ns: follow_joint_trajectory
-  default: True
-  type: FollowJointTrajectory
-  arm_id: panda_arm_1
-  joint_names:
-    - panda_arm_1_joint1
-    - panda_arm_1_joint2
-    - panda_arm_1_joint3
-    - panda_arm_1_joint4
-    - panda_arm_1_joint5
-    - panda_arm_1_joint6
-    - panda_arm_1_joint7
-
-panda_arm_2_controller:
-  action_ns: follow_joint_trajectory
-  default: True
-  type: FollowJointTrajectory
-  arm_id: panda_arm_2
-  joint_names:
-    - panda_arm_2_joint1
-    - panda_arm_2_joint2
-    - panda_arm_2_joint3
-    - panda_arm_2_joint4
-    - panda_arm_2_joint5
-    - panda_arm_2_joint6
-    - panda_arm_2_joint7
-
+controller_list:
+  - name: /panda_arm_1/position_joint_trajectory_controller
+    action_ns: follow_joint_trajectory
+    default: True
+    type: FollowJointTrajectory
+    joints:
+      - panda_arm_1_joint1
+      - panda_arm_1_joint2
+      - panda_arm_1_joint3
+      - panda_arm_1_joint4
+      - panda_arm_1_joint5
+      - panda_arm_1_joint6
+      - panda_arm_1_joint7
+  - name: /panda_arm_2/position_joint_trajctory_controller
+    action_ns: follow_joint_trajectory
+    default: True
+    type: FollowJointTrajectory
+    joints:
+      - panda_arm_2_joint1
+      - panda_arm_2_joint2
+      - panda_arm_2_joint3
+      - panda_arm_2_joint4
+      - panda_arm_2_joint5
+      - panda_arm_2_joint6
+      - panda_arm_2_joint7
+  - name: franka_gripper
+    action_ns: gripper_action
+    type: GripperCommand
+    default: true
+    joints:
+      - panda_finger_joint1
+      - panda_finger_joint2
