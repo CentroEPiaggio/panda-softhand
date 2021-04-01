@@ -1,6 +1,11 @@
 <launch>
+  <arg name="load_gripper" default="true" />
 
-  <include file="$(find panda_softhand_moveit_config)/launch/planning_context.launch" />
+  <include file="$(find panda_softhand_moveit_config)/launch/planning_context.launch">
+    <arg name="load_gripper" value="$(arg load_gripper)" />
+  </include>
+
+  <arg name="planner" default="ompl" />
 
   <!-- GDB Debug Option -->
   <arg name="debug" default="false" />

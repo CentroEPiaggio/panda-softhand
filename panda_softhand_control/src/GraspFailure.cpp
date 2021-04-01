@@ -78,7 +78,7 @@ bool GraspFailure::parse_task_params(){
 
     if(!ros::param::get("/grasp_params/robot_joints_name", this->robot_joints_name)){
 		ROS_WARN("The param 'robot_joints_name' not found in param server! Using default.");
-		this->robot_joints_name = "panda_1_joint";
+		this->robot_joints_name = "panda_arm_1_joint1";
 		success = false;
 	}
 
