@@ -69,6 +69,7 @@ set(OBJECTS_SOURCE_FILES
   src/PandaSoftHandClient.cpp
   src/TaskSequencer.cpp
   src/GraspFailure.cpp
+  src/ReGrasp.cpp
 )
 
 include_directories(
@@ -94,19 +95,26 @@ add_executable(control_server src/control_server.cpp ${OBJECTS_SOURCE_FILES})
 add_dependencies(control_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(control_server ${catkin_LIBRARIES} ${ROS_LIBRARIES})
 
+# NODE: Lower level position controls
+add_executable(control_server_2 src/control_server_2.cpp ${OBJECTS_SOURCE_FILES})
+add_dependencies(control_server_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(control_server_2 ${catkin_LIBRARIES} ${ROS_LIBRARIES})
+
+
 # NODE: Higher level sequences of position controls
 add_executable(task_server src/task_server.cpp ${OBJECTS_SOURCE_FILES})
 add_dependencies(task_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(task_server ${catkin_LIBRARIES} ${ROS_LIBRARIES})
 
 # NODE:Ire Paolo node
-add_executable(grasp src/grasp.cpp ${OBJECTS_SOURCE_FILES})
-add_dependencies(grasp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(grasp ${catkin_LIBRARIES} ${ROS_LIBRARIES})
+add_executable(grasp_robot_1 src/grasp_robot_1.cpp ${OBJECTS_SOURCE_FILES})
+add_dependencies(grasp_robot_1 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(grasp_robot_1 ${catkin_LIBRARIES} ${ROS_LIBRARIES})
 
-add_executable(hello src/hello.cpp ${OBJECTS_SOURCE_FILES})
-add_dependencies(hello ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(hello ${catkin_LIBRARIES} ${ROS_LIBRARIES})
+# NODE:Ire Paolo node
+add_executable(grasp_robot_2 src/grasp_robot_2.cpp ${OBJECTS_SOURCE_FILES})
+add_dependencies(grasp_robot_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(grasp_robot_2 ${catkin_LIBRARIES} ${ROS_LIBRARIES})
 
 
 # NODE: Utility to publish collision objects to planning scene from world file

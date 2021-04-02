@@ -8,13 +8,13 @@
 	<rosparam command="load" file="$(arg grasp_params)"/>
 
 	<!-- Load main node -->
-  	<node name="grasp_node" pkg="panda_softhand_control" type="grasp" output="screen"/>	
+  	<node name="grasp_node_2" pkg="panda_softhand_control" type="grasp_robot_2" output="screen"/>	
 
 	<!-- Temporarily publishing the object pose and tf. TODO: comment out when using vision -->
-	<node name="rostopic_object_pose_node" pkg="rostopic" type="rostopic" args="pub -r 10 /grasp/chosen_object geometry_msgs/Pose 
-	'{position: {x: 0.7, y: 0, z: 0.055}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 0.0}}'"/>
+	<node name="rostopic_object_pose_node" pkg="rostopic" type="rostopic" args="pub -r 10 /grasp/chosen_object_2 geometry_msgs/Pose 
+	'{position: {x: 0.7, y: -0.7, z: 0.055}, orientation: {x: 0.0, y: 0.0, z: 0.0, w: 0.0}}'"/>
 
-	<node name="world_to_object" pkg="tf" type="static_transform_publisher" args="0.7 0 0.055 0.0 0.0 0.0 world object 100"/>
+	<node name="world_to_object_2" pkg="tf" type="static_transform_publisher" args="0.7 -0.7 0.055 0.0 0.0 0.0 world object_2 100"/>
 
 
 </launch>

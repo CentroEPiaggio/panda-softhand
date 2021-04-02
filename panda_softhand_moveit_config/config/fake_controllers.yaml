@@ -1,45 +1,17 @@
 controller_list:
-  - name: fake_panda_arm_1_controller
+  - name: fake_panda_arm_controller
     joints:
-      - panda_arm_1_joint1
-      - panda_arm_1_joint2
-      - panda_arm_1_joint3
-      - panda_arm_1_joint4
-      - panda_arm_1_joint5
-      - panda_arm_1_joint6
-      - panda_arm_1_joint7
-  - name: fake_panda_arm_2_controller
+      - panda_joint1
+      - panda_joint2
+      - panda_joint3
+      - panda_joint4
+      - panda_joint5
+      - panda_joint6
+      - panda_joint7
+  - name: fake_hand_controller
     joints:
-      - panda_arm_2_joint1
-      - panda_arm_2_joint2
-      - panda_arm_2_joint3
-      - panda_arm_2_joint4
-      - panda_arm_2_joint5
-      - panda_arm_2_joint6
-      - panda_arm_2_joint7
-  - name: fake_right_hand_controller
-    joints:
-      - right_hand_synergy_joint
-  - name: fake_gripper_controller
-    joints:
-      - gripper_finger_joint1
-  - name: fake_panda_hand_arm_1_controller
-    joints:
-      - panda_arm_1_joint1
-      - panda_arm_1_joint2
-      - panda_arm_1_joint3
-      - panda_arm_1_joint4
-      - panda_arm_1_joint5
-      - panda_arm_1_joint6
-      - panda_arm_1_joint7
-      - right_hand_synergy_joint
-  - name: fake_panda_hand_arm_2_controller
-    joints:
-      - panda_arm_2_joint1
-      - panda_arm_2_joint2
-      - panda_arm_2_joint3
-      - panda_arm_2_joint4
-      - panda_arm_2_joint5
-      - panda_arm_2_joint6
-      - panda_arm_2_joint7
-      - gripper_finger_joint1
+      - panda_finger_joint1
+      - panda_finger_joint2
+initial:
+  - group: panda_arm_hand
+    pose: ready

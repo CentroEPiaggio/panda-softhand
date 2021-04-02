@@ -31,7 +31,7 @@ GraspFailure::GraspFailure(ros::NodeHandle& nh_){
 
     // Moveit names
     this->group_name = "panda_arm_1";
-    this->end_effector_name = "right_hand_ee_link";
+    this->end_effector_name = "panda_arm_1_EE";
 
     // Initializing other moveit stuff (robot model, kinematic model and state)
     this->robot_model_loader_ptr.reset(new robot_model_loader::RobotModelLoader("robot_description"));
@@ -84,7 +84,7 @@ bool GraspFailure::parse_task_params(){
 
     if(!ros::param::get("/grasp_params/pos_controller", this->pos_controller)){
 		ROS_WARN("The param 'pos_controller' not found in param server! Using default.");
-		this->pos_controller = "position_joint_trajectory_controller";
+		this->pos_controller = "position_joint_trajectory_controller_1";
 		success = false;
 	}
 
@@ -96,7 +96,7 @@ bool GraspFailure::parse_task_params(){
 
     if(!ros::param::get("/grasp_params/object_topic_name", this->object_topic_name)){
 		ROS_WARN("The param 'object_topic_name' not found in param server! Using default.");
-		this->object_topic_name = "/irim_demo/chosen_object";
+		this->object_topic_name = "/irim_demo/chosen_object_1";
 		success = false;
 	}
 

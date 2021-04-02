@@ -7,5 +7,6 @@
 
 	<!-- Load main node -->
   <node name="control_server_node" pkg="panda_softhand_control" type="control_server" output="screen"/>
+  <node name="control_server_node2" pkg="panda_softhand_control" type="control_server_2" output="screen"/>
 
 </launch>

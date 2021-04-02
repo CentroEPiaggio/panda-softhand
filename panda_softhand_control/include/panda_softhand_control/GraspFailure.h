@@ -81,7 +81,7 @@ class GraspFailure {
         PandaSoftHandClient panda_softhand_client;
    // Service names
         std::string grasp_task_service_name;
-        std::string franka_state_topic_name = "/franka_state_controller/franka_states";
+        std::string franka_state_topic_name = "/franka_state_controller_1/franka_states";
         //ros::ServiceServer grasp_task_server;
        // Parsed task sequence variables
        std::string robot_name;                     // Name of the robot (namespace)

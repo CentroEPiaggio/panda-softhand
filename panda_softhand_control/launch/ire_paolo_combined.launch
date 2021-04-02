@@ -29,10 +29,11 @@
   <arg name="robot_ips" value="{panda_arm_1/robot_ip: 172.16.0.2, panda_arm_2/robot_ip: 172.16.0.3}"/>
 
   <!-- The space separated list of controllers to start in this launch files. The controllers should be known from the controllers_file -->
-  <arg name="controllers_to_start" default="controller_list/position_joint_trajectory_controller_1 controller_list/position_joint_trajctory_controller_2"/>
+  <arg name="controllers_to_start" default="panda_arm_1_state_controller panda_arm_2_state_controller"/>
 
   <!-- The list of the joint_states topics of all combined robots to fuse to a complete topic -->
-  <arg name="joint_states_source_list" default="[position_joint_trajectory_controller_1/joint_states, position_joint_trajctory_controller_2/joint_states, panda_arm_1/right_hand/joint_states, panda_arm_2/gripper/joint_states]"/>
+  <arg name="joint_states_source_list" default="[panda_arm_1_state_controller/joint_states, panda_arm_2_state_controller/joint_states, panda_arm_1/right_hand/joint_states, panda_arm_2/gripper/joint_states]"/>
+  <arg name="joint_states_source_list_2" default="[panda_softhand/panda_arm_1_state_controller/joint_states, panda_softhand/panda_arm_2_state_controller/joint_states, panda_softhand/panda_arm_1/right_hand/joint_states, panda_softhand/panda_arm_2/gripper/joint_states]"/>
 
   <node name="$(arg robot_id)" pkg="franka_control" type="franka_combined_control_node" output="screen" required="true" >
     <rosparam command="load" file="$(arg hw_config_file)" />
@@ -41,19 +42,20 @@
     <param name="robot_description" command="xacro --inorder $(arg robot) $(arg args)" />
   </node>
 
-  
+  <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
+      <param name="robot_description" command="xacro --inorder $(arg robot) $(arg args)" />
+      <rosparam param="source_list"  subst_value="true">$(arg joint_states_source_list_2)</rosparam>
+      <param name="rate" value="30"/>
+  </node>
 
   
   <!-- Group combined_panda -->
   <group ns="$(arg robot_id)">
 
-    <rosparam command="load" file="$(find franka_control)/config/default_combined_controllers.yaml" />
-    <rosparam command="load" file="$(find panda_softhand_moveit_config)/config/panda_controllers.yaml" />
+    <rosparam command="load" file="$(find panda_softhand_moveit_config)/config/default_combined_controllers.yaml" />
+    <!-- <rosparam command="load" file="$(find panda_softhand_moveit_config)/config/panda_controllers.yaml" /> -->
       
-    
     <node name="hw_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="$(arg controllers_to_start)" />
-
-
 
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen"/>
     

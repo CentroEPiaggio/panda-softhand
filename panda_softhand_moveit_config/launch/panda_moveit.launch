@@ -2,7 +2,7 @@
 <launch>
   <arg name="load_gripper" default="true" />
 
-  <node name="hw_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="position_joint_trajectory_controller_1 position_joint_trajectory_controller_2"/>
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="position_joint_trajectory_controller"/>
 
   <include file="$(find panda_softhand_moveit_config)/launch/move_group.launch">
     <arg name="load_gripper" value="$(arg load_gripper)" />

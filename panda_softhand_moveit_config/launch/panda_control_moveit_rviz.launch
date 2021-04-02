@@ -1,10 +1,10 @@
 <?xml version="1.0" ?>
 <launch>
-  <arg name="robot_ip" default="combined_panda" />
+  <arg name="robot_ip" />
   <arg name="load_gripper" default="true" />
   <arg name="launch_rviz" default="true" />
 
-  <include file="$(find franka_control)/launch/franka_combined_control.launch" >
+  <include file="$(find franka_control)/launch/franka_control.launch" >
     <arg name="robot_ip" value="$(arg robot_ip)" />
     <arg name="load_gripper" value="$(arg load_gripper)" />
   </include>

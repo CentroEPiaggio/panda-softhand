@@ -1,11 +1,10 @@
 moveit_setup_assistant_config:
   URDF:
-    package: panda_softhand_description
-    relative_path: robot/panda_softhand_2robot.urdf.xacro
-    xacro_args: "--inorder "
+    package: franka_description
+    relative_path: robots/panda_arm_hand.urdf.xacro
   SRDF:
-    relative_path: config/panda_softhand.srdf
+    relative_path: config/panda.srdf
   CONFIG:
-    author_name: paolino
-    author_email: paolocheli95@gmail.com
-    generated_timestamp: 1617178766
+    author_name: Mike Lautman
+    author_email: mike@picknik.ai
+    generated_timestamp: 1519152260
