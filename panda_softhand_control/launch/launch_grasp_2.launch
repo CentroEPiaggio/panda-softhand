@@ -2,10 +2,10 @@
 <launch>
 
 	<!-- Launch arguments -->
-	<arg name="grasp_params" default="$(find panda_softhand_control)/configs/grasp_params_2.yaml"/>
+	<arg name="grasp_params_2" default="$(find panda_softhand_control)/configs/grasp_params_2.yaml"/>
 	
 	<!-- Loading config file to param server -->
-	<rosparam command="load" file="$(arg grasp_params)"/>
+	<rosparam command="load" file="$(arg grasp_params_2)"/>
 
 	<!-- Load main node -->
   	<node name="grasp_node_2" pkg="panda_softhand_control" type="grasp_robot_2" output="screen"/>	

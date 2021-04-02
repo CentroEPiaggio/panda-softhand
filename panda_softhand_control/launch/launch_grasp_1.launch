@@ -2,13 +2,13 @@
 <launch>
 
 	<!-- Launch arguments -->
-	<arg name="grasp_params" default="$(find panda_softhand_control)/configs/grasp_params_1.yaml"/>
+	<arg name="grasp_params_1" default="$(find panda_softhand_control)/configs/grasp_params_1.yaml"/>
 	
 	<!-- Loading config file to param server -->
-	<rosparam command="load" file="$(arg grasp_params)"/>
+	<rosparam command="load" file="$(arg grasp_params_1)"/>
 
 	<!-- Load main node -->
-  	<node name="grasp_node" pkg="panda_softhand_control" type="grasp_robot_1" output="screen"/>	
+  	<node name="grasp_node_1" pkg="panda_softhand_control" type="grasp_robot_1" output="screen"/>	
 
 	<!-- Temporarily publishing the object pose and tf. TODO: comment out when using vision -->
 	<node name="rostopic_object_pose_node" pkg="rostopic" type="rostopic" args="pub -r 10 /grasp/chosen_object_1 geometry_msgs/Pose 

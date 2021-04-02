@@ -12,7 +12,7 @@ ROS NODE MAIN GRASP
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "panda_softhand_grasp");
+    ros::init(argc, argv, "panda_softhand_grasp_2");
 
     ros::NodeHandle nh_;
 

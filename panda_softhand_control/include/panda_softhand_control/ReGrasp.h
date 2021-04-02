@@ -26,7 +26,7 @@
 #include <moveit/robot_state/robot_state.h>
 
 // Custom Includes
-#include "panda_softhand_control/PandaSoftHandClient.h"
+#include "panda_softhand_control/PandaSoftHandClient_2.h"
 
 
 #include "qb_class.h"
@@ -78,21 +78,21 @@ class ReGrasp {
         std::vector<float> v2{0};
         
         // The Panda SoftHand Client
-        PandaSoftHandClient panda_softhand_client;
+        PandaSoftHandClient_2 panda_softhand_client_2;
    // Service names
-        std::string grasp_task_service_name;
-        std::string franka_state_topic_name = "/franka_state_controller_2/franka_states";
+        std::string grasp_task_service_name_2;
+        std::string franka_state_topic_name_2 = "/franka_state_controller_2/franka_states";
         //ros::ServiceServer grasp_task_server;
        // Parsed task sequence variables
-       std::string robot_name;                     // Name of the robot (namespace)
-       std::string robot_joints_name;              // Name of the robot joints (without the number of the joints)
-       std::string pos_controller;                 // Name of position controller
-       std::string imp_controller;                 // Name of impedance controller
-       std::string object_topic_name;              // Name of the topic where the object pose is published
-       std::vector<double> home_joints;
-       std::vector<double> grasp_transform;
+       std::string robot_name_2;                     // Name of the robot (namespace)
+       std::string robot_joints_name_2;              // Name of the robot joints (without the number of the joints)
+       std::string pos_controller_2;                 // Name of position controller
+       std::string imp_controller_2;                 // Name of impedance controller
+       std::string object_topic_name_2;              // Name of the topic where the object pose is published
+       std::vector<double> home_joints_2;
+       std::vector<double> grasp_transform_2;
        geometry_msgs::Pose grasp_T;
-       std::vector<double> pre_grasp_transform;
+       std::vector<double> pre_grasp_transform_2;
        geometry_msgs::Pose pre_grasp_T;
      
        // MoveIt stuff and functions for FK and IK
@@ -107,5 +107,5 @@ class ReGrasp {
        ros::Duration waiting_time;
        ros::Duration waiting_time2;
        std::vector<double> null_joints;                            // null joints in order to make joint plan from present joints
-       ros::ServiceServer grasp_task_server;
+       ros::ServiceServer grasp_task_server_2;
 };

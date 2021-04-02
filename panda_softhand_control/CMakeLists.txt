@@ -67,6 +67,20 @@ set(OBJECTS_SOURCE_FILES
   src/PosePlan.cpp
   src/JointPlan.cpp
   src/PandaSoftHandClient.cpp
+  src/HandPlan_1.cpp
+  src/HandControl_1.cpp
+  src/ArmControl_1.cpp
+  src/SlerpPlan_1.cpp 
+  src/PosePlan_1.cpp
+  src/JointPlan_1.cpp
+  src/PandaSoftHandClient_1.cpp
+  src/HandPlan_2.cpp
+  src/HandControl_2.cpp
+  src/ArmControl_2.cpp
+  src/SlerpPlan_2.cpp 
+  src/PosePlan_2.cpp
+  src/JointPlan_2.cpp
+  src/PandaSoftHandClient_2.cpp
   src/TaskSequencer.cpp
   src/GraspFailure.cpp
   src/ReGrasp.cpp

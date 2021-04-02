@@ -17,17 +17,17 @@ ReGrasp::ReGrasp(ros::NodeHandle& nh_){
 
 
     // Initializing the object subscriber and waiting (the object topic name is parsed now)
-    ros::Subscriber object_sub = this->nh.subscribe(this->object_topic_name, 1, &ReGrasp::get_object_pose, this);
-    ros::topic::waitForMessage<geometry_msgs::Pose>(this->object_topic_name, ros::Duration(2.0));
+    ros::Subscriber object_sub = this->nh.subscribe(this->object_topic_name_2, 1, &ReGrasp::get_object_pose, this);
+    ros::topic::waitForMessage<geometry_msgs::Pose>(this->object_topic_name_2, ros::Duration(2.0));
 
     // Initializing the franka_state_sub subscriber and waiting
-    ros::Subscriber franka_state_sub = this->nh.subscribe("/" + this->robot_name + this->franka_state_topic_name, 1, &ReGrasp::get_franka_state, this);
-    ros::topic::waitForMessage<franka_msgs::FrankaState>("/" + this->robot_name + this->franka_state_topic_name, ros::Duration(2.0));
+    ros::Subscriber franka_state_sub = this->nh.subscribe("/" + this->robot_name_2 + this->franka_state_topic_name_2, 1, &ReGrasp::get_franka_state, this);
+    ros::topic::waitForMessage<franka_msgs::FrankaState>("/" + this->robot_name_2 + this->franka_state_topic_name_2, ros::Duration(2.0));
     
     this->handRef_pub = this->nh.advertise<qb_interface::handRef>("/qb_class/hand_ref",1);
     
     // Initializing Panda SoftHand Client (TODO: Return error if initialize returns false)
-    this->panda_softhand_client.initialize(this->nh);
+    this->panda_softhand_client_2.initialize(this->nh);
 
     // Moveit names
     this->group_name = "panda_arm_2";
@@ -41,8 +41,8 @@ ReGrasp::ReGrasp(ros::NodeHandle& nh_){
 
     // Setting the task service names
     std::cout << "Starting to advertise!!!" << std::endl;
-    this->grasp_task_service_name = "/grasp_task_service";
-    this->grasp_task_server = this->nh.advertiseService(this->grasp_task_service_name, &ReGrasp::call_simple_grasp_task, this);
+    this->grasp_task_service_name_2 = "/grasp_task_service_2";
+    this->grasp_task_server_2 = this->nh.advertiseService(this->grasp_task_service_name_2, &ReGrasp::call_simple_grasp_task, this);
     std::cout << "Finished to advertise!!!" << std::endl;
 
     // Initializing other control values
@@ -70,61 +70,61 @@ ReGrasp::~ReGrasp(){
 bool ReGrasp::parse_task_params(){
     bool success = true;
 
-    if(!ros::param::get("/grasp_params/robot_name", this->robot_name)){
-		ROS_WARN("The param 'robot_name' not found in param server! Using default.");
-		this->robot_name = "panda_arm_2";
+    if(!ros::param::get("/grasp_params_2/robot_name_2", this->robot_name_2)){
+		ROS_WARN("The param 'robot_name_2' not found in param server! Using default.");
+		this->robot_name_2 = "panda_arm_2";
 		success = false;
 	}
 
-    if(!ros::param::get("/grasp_params/robot_joints_name", this->robot_joints_name)){
-		ROS_WARN("The param 'robot_joints_name' not found in param server! Using default.");
-		this->robot_joints_name = "panda_arm_2_joint1";
+    if(!ros::param::get("/grasp_params_2/robot_joints_name_2", this->robot_joints_name_2)){
+		ROS_WARN("The param 'robot_joints_name_2' not found in param server! Using default.");
+		this->robot_joints_name_2 = "panda_arm_2_joint1";
 		success = false;
 	}
 
-    if(!ros::param::get("/grasp_params/pos_controller", this->pos_controller)){
-		ROS_WARN("The param 'pos_controller' not found in param server! Using default.");
-		this->pos_controller = "position_joint_trajectory_controller_2";
+    if(!ros::param::get("/grasp_params_2/pos_controller_2", this->pos_controller_2)){
+		ROS_WARN("The param 'pos_controller_2' not found in param server! Using default.");
+		this->pos_controller_2 = "position_joint_trajectory_controller_2";
 		success = false;
 	}
 
-    if(!ros::param::get("/grasp_params/imp_controller", this->imp_controller)){
-		ROS_WARN("The param 'imp_controller' not found in param server! Using default.");
-		this->imp_controller = "cartesian_impedance_controller_softbots_stiff_matrix";
+    if(!ros::param::get("/grasp_params_2/imp_controller_2", this->imp_controller_2)){
+		ROS_WARN("The param 'imp_controller_2' not found in param server! Using default.");
+		this->imp_controller_2 = "cartesian_impedance_controller_softbots_stiff_matrix";
 		success = false;
 	}
 
-    if(!ros::param::get("/grasp_params/object_topic_name", this->object_topic_name)){
-		ROS_WARN("The param 'object_topic_name' not found in param server! Using default.");
-		this->object_topic_name = "/irim_demo/chosen_object_2";
+    if(!ros::param::get("/grasp_params_2/object_topic_name_2", this->object_topic_name_2)){
+		ROS_WARN("The param 'object_topic_name_2' not found in param server! Using default.");
+		this->object_topic_name_2 = "/irim_demo/chosen_object_2";
 		success = false;
 	}
 
-	if(!ros::param::get("/grasp_params/home_joints", this->home_joints)){
-		ROS_WARN("The param 'home_joints' not found in param server! Using default.");
-		this->home_joints = {-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110};
+	if(!ros::param::get("/grasp_params_2/home_joints_2", this->home_joints_2)){
+		ROS_WARN("The param 'home_joints_2' not found in param server! Using default.");
+		this->home_joints_2 = {-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110};
 		success = false;
 	}
 
-    if(!ros::param::get("/grasp_params/grasp_transform", this->grasp_transform)){
-		ROS_WARN("The param 'grasp_transform' not found in param server! Using default.");
-		this->grasp_transform.resize(6);
-        std::fill(this->grasp_transform.begin(), this->grasp_transform.end(), 0.0);
+    if(!ros::param::get("/grasp_params_2/grasp_transform_2", this->grasp_transform_2)){
+		ROS_WARN("The param 'grasp_transform_2' not found in param server! Using default.");
+		this->grasp_transform_2.resize(6);
+        std::fill(this->grasp_transform_2.begin(), this->grasp_transform_2.end(), 0.0);
 		success = false;
 	}
 
-    // Converting the grasp_transform vector to geometry_msgs Pose
-    this->grasp_T = this->convert_vector_to_pose(this->grasp_transform);
+    // Converting the grasp_transform_2 vector to geometry_msgs Pose
+    this->grasp_T = this->convert_vector_to_pose(this->grasp_transform_2);
 
-    if(!ros::param::get("/grasp_params/pre_grasp_transform", this->pre_grasp_transform)){
-		ROS_WARN("The param 'pre_grasp_transform' not found in param server! Using default.");
-		this->pre_grasp_transform.resize(6);
-        std::fill(this->pre_grasp_transform.begin(), this->pre_grasp_transform.end(), 0.0);
+    if(!ros::param::get("/grasp_params_2/pre_grasp_transform_2", this->pre_grasp_transform_2)){
+		ROS_WARN("The param 'pre_grasp_transform_2' not found in param server! Using default.");
+		this->pre_grasp_transform_2.resize(6);
+        std::fill(this->pre_grasp_transform_2.begin(), this->pre_grasp_transform_2.end(), 0.0);
 		success = false;
 	}
 
-    // Converting the pre_grasp_transform vector to geometry_msgs Pose
-    this->pre_grasp_T = this->convert_vector_to_pose(this->pre_grasp_transform);
+    // Converting the pre_grasp_transform_2 vector to geometry_msgs Pose
+    this->pre_grasp_T = this->convert_vector_to_pose(this->pre_grasp_transform_2);
 
     return success;
 }
@@ -188,12 +188,12 @@ bool ReGrasp::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::
 
     // Computing the grasp and pregrasp pose and converting to geometry_msgs Pose
     Eigen::Affine3d object_pose_aff; tf::poseMsgToEigen(this->object_pose_T, object_pose_aff);
-    Eigen::Affine3d grasp_transform_aff; tf::poseMsgToEigen(this->grasp_T, grasp_transform_aff);
-    Eigen::Affine3d pre_grasp_transform_aff; tf::poseMsgToEigen(this->pre_grasp_T, pre_grasp_transform_aff);
+    Eigen::Affine3d grasp_transform_2_aff; tf::poseMsgToEigen(this->grasp_T, grasp_transform_2_aff);
+    Eigen::Affine3d pre_grasp_transform_2_aff; tf::poseMsgToEigen(this->pre_grasp_T, pre_grasp_transform_2_aff);
 
     geometry_msgs::Pose pre_grasp_pose; geometry_msgs::Pose grasp_pose;
-    tf::poseEigenToMsg(object_pose_aff * pre_grasp_transform_aff, pre_grasp_pose);
-    tf::poseEigenToMsg(object_pose_aff * grasp_transform_aff, grasp_pose);
+    tf::poseEigenToMsg(object_pose_aff * pre_grasp_transform_2_aff, pre_grasp_pose);
+    tf::poseEigenToMsg(object_pose_aff * grasp_transform_2_aff, grasp_pose);
 
     // Couting object pose for debugging
     
@@ -219,14 +219,14 @@ bool ReGrasp::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::
     present_pose.orientation.x = 0.0; present_pose.orientation.y = 0.0; present_pose.orientation.z = 0.0; present_pose.orientation.w = 1.0;
 
     // 1) Going to pregrasp pose
-    if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose, present_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client_2.call_pose_service_2(pre_grasp_pose, present_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified pre grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
         return false;
     }
 
-    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client_2.call_arm_control_service_2(this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not go to pre grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
@@ -234,28 +234,28 @@ bool ReGrasp::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::
     }
 
     // 2) Going to grasp pose
-    if(!this->panda_softhand_client.call_slerp_service(grasp_pose, pre_grasp_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client_2.call_slerp_service_2(grasp_pose, pre_grasp_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
         return false;
     }
 
-    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+    if(!this->panda_softhand_client_2.call_arm_wait_service_2(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
         ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre grasp from home joints");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
         return false;
     }
 
-    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client_2.call_arm_control_service_2(this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not go to grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
         return false;
     }
 
-    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+    if(!this->panda_softhand_client_2.call_arm_wait_service_2(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
         ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to grasp pose");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
@@ -269,21 +269,21 @@ bool ReGrasp::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::
 
     
     // 4) Returning to pre grasp pose
-    if(!this->panda_softhand_client.call_slerp_service(pre_grasp_pose, grasp_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client_2.call_slerp_service_2(pre_grasp_pose, grasp_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
         return false;
     }
 
-    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client_2.call_arm_control_service_2(this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not go to grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
         return false;
     }
 
-     if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+     if(!this->panda_softhand_client_2.call_arm_wait_service_2(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
         ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to grasp pose");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
@@ -306,21 +306,21 @@ bool ReGrasp::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::
     }
 
     // 7) Lifting the grasped? object
-    if(!this->panda_softhand_client.call_joint_service(this->home_joints, now_joints, this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client_2.call_joint_service_2(this->home_joints_2, now_joints, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not lift to the specified pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
         return false;
     }
 
-    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client_2.call_arm_control_service_2(this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not go to grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
         return false;
     }
 
-    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+    if(!this->panda_softhand_client_2.call_arm_wait_service_2(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
         ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to grasp pose");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
