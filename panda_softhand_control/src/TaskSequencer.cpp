@@ -8,7 +8,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "panda_softhand_control/TaskSequencer.h"
 
 TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
-    
+
     // Initializing Node Handle
     this->nh = nh_;
 
@@ -27,7 +27,7 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     ros::topic::waitForMessage<franka_msgs::FrankaState>("/" + this->robot_name + this->franka_state_topic_name, ros::Duration(2.0));
 
     // Initializing the tau_ext norm and franka recovery publishers
-    this->pub_franka_recovery = this->nh.advertise<franka_control::ErrorRecoveryActionGoal>("/" + this->robot_name + "/franka_control/error_recovery/goal", 1);
+    this->pub_franka_recovery = this->nh.advertise<franka_msgs::ErrorRecoveryActionGoal>("/" + this->robot_name + "/franka_control/error_recovery/goal", 1);
     this->pub_tau_ext_norm = this->nh.advertise<std_msgs::Float64>("tau_ext_norm", 1);
 
     // Initializing Panda SoftHand Client (TODO: Return error if initialize returns false)
@@ -47,7 +47,7 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
 }
 
 TaskSequencer::~TaskSequencer(){
-    
+
     // Nothing to do here yet
 }
 
@@ -134,8 +134,8 @@ bool TaskSequencer::parse_task_params(){
             std::cout << it.first << " : [ ";
             for(auto vec_it : it.second){
                 std::cout << vec_it << " ";
-            } 
-            std::cout << "]" << std::endl;     
+            }
+            std::cout << "]" << std::endl;
         }
     }
 
@@ -144,7 +144,7 @@ bool TaskSequencer::parse_task_params(){
 
 // Convert xyzrpy vector to geometry_msgs Pose
 geometry_msgs::Pose TaskSequencer::convert_vector_to_pose(std::vector<double> input_vec){
-    
+
     // Creating temporary variables
     geometry_msgs::Pose output_pose;
     Eigen::Affine3d output_affine;
@@ -155,8 +155,8 @@ geometry_msgs::Pose TaskSequencer::convert_vector_to_pose(std::vector<double> in
     Eigen::Matrix3d rotation = Eigen::Matrix3d(Eigen::AngleAxisd(input_vec[5], Eigen::Vector3d::UnitZ())
         * Eigen::AngleAxisd(input_vec[4], Eigen::Vector3d::UnitY())
         * Eigen::AngleAxisd(input_vec[3], Eigen::Vector3d::UnitX()));
-    output_affine.linear() = rotation;    
-    
+    output_affine.linear() = rotation;
+
     // Converting to geometry_msgs and returning
     tf::poseEigenToMsg(output_affine, output_pose);
     return output_pose;
@@ -220,12 +220,12 @@ void TaskSequencer::get_franka_state(const franka_msgs::FrankaState::ConstPtr &m
     // Publishing norm
     std_msgs::Float64 norm_msg; norm_msg.data = this->tau_ext_norm;
     this->pub_tau_ext_norm.publish(norm_msg);
-    
+
 }
 
 // Callback for simple grasp task service
 bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
-    
+
     // Checking the request for correctness
     if(!req.data){
         ROS_WARN("Did you really want to call the simple grasp task service with data = false?");
@@ -306,12 +306,12 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         if((now_time - init_time) > ros::Duration(10, 0)){
             hand_open = true;
             if(DEBUG) ROS_WARN_STREAM("Opening condition reached!" << " TIMEOUT!");
-            if(DEBUG) ROS_WARN_STREAM("The initial time was " << init_time << ", now it is " << now_time 
+            if(DEBUG) ROS_WARN_STREAM("The initial time was " << init_time << ", now it is " << now_time
                 << ", the difference is " << (now_time - init_time) << " and the timeout thresh is " << ros::Duration(10, 0));
         }
     }
 
-    // 8) Opening hand 
+    // 8) Opening hand
     if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
         ROS_ERROR("Could not open the hand.");
         res.success = false;
