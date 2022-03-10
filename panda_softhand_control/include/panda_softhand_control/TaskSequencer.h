@@ -16,7 +16,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "geometry_msgs/Pose.h"
 #include <controller_manager_msgs/SwitchController.h>
 #include <franka_msgs/FrankaState.h>
-#include <franka_control/ErrorRecoveryActionGoal.h>
+#include <franka_msgs/ErrorRecoveryActionGoal.h>
 
 // Parsing includes
 #include <XmlRpcValue.h>

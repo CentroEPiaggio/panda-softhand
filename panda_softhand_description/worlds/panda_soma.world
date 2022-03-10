@@ -2,16 +2,16 @@
 <sdf version="1.4">
   <!-- We use a custom world for the panda + softhand. -->
   <!-- One can change this world to his needs or use another one. -->
-  
+
   <world name="default">
 
 	<!-- box (like a robot base) -->
-    <model name="rob_base">
+    <!-- <model name="rob_base">
 			<pose> -0.08 0 -0.03 0 0 0</pose>
 			<static>true</static>
 			<link name='linkRobBase'>
 				<pose>0 0 0 0 0 0</pose>
-				
+
 				<collision name="my_collisionRobBase">
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
@@ -20,7 +20,7 @@
 		        </box>
 		      </geometry>
 	      </collision>
-				
+
 				<visual name="my_visualRobBase">
 					<geometry>
 		        <box>
@@ -28,19 +28,19 @@
 		        </box>
 		      </geometry>
 	      </visual>
-				
-				<self_collide>0</self_collide>		
+
+				<self_collide>0</self_collide>
 				<gravity>1</gravity>
 			</link>
-    </model>
-	
+    </model> -->
+
 	<!-- box (like a table) -->
     <model name="table">
-			<pose> 0.6 0 -0.05 0 0 0</pose>
+			<pose> 0.65 0 -0.05 0 0 0</pose>
 			<static>true</static>
 			<link name='linkTable'>
 				<pose>0 0 0 0 0 0</pose>
-				
+
 				<collision name="my_collisionTable">
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
@@ -49,7 +49,7 @@
 		        </box>
 		      </geometry>
 	      </collision>
-				
+
 				<visual name="my_visualTable">
 					<geometry>
 		        <box>
@@ -57,19 +57,19 @@
 		        </box>
 		      </geometry>
 	      </visual>
-				
-				<self_collide>0</self_collide>		
+
+				<self_collide>0</self_collide>
 				<gravity>1</gravity>
 			</link>
     </model>
 
 	<!-- box (like a wall behind) -->
-    <model name="wall_behind">
+    <!-- <model name="wall_behind">
 			<pose> -0.30 0 0.5 0 0 0</pose>
 			<static>true</static>
 			<link name='linkWallBehind'>
 				<pose>0 0 0 0 0 0</pose>
-				
+
 				<collision name="my_collisionWallBehind">
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
@@ -78,7 +78,7 @@
 		        </box>
 		      </geometry>
 	      </collision>
-				
+
 				<visual name="my_visualWallBehind">
 					<geometry>
 		        <box>
@@ -86,19 +86,19 @@
 		        </box>
 		      </geometry>
 	      </visual>
-				
-				<self_collide>0</self_collide>		
+
+				<self_collide>0</self_collide>
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model> -->
 
 	<!-- box (like a wall near the camera) -->
-    <model name="wall_camera">
+    <!--<model name="wall_camera">
 			<pose> 0.20 -0.49 0.2 0 0 0</pose>
 			<static>true</static>
 			<link name='linkWallCamera'>
 				<pose>0 0 0 0 0 0</pose>
-				
+
 				<collision name="my_collisionWallCamera">
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
@@ -107,7 +107,7 @@
 		        </box>
 		      </geometry>
 	      </collision>
-				
+
 				<visual name="my_visualWallCamera">
 					<geometry>
 		        <box>
@@ -115,19 +115,19 @@
 		        </box>
 		      </geometry>
 	      </visual>
-				
-				<self_collide>0</self_collide>		
+
+				<self_collide>0</self_collide>
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model>-->
 
 	<!-- box (like a wall near the control pc) -->
-    <model name="wall_pc">
+    <!--<model name="wall_pc">
 			<pose> 0.20 0.30 0.2 0 0 0</pose>
 			<static>true</static>
 			<link name='linkWallPc'>
 				<pose>0 0 0 0 0 0</pose>
-				
+
 				<collision name="my_collisionWallPc">
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
@@ -136,7 +136,7 @@
 		        </box>
 		      </geometry>
 	      </collision>
-				
+
 				<visual name="my_visualWallPc">
 					<geometry>
 		        <box>
@@ -144,19 +144,19 @@
 		        </box>
 		      </geometry>
 	      </visual>
-				
-				<self_collide>0</self_collide>		
+
+				<self_collide>0</self_collide>
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model> -->
 
 	<!-- box (like a container for placing) -->
-    <model name="box_container">
+  <!--  <model name="box_container">
 			<pose> 0.65 0.13 0.01 0 0 0</pose>
 			<static>true</static>
 			<link name='linkBoxContainer'>
 				<pose>0 0 0 0 0 0</pose>
-				
+
 				<collision name="my_collisionBoxContainer">
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
@@ -165,7 +165,7 @@
 		        </box>
 		      </geometry>
 	      </collision>
-				
+
 				<visual name="my_visualBoxContainer">
 					<geometry>
 		        <box>
@@ -173,12 +173,12 @@
 		        </box>
 		      </geometry>
 	      </visual>
-				
-				<self_collide>0</self_collide>		
+
+				<self_collide>0</self_collide>
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model>-->
 
   </world>
-  
+
 </sdf>

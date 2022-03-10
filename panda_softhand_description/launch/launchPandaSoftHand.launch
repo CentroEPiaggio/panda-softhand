@@ -8,7 +8,7 @@
 
     <!-- Panda params -->
     <arg name="panda_arm_enabled" default="true"/>
-    <arg name="robot_ip" default="172.16.0.101"/>
+    <arg name="robot_ip" default="172.16.0.3"/>
     <arg name="load_gripper" default="false"/>
 
     <!-- Hand/Glove params -->
@@ -36,7 +36,7 @@
 	</node>
 
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
-    
+
     <!-- Panda namespace -->
     <group ns="panda_arm">
 
@@ -56,8 +56,8 @@
         <rosparam command="load" file="$(find panda_controllers)/config/panda_controllers.yaml" />
         <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="franka_state_controller"/>
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="position_joint_trajectory_controller"/>
-        <node name="controller_stopper" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="--stopped cartesian_velocity_controller"/>
-        
+        <!-- <node name="controller_stopper" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="stopped cartesian_velocity_controller"/> -->
+
         <!-- Panda joint state publisher -->
         <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
             <rosparam if="$(arg load_gripper)" param="source_list">[franka_state_controller/joint_states, franka_gripper/joint_states] </rosparam>
@@ -89,12 +89,12 @@
   	<node name="world_to_planning_scene" pkg="panda_softhand_control" type="world_to_planning_scene_node" args="$(find panda_softhand_description)/worlds/$(arg environment_name).world --skipIfco" output="screen"/>
 
     <rosparam command="load" file="$(find soft_hand_controllers)/config/controllers.yaml" />
-    
+
     <!-- Hand namespace -->
     <group ns="right_hand">
-        
+
         <group if="$(arg right_hand_enabled)">
-            
+
             <!-- A copy of robot description -->
             <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find panda_softhand_description)/robot/panda_softhand.urdf.xacro'" unless="$(arg load_gripper)" />
 
