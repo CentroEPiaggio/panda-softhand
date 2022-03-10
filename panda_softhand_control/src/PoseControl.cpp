@@ -121,6 +121,10 @@ bool PoseControl::performMotionPlan(){
 
     // Loading the remote control for visual tools and promting a message
     visual_tools.loadRemoteControl();
+
+    // Show the pose
+    visual_tools.publishAxisLabeled(this->goalPose, "goal pose");
+    
     visual_tools.trigger();
 
     #endif
