@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(4);
     spinner.start();
    
-    /*Going to home position*/
+    /* 1) Going to home position*/
     //Create the request and response object
     
     std_srvs::SetBool::Request req;
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
        ROS_INFO_STREAM("Failed to completed the service");
     }
     
-    /*Going to grasping position for handtool*/
+    /* 2) Going to grasping position for handtool*/
     
     ROS_INFO("Going to grasping position");
     bool success_handtool = task_sequencer_obj.call_simple_grasp_task(req,resp);
