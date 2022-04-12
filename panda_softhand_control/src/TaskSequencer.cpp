@@ -253,13 +253,13 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return true;
     }
 
-    // 1) Going to home configuration
-    if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
-        ROS_ERROR("Could not go to the specified home joint configuration.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
-        return false;
-    }
+    // // 1) Going to home configuration
+    // if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
+    //     ROS_ERROR("Could not go to the specified home joint configuration.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+    //     return false;
+    // }
 
     // Computing the grasp and pregrasp pose and converting to geometry_msgs Pose
     Eigen::Affine3d object_pose_aff; tf::poseMsgToEigen(this->object_pose_T, object_pose_aff);
@@ -270,7 +270,7 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
     tf::poseEigenToMsg(object_pose_aff * grasp_transform_aff * pre_grasp_transform_aff, pre_grasp_pose);
     tf::poseEigenToMsg(object_pose_aff * grasp_transform_aff, grasp_pose);
 
-    // Couting object pose for debugging
+    // Computing object pose for debugging
     std::cout << "Object position is \n" << object_pose_aff.translation() << std::endl;
 
     // 2) Going to pregrasp pose
@@ -297,13 +297,13 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
-    // 4) Lifting the grasped? object
-    if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
-        ROS_ERROR("Could not lift to the specified pose.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
-        return false;
-    }
+    // // 4) Lifting the grasped? object
+    // if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
+    //     ROS_ERROR("Could not lift to the specified pose.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+    //     return false;
+    // }
 
     // Now, everything finished well
     res.success = true;
