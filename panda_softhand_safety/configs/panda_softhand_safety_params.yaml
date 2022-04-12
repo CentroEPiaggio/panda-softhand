@@ -5,7 +5,7 @@ panda_softhand_safety:
   # Name of the moveit group
   group_name: panda_arm
   # Collision distance threshold
-  collision_threshold: 0.020
+  collision_threshold: 0.010
   # Name of the root
   root_name: panda_link0
   # Name of the tip
