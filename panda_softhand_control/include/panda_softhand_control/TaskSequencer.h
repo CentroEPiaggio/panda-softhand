@@ -60,9 +60,12 @@ class TaskSequencer {
         // Callback for simple grasp task service
         bool call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
         
-        // Callback for simple vacuuming task service
+        /*---- Callback for simple vacuuming task service----*/
         bool call_simple_vacuum_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
         
+        /*---- Callback for throwing task service----*/
+        bool call_simple_throwing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+
         // Callback for complex grasp task service (goes to specified pose)
         bool call_complex_grasp_task(panda_softhand_control::complex_grasp::Request &req, panda_softhand_control::complex_grasp::Response &res);
 
@@ -118,6 +121,7 @@ class TaskSequencer {
         std::string set_object_service_name;
 
         std::string vacuum_task_service_name;
+        std::string throwing_task_service_name;
 
         // Service Servers
         ros::ServiceServer grasp_task_server;
@@ -128,7 +132,7 @@ class TaskSequencer {
         ros::ServiceServer set_object_server;
 
         ros::ServiceServer vacuum_task_server;
-
+        ros::ServiceServer throwing_task_server;
 
         // The XmlRpc value for parsing complex params
         XmlRpc::XmlRpcValue task_seq_params;
@@ -154,6 +158,8 @@ class TaskSequencer {
         geometry_msgs::Pose grasp_T_vacuuming;
         std::vector<double> pre_grasp_transform_vacuuming;
         geometry_msgs::Pose pre_grasp_T_vacuuming;
+
+        std::vector<double> throwing_joints;
 
         std::map<std::string, std::vector<double>> poses_map;     // The map containing the notable poses
 

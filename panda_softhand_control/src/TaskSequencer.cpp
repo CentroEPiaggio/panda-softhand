@@ -46,6 +46,7 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     this->set_object_service_name = "set_object_service";
 
     this->vacuum_task_service_name = "vacuum_task_service";
+    this->throwing_task_service_name = "throwing_task_service_name";
 
     // Advertising the services
     this->grasp_task_server = this->nh.advertiseService(this->grasp_task_service_name, &TaskSequencer::call_simple_grasp_task, this);
@@ -55,8 +56,9 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     this->handover_task_server = this->nh.advertiseService(this->handover_task_service_name, &TaskSequencer::call_simple_handover_task, this);
     this->set_object_server = this->nh.advertiseService(this->set_object_service_name, &TaskSequencer::call_set_object, this);
     
-    this->vacuum_task_server = this->nh.advertiseService(this->vacuum_task_service_name, &TaskSequencer::call_simple_vacuum_task, this );
-
+    this->vacuum_task_server = this->nh.advertiseService(this->vacuum_task_service_name,     &TaskSequencer::call_simple_vacuum_task, this );
+    this->throwing_task_server = this->nh.advertiseService(this->throwing_task_service_name, &TaskSequencer::call_simple_throwing_task, this );
+    
     // Spinning once
     ros::spinOnce();
 
@@ -167,6 +169,13 @@ bool TaskSequencer::parse_task_params(){
 		this->place_joints = {-0.136, 0.794, -0.115, -1.337, 0.250, 2.217, -0.479};
 		success = false;
 	}
+    
+    if(!ros::param::get("/task_sequencer/throwing_joints", this->throwing_joints)){
+		ROS_WARN("The param 'throwing_joints' not found in param server! Using default.");
+		this->throwing_joints = {-0.136, 0.794, -0.115, -1.337, 0.250, 2.217, -0.479};
+		success = false;
+	}
+
 
     if(!ros::param::get("/task_sequencer/handover_thresh", this->handover_thresh)){
 		ROS_WARN("The param 'handover_thresh' not found in param server! Using default.");
@@ -252,7 +261,6 @@ void TaskSequencer::get_object_pose_vacuuming(const geometry_msgs::Pose::ConstPt
     // Saving the message
     this->object_pose_T_vacuuming = *msg;
 }
-
 
 
 // Callback for franka state subscriber
@@ -359,7 +367,7 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
     return true;
 }
 
-/*-----------------------------------*/
+/*------------Vacuuming Service------------------*/
 bool TaskSequencer::call_simple_vacuum_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
 
  // Checking the request for correctness
@@ -427,6 +435,38 @@ bool TaskSequencer::call_simple_vacuum_task(std_srvs::SetBool::Request &req, std
     res.message = "The service call_simple_grasp_task was correctly performed!";
     return true;
 }
+
+/*------------Throwing Service -------------------*/
+bool TaskSequencer::call_simple_throwing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
+    
+    // Checking the request for correctness
+    if(!req.data){
+        ROS_WARN("Did you really want to call the simple throwing task service with data = false?");
+        res.success = true;
+        res.message = "The service call_simple_throwing_task done correctly with false request!";
+        return true;
+    }
+
+    // 1) Going to place joint config
+    if(!this->panda_softhand_client.call_joint_service(this->throwing_joints) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified throwing place joint config.");
+        res.success = false;
+        res.message = "The service call_simple_throwing_task was NOT performed correctly!";
+        return false;
+    }
+    // // 2) Opening hand
+    // if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
+    //     ROS_ERROR("Could not open the hand.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_place_task was NOT performed correctly!";
+    //     return false;
+    // }
+
+    // Now, everything finished well
+    res.success = true;
+    res.message = "The service call_simple_throwing_task was correctly performed!";
+    return true;
+};
 
 // Callback for complex grasp task service (goes to specified pose)
 bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_grasp::Request &req, panda_softhand_control::complex_grasp::Response &res){

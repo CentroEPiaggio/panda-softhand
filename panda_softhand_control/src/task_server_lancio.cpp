@@ -2,9 +2,11 @@
 Authors: George Jose Pollayil - Mathew Jose Pollayil
 Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
+//
+
 // Basic Includes
 #include "ros/ros.h"
-
+#include <iostream>
 #include "ros/service_client.h"
 
 // Object Includes
@@ -15,7 +17,7 @@ ROS NODE MAIN TASK SEQUENCE SERVER
 **********************************************/
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "panda_softhand_task_server");
+    ros::init(argc, argv, "panda_softhand_task_server_lancio");
 
     ros::NodeHandle nh_;
 
@@ -28,7 +30,8 @@ int main(int argc, char **argv)
     // ROS Async spinner (necessary for processing callbacks inside the service callbacks)
     ros::AsyncSpinner spinner(4);
     spinner.start();
-   
+    
+    std::cout << std::boolalpha;
     /* 1) Going to home position*/
     //Create the request and response object
     
@@ -74,6 +77,18 @@ int main(int argc, char **argv)
        ROS_INFO_STREAM("Failed to completed the Vacuuming service");
     }
 
+    /*4) Going to vacuuming position */
+    ROS_INFO("Going to throwing position");
+    bool success_throwing = task_sequencer_obj.call_simple_throwing_task(req,resp);
+    
+    // Check the success_throwing and use of the response
+
+    if(success_throwing){
+       ROS_INFO_STREAM("Throwing service completed correctly: " << resp.success);
+    } else {
+       ROS_INFO_STREAM("Failed to completed the Throwing service");
+    }
+    
 
     while(ros::ok()){
         // Nothing to do here
