@@ -51,12 +51,18 @@ class TaskSequencer {
         // Callback for object pose subscriber
         void get_object_pose(const geometry_msgs::Pose::ConstPtr &msg);
 
+        /* Callback for object pose subscriber vacuuming*/
+        void get_object_pose_vacuuming(const geometry_msgs::Pose::ConstPtr &msg);
+
         // Callback for franka state subscriber
         void get_franka_state(const franka_msgs::FrankaState::ConstPtr &msg);
 
         // Callback for simple grasp task service
         bool call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
-
+        
+        // Callback for simple vacuuming task service
+        bool call_simple_vacuum_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+        
         // Callback for complex grasp task service (goes to specified pose)
         bool call_complex_grasp_task(panda_softhand_control::complex_grasp::Request &req, panda_softhand_control::complex_grasp::Response &res);
 
@@ -79,6 +85,11 @@ class TaskSequencer {
         // Subscriber to object pose and the pose
         ros::Subscriber object_sub;
         geometry_msgs::Pose object_pose_T;
+
+        /* Subscriber to object pose and the pose for vacuuming*/
+
+        ros::Subscriber object_sub_vacuuming;
+        geometry_msgs::Pose object_pose_T_vacuuming;
 
         // Subscriber to franka_states for getting tau_ext on joints and other info and Publisher of its norm
         ros::Subscriber franka_state_sub;
@@ -106,6 +117,8 @@ class TaskSequencer {
         std::string handover_task_service_name;
         std::string set_object_service_name;
 
+        std::string vacuum_task_service_name;
+
         // Service Servers
         ros::ServiceServer grasp_task_server;
         ros::ServiceServer complex_grasp_task_server;
@@ -113,6 +126,9 @@ class TaskSequencer {
         ros::ServiceServer home_task_server;
         ros::ServiceServer handover_task_server;
         ros::ServiceServer set_object_server;
+
+        ros::ServiceServer vacuum_task_server;
+
 
         // The XmlRpc value for parsing complex params
         XmlRpc::XmlRpcValue task_seq_params;
@@ -131,6 +147,13 @@ class TaskSequencer {
         std::vector<double> place_joints;
         std::vector<double> handover_joints;
         double handover_thresh;
+
+        std::vector<double> vacuum_transform;
+
+        std::vector<double> grasp_transform_vacuuming;
+        geometry_msgs::Pose grasp_T_vacuuming;
+        std::vector<double> pre_grasp_transform_vacuuming;
+        geometry_msgs::Pose pre_grasp_T_vacuuming;
 
         std::map<std::string, std::vector<double>> poses_map;     // The map containing the notable poses
 

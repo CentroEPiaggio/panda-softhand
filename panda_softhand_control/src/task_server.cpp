@@ -61,6 +61,20 @@ int main(int argc, char **argv)
        ROS_INFO_STREAM("Failed to completed the handtool service");
     }
     
+
+    /*3) Going to vacuuming position */
+    ROS_INFO("Going to vacuuming position");
+    bool success_vacuuming = task_sequencer_obj.call_simple_vacuum_task(req,resp);
+    
+    // Check the success_handtool and use of the response
+
+    if(success_vacuuming){
+       ROS_INFO_STREAM("Vacuuming service completed correctly: " << resp.success);
+    } else {
+       ROS_INFO_STREAM("Failed to completed the Vacuuming service");
+    }
+
+
     while(ros::ok()){
         // Nothing to do here
     }

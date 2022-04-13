@@ -15,11 +15,19 @@ task_sequencer:
 
   # The joint configuration for home
   home_joints: [-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110] 
+
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
   # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default)
   grasp_transform: [0.478, -0.607, 0.511, 1.567, 0.106, 0.129]
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform: [0.0, 0.0, -0.1, 0.0, 0.0, 0.0]
+
+  # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
+  grasp_transform_vacuum: [0.612, -0.335, 0.395, 2.397, -0.458, 0.010]
+  # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
+  pre_grasp_transform_vacuum: [0.0, 0.0, -0.10, 0.0, 0.0, 0.0]
+
+
   # The joint configuration for place
   place_joints: [0.13173753611513103, 0.6463656097044025, 0.3532548962979362, -1.836787588992318, -1.4020667830440734, 1.2804275251831323, 0.7702129185133509]
   # The joint configuration for handover
