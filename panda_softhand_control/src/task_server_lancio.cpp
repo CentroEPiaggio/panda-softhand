@@ -76,8 +76,23 @@ int main(int argc, char **argv)
     } else {
        ROS_INFO_STREAM("Failed to completed the Vacuuming service");
     }
+   
+   /*4) Going to prethrowing position */
 
-    /*4) Going to vacuuming position */
+    ROS_INFO("Going to prethrowing position");
+    bool success_prethrowing = task_sequencer_obj.call_simple_prethrowing_task(req,resp);
+    
+    // Check the success_handtool and use of the response
+
+    if(success_prethrowing){
+       ROS_INFO_STREAM("Prethrowing service completed correctly: " << resp.success);
+    } else {
+       ROS_INFO_STREAM("Failed to completed the Prethrowing service");
+    }
+
+
+
+    /*5) Going to throwing position */
     ROS_INFO("Going to throwing position");
     bool success_throwing = task_sequencer_obj.call_simple_throwing_task(req,resp);
     

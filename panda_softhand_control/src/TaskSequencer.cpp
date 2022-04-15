@@ -21,10 +21,19 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     this->object_sub = this->nh.subscribe(this->object_topic_name, 1, &TaskSequencer::get_object_pose, this);
     ros::topic::waitForMessage<geometry_msgs::Pose>(this->object_topic_name, ros::Duration(2.0));
     
-     // Initializing the object subscriber and waiting (the object topic name is parsed now) vacuuming
+    // Initializing the object subscriber and waiting (the object topic name is parsed now) vacuuming
     this->object_sub_vacuuming = this->nh.subscribe(this->object_topic_name, 1, &TaskSequencer::get_object_pose_vacuuming, this);
     ros::topic::waitForMessage<geometry_msgs::Pose>(this->object_topic_name, ros::Duration(2.0));
+    
 
+    // Initializing the object subscriber and waiting (the object topic name is parsed now) prethrown
+    this->object_sub_prethrown = this->nh.subscribe(this->object_topic_name, 1, &TaskSequencer::get_object_pose_prethrown, this);
+    ros::topic::waitForMessage<geometry_msgs::Pose>(this->object_topic_name, ros::Duration(2.0));
+    
+    // Initializing the object subscriber and waiting (the object topic name is parsed now) throwing
+    
+    this->object_sub_thrown = this->nh.subscribe(this->object_topic_name, 1, &TaskSequencer::get_object_pose_thrown, this);
+    ros::topic::waitForMessage<geometry_msgs::Pose>(this->object_topic_name, ros::Duration(2.0));
 
     // Initializing the franka_state_sub subscriber and waiting
     this->franka_state_sub = this->nh.subscribe("/" + this->robot_name + this->franka_state_topic_name, 1, &TaskSequencer::get_franka_state, this);
@@ -46,6 +55,7 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     this->set_object_service_name = "set_object_service";
 
     this->vacuum_task_service_name = "vacuum_task_service";
+    this->prethrown_task_service_name = "prethrown_service";
     this->throwing_task_service_name = "throwing_task_service_name";
 
     // Advertising the services
@@ -57,6 +67,7 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     this->set_object_server = this->nh.advertiseService(this->set_object_service_name, &TaskSequencer::call_set_object, this);
     
     this->vacuum_task_server = this->nh.advertiseService(this->vacuum_task_service_name,     &TaskSequencer::call_simple_vacuum_task, this );
+    this->prethrowing_task_server = this->nh.advertiseService(this->prethrown_task_service_name,   &TaskSequencer::call_simple_prethrowing_task, this );
     this->throwing_task_server = this->nh.advertiseService(this->throwing_task_service_name, &TaskSequencer::call_simple_throwing_task, this );
     
     // Spinning once
@@ -135,7 +146,7 @@ bool TaskSequencer::parse_task_params(){
     /* For Vacuuming service..not sure if it will work*/
     
     if(!ros::param::get("/task_sequencer/grasp_transform_vacuum", this->grasp_transform_vacuuming)){
-		ROS_WARN("The param 'grasp_transform' not found in param server! Using default.");
+		ROS_WARN("The param 'grasp_transform_vacuum' not found in param server! Using default.");
 		this->grasp_transform_vacuuming.resize(6);
         std::fill(this->grasp_transform_vacuuming.begin(), this->grasp_transform_vacuuming.end(), 0.0);
 		success = false;
@@ -146,7 +157,7 @@ bool TaskSequencer::parse_task_params(){
 
 
     if(!ros::param::get("/task_sequencer/pre_grasp_transform_vacuum", this->pre_grasp_transform_vacuuming)){
-		ROS_WARN("The param 'pre_grasp_transform' not found in param server! Using default.");
+		ROS_WARN("The param 'pre_grasp_transform_vacuum' not found in param server! Using default.");
 		this->pre_grasp_transform_vacuuming.resize(6);
         std::fill(this->pre_grasp_transform_vacuuming.begin(), this->pre_grasp_transform_vacuuming.end(), 0.0);
 		success = false;
@@ -157,6 +168,74 @@ bool TaskSequencer::parse_task_params(){
     this->pre_grasp_T_vacuuming = this->convert_vector_to_pose(this->pre_grasp_transform_vacuuming);
 
    /*-------------------------------------------------------------------------------*/
+   
+
+   /*------------------------------------------------------------------------*/
+    /* For Prethrowing task service..not sure if it will work*/
+    
+    if(!ros::param::get("/task_sequencer/grasp_transform_prethrown", this->grasp_transform_prethrown)){
+		ROS_WARN("The param 'grasp_transform' not found in param server! Using default.");
+		this->grasp_transform_prethrown.resize(6);
+        std::fill(this->grasp_transform_prethrown.begin(), this->grasp_transform_prethrown.end(), 0.0);
+		success = false;
+	}
+
+    // Converting the grasp_transform vector to geometry_msgs Pose
+    this->grasp_T_prethrown = this->convert_vector_to_pose(this->grasp_transform_prethrown);
+
+
+    if(!ros::param::get("/task_sequencer/pre_grasp_transform_prethrown", this->pre_grasp_transform_prethrown)){
+		ROS_WARN("The param 'pre_grasp_transform' not found in param server! Using default.");
+		this->pre_grasp_transform_prethrown.resize(6);
+        std::fill(this->pre_grasp_transform_prethrown.begin(), this->pre_grasp_transform_prethrown.end(), 0.0);
+		success = false;
+	}
+    
+    
+    // Converting the pre_grasp_transform vector to geometry_msgs Pose
+    this->pre_grasp_T_prethrown = this->convert_vector_to_pose(this->pre_grasp_transform_prethrown);
+
+   /*-------------------------------------------------------------------------------*/
+    
+    /*------------------------------------------------------------------------*/
+    /* For Throwing task service..not sure if it will work*/
+    
+    if(!ros::param::get("/task_sequencer/grasp_transform_thrown", this->grasp_transform_thrown)){
+		ROS_WARN("The param 'grasp_transform_thrown' not found in param server! Using default.");
+		this->grasp_transform_thrown.resize(6);
+        std::fill(this->grasp_transform_thrown.begin(), this->grasp_transform_thrown.end(), 0.0);
+		success = false;
+	}
+
+    // Converting the grasp_transform vector to geometry_msgs Pose
+    this->grasp_T_thrown = this->convert_vector_to_pose(this->grasp_transform_thrown);
+
+
+    if(!ros::param::get("/task_sequencer/pre_grasp_transform_thrown", this->pre_grasp_transform_thrown)){
+		ROS_WARN("The param 'pre_grasp_transform_thrown' not found in param server! Using default.");
+		this->pre_grasp_transform_thrown.resize(6);
+        std::fill(this->pre_grasp_transform_thrown.begin(), this->pre_grasp_transform_thrown.end(), 0.0);
+		success = false;
+	}
+    
+    
+    // Converting the pre_grasp_transform vector to geometry_msgs Pose
+    this->pre_grasp_T_thrown = this->convert_vector_to_pose(this->pre_grasp_transform_thrown);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     if(!ros::param::get("/task_sequencer/handover_joints", this->handover_joints)){
 		ROS_WARN("The param 'handover_joints' not found in param server! Using default.");
@@ -197,10 +276,6 @@ bool TaskSequencer::parse_task_params(){
     if(DEBUG){
         ROS_INFO_STREAM("The poses map is");
         for(auto it : this->poses_map){
-            std::cout << it.first << " : [ ";
-            for(auto vec_it : it.second){
-                std::cout << vec_it << " ";
-            }
             std::cout << "]" << std::endl;
         }
     }
@@ -260,6 +335,22 @@ void TaskSequencer::get_object_pose_vacuuming(const geometry_msgs::Pose::ConstPt
 
     // Saving the message
     this->object_pose_T_vacuuming = *msg;
+}
+
+//*Callback for prethrown object pose
+
+void TaskSequencer::get_object_pose_prethrown(const geometry_msgs::Pose::ConstPtr &msg){
+
+    // Saving the message
+    this->object_pose_T_prethrown = *msg;
+}
+
+//*Callback for thrown object pose
+
+void TaskSequencer::get_object_pose_thrown(const geometry_msgs::Pose::ConstPtr &msg){
+
+    // Saving the message
+    this->object_pose_T_thrown = *msg;
 }
 
 
@@ -370,7 +461,7 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
 /*------------Vacuuming Service------------------*/
 bool TaskSequencer::call_simple_vacuum_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
 
- // Checking the request for correctness
+// Checking the request for correctness
     if(!req.data){
         ROS_WARN("Did you really want to call the simple grasp task service with data = false?");
         res.success = true;
@@ -436,36 +527,145 @@ bool TaskSequencer::call_simple_vacuum_task(std_srvs::SetBool::Request &req, std
     return true;
 }
 
-/*------------Throwing Service -------------------*/
-bool TaskSequencer::call_simple_throwing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
-    
-    // Checking the request for correctness
+/*------------Prethrowing Service------------------*/
+
+bool TaskSequencer::call_simple_prethrowing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
+
+   // Checking the request for correctness
     if(!req.data){
-        ROS_WARN("Did you really want to call the simple throwing task service with data = false?");
+        ROS_WARN("Did you really want to call the simple prethrowning task service with data = false?");
         res.success = true;
-        res.message = "The service call_simple_throwing_task done correctly with false request!";
+        res.message = "The service call_simple_prethrowing_task done correctly with false request!";
         return true;
     }
 
-    // 1) Going to place joint config
-    if(!this->panda_softhand_client.call_joint_service(this->throwing_joints) || !this->franka_ok){
-        ROS_ERROR("Could not go to the specified throwing place joint config.");
+    // // 1) Going to home configuration
+    // if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
+    //     ROS_ERROR("Could not go to the specified home joint configuration.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+    //     return false;
+    // }
+
+    // Computing the grasp and pregrasp pose and converting to geometry_msgs Pose
+    Eigen::Affine3d object_pose_aff_prethrown; tf::poseMsgToEigen(this->object_pose_T_prethrown, object_pose_aff_prethrown);
+    Eigen::Affine3d grasp_transform_aff_prethrown; tf::poseMsgToEigen(this->grasp_T_prethrown, grasp_transform_aff_prethrown);
+    Eigen::Affine3d pre_grasp_transform_aff_prethrown; tf::poseMsgToEigen(this->pre_grasp_T_prethrown, pre_grasp_transform_aff_prethrown);
+
+    geometry_msgs::Pose pre_grasp_pose_prethrown; geometry_msgs::Pose grasp_pose_prethrown;
+    tf::poseEigenToMsg(object_pose_aff_prethrown * grasp_transform_aff_prethrown * pre_grasp_transform_aff_prethrown, pre_grasp_pose_prethrown);
+    tf::poseEigenToMsg(object_pose_aff_prethrown * grasp_transform_aff_prethrown, grasp_pose_prethrown);
+
+    // Computing object pose for debugging
+    std::cout << "Object position is \n" << object_pose_aff_prethrown.translation() << std::endl;
+
+    // 2) Going to pregrasp pose
+    if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose_prethrown, false) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified pre grasp pose.");
         res.success = false;
-        res.message = "The service call_simple_throwing_task was NOT performed correctly!";
+        res.message = "The service call_simple_prethrown_task was NOT performed correctly!";
         return false;
     }
-    // // 2) Opening hand
-    // if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
-    //     ROS_ERROR("Could not open the hand.");
+
+    // 3) Going to grasp pose
+    if(!this->panda_softhand_client.call_slerp_service(grasp_pose_prethrown, false) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified grasp pose.");
+        res.success = false;
+        res.message = "The service call_simple_prethrown_task was NOT performed correctly!";
+        return false;
+    }
+
+    // // 4) Performing simple grasp
+    // if(!this->panda_softhand_client.call_hand_service(1.0, 2.0) || !this->franka_ok){
+    //     ROS_ERROR("Could not perform the simple grasp.");
     //     res.success = false;
-    //     res.message = "The service call_simple_place_task was NOT performed correctly!";
+    //     res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+    //     return false;
+    // }
+
+    // // 4) Lifting the grasped? object
+    // if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
+    //     ROS_ERROR("Could not lift to the specified pose.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_grasp_task was NOT performed correctly!";
     //     return false;
     // }
 
     // Now, everything finished well
     res.success = true;
-    res.message = "The service call_simple_throwing_task was correctly performed!";
+    res.message = "The service call_simple_prethrown_task was correctly performed!";
     return true;
+};
+
+
+/*------------Throwing Service -------------------*/
+bool TaskSequencer::call_simple_throwing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
+    
+    // Checking the request for correctness
+    if(!req.data){
+        ROS_WARN("Did you really want to call the simple throwning task service with data = false?");
+        res.success = true;
+        res.message = "The service call_simple_throwing_task done correctly with false request!";
+        return true;
+    }
+
+    // // 1) Going to home configuration
+    // if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
+    //     ROS_ERROR("Could not go to the specified home joint configuration.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+    //     return false;
+    // }
+
+    // Computing the grasp and pregrasp pose and converting to geometry_msgs Pose
+    Eigen::Affine3d object_pose_aff_thrown; tf::poseMsgToEigen(this->object_pose_T_thrown, object_pose_aff_thrown);
+    Eigen::Affine3d grasp_transform_aff_thrown; tf::poseMsgToEigen(this->grasp_T_thrown, grasp_transform_aff_thrown);
+    Eigen::Affine3d pre_grasp_transform_aff_thrown; tf::poseMsgToEigen(this->pre_grasp_T_thrown, pre_grasp_transform_aff_thrown);
+
+    geometry_msgs::Pose pre_grasp_pose_thrown; geometry_msgs::Pose grasp_pose_thrown;
+    tf::poseEigenToMsg(object_pose_aff_thrown * grasp_transform_aff_thrown * pre_grasp_transform_aff_thrown, pre_grasp_pose_thrown);
+    tf::poseEigenToMsg(object_pose_aff_thrown * grasp_transform_aff_thrown, grasp_pose_thrown);
+
+    // Computing object pose for debugging
+    std::cout << "Object position is \n" << object_pose_aff_thrown.translation() << std::endl;
+
+    // 2) Going to pregrasp pose
+    if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose_thrown, false) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified pre grasp pose.");
+        res.success = false;
+        res.message = "The service call_simple_thrown_task was NOT performed correctly!";
+        return false;
+    }
+
+    // 3) Going to grasp pose
+    if(!this->panda_softhand_client.call_slerp_service(grasp_pose_thrown, false) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified grasp pose.");
+        res.success = false;
+        res.message = "The service call_simple_thrown_task was NOT performed correctly!";
+        return false;
+    }
+
+    // // 4) Performing simple grasp
+    // if(!this->panda_softhand_client.call_hand_service(1.0, 2.0) || !this->franka_ok){
+    //     ROS_ERROR("Could not perform the simple grasp.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+    //     return false;
+    // }
+
+    // // 4) Lifting the grasped? object
+    // if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
+    //     ROS_ERROR("Could not lift to the specified pose.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+    //     return false;
+    // }
+
+    // Now, everything finished well
+    res.success = true;
+    res.message = "The service call_simple_prethrown_task was correctly performed!";
+    return true;
+
 };
 
 // Callback for complex grasp task service (goes to specified pose)

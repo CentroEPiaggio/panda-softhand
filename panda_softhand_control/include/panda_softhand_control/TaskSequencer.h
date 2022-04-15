@@ -54,6 +54,13 @@ class TaskSequencer {
         /* Callback for object pose subscriber vacuuming*/
         void get_object_pose_vacuuming(const geometry_msgs::Pose::ConstPtr &msg);
 
+        /* Callback for object pose subscriber prethrown*/
+        void get_object_pose_prethrown(const geometry_msgs::Pose::ConstPtr &msg);
+        
+        /* Callback for object pose subscriber Thrown*/
+        void get_object_pose_thrown(const geometry_msgs::Pose::ConstPtr &msg);
+
+
         // Callback for franka state subscriber
         void get_franka_state(const franka_msgs::FrankaState::ConstPtr &msg);
 
@@ -63,6 +70,11 @@ class TaskSequencer {
         /*---- Callback for simple vacuuming task service----*/
         bool call_simple_vacuum_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
         
+       
+        /*----- Callback for pre-throwing task service---- */
+        
+        bool call_simple_prethrowing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+
         /*---- Callback for throwing task service----*/
         bool call_simple_throwing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
@@ -93,6 +105,17 @@ class TaskSequencer {
 
         ros::Subscriber object_sub_vacuuming;
         geometry_msgs::Pose object_pose_T_vacuuming;
+        
+
+        /* Subscriber to object pose and the pose for prethrowing*/
+
+        ros::Subscriber object_sub_prethrown;
+        geometry_msgs::Pose object_pose_T_prethrown;
+
+        /* Subscriber to object pose and the pose for throwing*/
+
+        ros::Subscriber object_sub_thrown;
+        geometry_msgs::Pose object_pose_T_thrown;
 
         // Subscriber to franka_states for getting tau_ext on joints and other info and Publisher of its norm
         ros::Subscriber franka_state_sub;
@@ -121,6 +144,7 @@ class TaskSequencer {
         std::string set_object_service_name;
 
         std::string vacuum_task_service_name;
+        std::string prethrown_task_service_name;
         std::string throwing_task_service_name;
 
         // Service Servers
@@ -132,6 +156,7 @@ class TaskSequencer {
         ros::ServiceServer set_object_server;
 
         ros::ServiceServer vacuum_task_server;
+        ros::ServiceServer prethrowing_task_server;
         ros::ServiceServer throwing_task_server;
 
         // The XmlRpc value for parsing complex params
@@ -151,13 +176,33 @@ class TaskSequencer {
         std::vector<double> place_joints;
         std::vector<double> handover_joints;
         double handover_thresh;
-
+        
+        /* Vacuuming task service */
         std::vector<double> vacuum_transform;
 
         std::vector<double> grasp_transform_vacuuming;
         geometry_msgs::Pose grasp_T_vacuuming;
         std::vector<double> pre_grasp_transform_vacuuming;
         geometry_msgs::Pose pre_grasp_T_vacuuming;
+        
+        /* Prethrowing task service*/
+        std::vector<double> prethrown_transform;
+
+        std::vector<double> grasp_transform_prethrown;
+        geometry_msgs::Pose grasp_T_prethrown;
+        std::vector<double> pre_grasp_transform_prethrown;
+        geometry_msgs::Pose pre_grasp_T_prethrown;
+        
+
+        /* Throwing task service*/
+        std::vector<double> thrown_transform;
+
+        std::vector<double> grasp_transform_thrown;
+        geometry_msgs::Pose grasp_T_thrown;
+        std::vector<double> pre_grasp_transform_thrown;
+        geometry_msgs::Pose pre_grasp_T_thrown;
+
+
 
         std::vector<double> throwing_joints;
 
