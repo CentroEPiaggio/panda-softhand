@@ -21,13 +21,13 @@ task_sequencer:
   #------------------------ Grasping handtools-----------------------#
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
   # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default)
-  grasp_transform: [0.702, -0.388, 0.555, 1.610, -0.001, 0.066]
+  grasp_transform: [0.302, -0.412, 0.576, 1.566, 0.195, -0.218]
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform: [0.0, 0.0, -0.1, 0.0, 0.0, 0.0]
 
   #------------------------ Vacuuming action -----------------------#
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
-  grasp_transform_vacuum: [0.635, 0.049, 0.257, 1.622, -0.029, 0.136]
+  grasp_transform_vacuum: [0.662, -0.119, 0.274, 1.574, 0.206, 0.257]
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform_vacuum: [0.0, 0.10, 0, 0.0, 0.0, 0.0]
   

@@ -1,13 +1,12 @@
 <?xml version="1.0"?>
 <launch>
 
-	<!-- Launch arguments -->
-	<arg name="task_sequences_params" default="$(find panda_softhand_control)/configs/task_sequences_params.yaml"/>
+<!-- <include file="$(find listener_pkg)/launch/launchListener.launch" /> -->
+    <arg name="task_sequences_params" default="$(find panda_softhand_control)/configs/task_sequences_params.yaml"/>
 	
 	<!-- Loading config file to param server -->
 	<rosparam command="load" file="$(arg task_sequences_params)"/>
 
-	<!-- Load main node -->
+<!-- Load main node -->
   	<node name="task_server_node_lancio" pkg="panda_softhand_control" type="task_server_lancio" output="screen"/>	
-
 </launch>

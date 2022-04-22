@@ -1,6 +1,5 @@
 <launch>
-
-<include file="$(find panda_softhand_description)/launch/launchPandaSoftHand.launch" />
-<include file="$(find panda_softhand_control)/launch/launchControlServer.launch" />
-
+   <include file="$(find panda_softhand_description)/launch/launchPandaSoftHand.launch" />
+   <include file="$(find panda_softhand_control)/launch/launchControlServer.launch" />   
+   <include file="$(find panda_softhand_control)/launch/launchTaskServer.launch" />
 </launch>

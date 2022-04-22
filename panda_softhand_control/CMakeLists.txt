@@ -90,6 +90,10 @@ add_executable(task_server_lancio src/task_server_lancio.cpp ${OBJECTS_SOURCE_FI
 add_dependencies(task_server_lancio ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(task_server_lancio ${catkin_LIBRARIES} ${ROS_LIBRARIES})
 
+add_executable(task_server src/task_server.cpp ${OBJECTS_SOURCE_FILES})
+add_dependencies(task_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(task_server ${catkin_LIBRARIES} ${ROS_LIBRARIES})
+
 # NODE: Utility to publish collision objects to planning scene from world file
 add_executable(world_to_planning_scene_node src/SdfToPlanningScene.cpp)
 target_link_libraries(world_to_planning_scene_node ${catkin_LIBRARIES} ${ROS_LIBRARIES} ${SDFormat_LIBRARIES})

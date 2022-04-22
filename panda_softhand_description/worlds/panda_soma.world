@@ -45,7 +45,7 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>1.2 1 0.03</size>
+		          <size>1.2 0.9 0.03</size>
 		        </box>
 		      </geometry>
 	      </collision>
@@ -53,7 +53,36 @@
 				<visual name="my_visualTable">
 					<geometry>
 		        <box>
-					<size>1.2 1 0.03</size>
+					<size>1.2 0.9 0.03</size>
+		        </box>
+		      </geometry>
+	      </visual>
+
+				<self_collide>0</self_collide>
+				<gravity>1</gravity>
+			</link>
+    </model>
+
+	<!-- box (like a wall on the right of the robot) -->
+    <model name="wall_right">
+			<pose> 0 0 0 0 0 0</pose>
+			<static>true</static>
+			<link name='linkWallRight'>
+				<pose>0 0 0 0 0 0</pose>
+
+				<collision name="my_collisionWallRight">
+		 			<pose>0 0 0 0 0 0</pose>
+					<geometry>
+		        <box>
+		          <size>0.05 1 1</size>
+		        </box>
+		      </geometry>
+	      </collision>
+
+				<visual name="my_visualWallRight">
+					<geometry>
+		        <box>
+					<size>0.05 1 1</size>
 		        </box>
 		      </geometry>
 	      </visual>
