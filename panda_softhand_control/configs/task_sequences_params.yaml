@@ -27,23 +27,22 @@ task_sequencer:
 
   #------------------------ Vacuuming action -----------------------#
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
-  grasp_transform_vacuum: [0.662, -0.119, 0.274, 1.574, 0.206, 0.257]
+  grasp_transform_vacuum: [0.662, -0.120, 0.274, 1.576, 0.207, 0.256]
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform_vacuum: [0.0, 0.10, 0, 0.0, 0.0, 0.0]
   
 
-
   #------------------------- Prethrowing action ----------------------#
 
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
-  grasp_transform_prethrown: [0.635, 0.049, 0.497, 1.622, -0.029, 0.136]
+  grasp_transform_prethrown: [0.662, -0.120, 0.494, 1.576, 0.207, 0.256]
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform_prethrown: [0.0, 0.0, 0, 0.0, 0.0, 0.0]
 
     #------------------------- Throwing action ----------------------#
 
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
-  grasp_transform_thrown: [0.635, 0.049, 0.497, -1.625, 0.656, -0.048]
+  grasp_transform_thrown: [0.662, -0.120, 0.494, -1.719, 0.688, -0.194]
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform_thrown: [0.0, 0.0, 0, 0.0, 0.0, 0.0]
 
@@ -55,7 +54,8 @@ task_sequencer:
 
 
   # The joint configuration for place
-  place_joints: [0.13173753611513103, 0.6463656097044025, 0.3532548962979362, -1.836787588992318, -1.4020667830440734, 1.2804275251831323, 0.7702129185133509]
+  place_joints: [0.24426277293029583, -0.11408204548505313, -0.3088522421563914, -2.1368414315101796, 1.4148923071887758, 1.841613292105521, 0.2639070161117448]
+  
   # The joint configuration for handover
   handover_joints: [-0.101, 0.161, 0.159, -1.651, 2.023, 2.419, -0.006]
   # The threshold on tau_ext for handover hand opening

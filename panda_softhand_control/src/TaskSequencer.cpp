@@ -757,13 +757,13 @@ bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
-    // 2) Opening hand
-    if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
-        ROS_ERROR("Could not open the hand.");
-        res.success = false;
-        res.message = "The service call_simple_place_task was NOT performed correctly!";
-        return false;
-    }
+    // // 2) Opening hand
+    // if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
+    //     ROS_ERROR("Could not open the hand.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_place_task was NOT performed correctly!";
+    //     return false;
+    // }
 
     // Now, everything finished well
     res.success = true;
