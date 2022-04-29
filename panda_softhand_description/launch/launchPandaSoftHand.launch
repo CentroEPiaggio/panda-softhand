@@ -8,7 +8,7 @@
 
     <!-- Panda params -->
     <arg name="panda_arm_enabled" default="true"/>
-    <arg name="robot_ip" default="172.16.0.101"/>
+    <arg name="robot_ip" default="172.16.0.3"/>
     <arg name="load_gripper" default="false"/>
 
     <!-- Hand/Glove params -->
@@ -56,7 +56,8 @@
         <rosparam command="load" file="$(find panda_controllers)/config/panda_controllers.yaml" />
         <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="franka_state_controller"/>
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="position_joint_trajectory_controller"/>
-        <node name="controller_stopper" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="--stopped cartesian_velocity_controller"/>
+        
+        
         
         <!-- Panda joint state publisher -->
         <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">

@@ -11,7 +11,7 @@ task_sequencer:
   # Impedance controller
   imp_controller: cartesian_impedance_controller_softbots_stiff_matrix
   # Name of the topic where the object pose is published
-  object_topic_name: /irim_demo/chosen_object
+  object_topic_name: /darko_throwing/chosen_object
 
   # The joint configuration for home
   home_joints: [-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110] 

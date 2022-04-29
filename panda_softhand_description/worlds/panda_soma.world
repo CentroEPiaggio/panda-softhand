@@ -6,7 +6,7 @@
   <world name="default">
 
 	<!-- box (like a robot base) -->
-    <model name="rob_base">
+    <!-- <model name="rob_base">
 			<pose> -0.08 0 -0.03 0 0 0</pose>
 			<static>true</static>
 			<link name='linkRobBase'>
@@ -32,11 +32,11 @@
 				<self_collide>0</self_collide>		
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model> -->
 	
 	<!-- box (like a table) -->
     <model name="table">
-			<pose> 0.6 0 -0.04 0 0 0</pose>
+			<pose> 0.7 0 0 0 0 0</pose>
 			<static>true</static>
 			<link name='linkTable'>
 				<pose>0 0 0 0 0 0</pose>
@@ -64,7 +64,7 @@
     </model>
 
 	<!-- box (like a roof) -->
-    <model name="roof">
+    <!-- <model name="roof">
 			<pose> 0.4 0 1.00 0 0 0</pose>
 			<static>true</static>
 			<link name='linkRoof'>
@@ -90,10 +90,10 @@
 				<self_collide>0</self_collide>		
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model> -->
 
 	<!-- box (like a wall behind) -->
-    <model name="wall_behind">
+    <!-- <model name="wall_behind">
 			<pose> -0.30 0 0.5 0 0 0</pose>
 			<static>true</static>
 			<link name='linkWallBehind'>
@@ -119,10 +119,10 @@
 				<self_collide>0</self_collide>		
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model> -->
 
 	<!-- box (like a wall near the camera) -->
-    <model name="wall_camera">
+    <!-- <model name="wall_camera">
 			<pose> 0.20 -0.45 0.5 0 0 0</pose>
 			<static>true</static>
 			<link name='linkWallCamera'>
@@ -148,10 +148,10 @@
 				<self_collide>0</self_collide>		
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model> -->
 
 	<!-- box (like a wall near the control pc) -->
-    <model name="wall_pc">
+    <!-- <model name="wall_pc">
 			<pose> 0.20 0.30 0.5 0 0 0</pose>
 			<static>true</static>
 			<link name='linkWallPc'>
@@ -177,10 +177,10 @@
 				<self_collide>0</self_collide>		
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model> -->
 
 	<!-- box (like a container for placing) -->
-    <model name="box_container">
+    <!-- <model name="box_container">
 			<pose> 0.87 0.00 0.01 0 0 0</pose>
 			<static>true</static>
 			<link name='linkBoxContainer'>
@@ -206,7 +206,7 @@
 				<self_collide>0</self_collide>		
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model> -->
 
   </world>
   

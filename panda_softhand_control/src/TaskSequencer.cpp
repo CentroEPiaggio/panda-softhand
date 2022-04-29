@@ -109,7 +109,7 @@ bool TaskSequencer::parse_task_params(){
 
     if(!ros::param::get("/task_sequencer/object_topic_name", this->object_topic_name)){
 		ROS_WARN("The param 'object_topic_name' not found in param server! Using default.");
-		this->object_topic_name = "/irim_demo/chosen_object";
+		this->object_topic_name = "/darko_throwing/chosen_object";
 		success = false;
 	}
 
@@ -323,6 +323,7 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
     }
 
     // 3) Going to grasp pose
+    
     if(!this->panda_softhand_client.call_slerp_service(grasp_pose, pre_grasp_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
@@ -546,7 +547,6 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_gras
     return true;
 
 }
-
 
 // Callback for simple place task service
 bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
@@ -797,7 +797,6 @@ bool TaskSequencer::call_set_place(panda_softhand_control::set_object::Request &
     return res.result;
 
 }
-
 
 // FK and IK Functions which makes use of MoveIt
 geometry_msgs::Pose TaskSequencer::performFK(std::vector<double> joints_in){
