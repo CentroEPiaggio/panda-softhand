@@ -869,8 +869,7 @@ bool TaskSequencer::call_set_object(panda_softhand_control::set_object::Request 
         ROS_WARN_STREAM("The object " << req.object_name << " is not present in my memory; using the previously used one or default... Did you spell it correctly? Is it in the yaml?");
         res.result = false;
         return res.result;
-    }
-
+    }    
     // Setting the grasp pose as requested
     this->grasp_transform = this->poses_map.at(req.object_name);
 
