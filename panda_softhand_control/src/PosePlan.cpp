@@ -53,7 +53,6 @@ bool PosePlan::call_pose_plan(panda_softhand_control::pose_plan::Request &req, p
     return true;
 }
 
-
 // Initialize the things for motion planning. Is called by the callback
 bool PosePlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory past_trajectory){
 

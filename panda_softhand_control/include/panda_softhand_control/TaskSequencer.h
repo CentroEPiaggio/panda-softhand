@@ -8,6 +8,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <eigen_conversions/eigen_msg.h>
 
 // ROS Service and Message Includes
+#include "std_msgs/Empty.h"
 #include "std_msgs/Float64.h"
 #include "std_msgs/Bool.h"
 #include "std_srvs/SetBool.h"
@@ -55,7 +56,9 @@ class TaskSequencer {
 
         // Callback for object pose subscriber
         void get_object_pose(const geometry_msgs::Pose::ConstPtr &msg);
-
+         
+        void get_object_pose_vacuum(const geometry_msgs::Pose::ConstPtr &msg);
+        
         // Callback for franka state subscriber
         void get_franka_state(const franka_msgs::FrankaState::ConstPtr &msg);
 
@@ -74,12 +77,15 @@ class TaskSequencer {
         // Callback for simple handover task service
         bool call_simple_handover_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
+        // Callback for throwing task service(grasping the hand-tool, vacuuming the object and throwing by using the blow-off function)
+        bool call_throwing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+
         // Callback for set object service
         bool call_set_object(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
 
         // Callback for set place joints service
         bool call_set_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
-
+        
 	/// private variables -------------------------------------------------------------------------
 	private:
 		ros::NodeHandle nh;
@@ -87,6 +93,12 @@ class TaskSequencer {
         // Subscriber to object pose and the pose
         ros::Subscriber object_sub;
         geometry_msgs::Pose object_pose_T;
+        
+        // Publishers for arduino(blowing_off and suctioning function)
+        
+        ros::Publisher pub_blow;
+        ros::Publisher pub_suction;
+    
 
         // Subscriber to franka_states for getting tau_ext on joints and other info and Publisher of its norm
         ros::Subscriber franka_state_sub;
@@ -112,8 +124,16 @@ class TaskSequencer {
         std::string place_task_service_name;
         std::string home_task_service_name;
         std::string handover_task_service_name;
+        std::string throwing_task_service_name;//
+
         std::string set_object_service_name;
         std::string set_place_service_name;
+        
+
+        // Topic names for arduino
+
+        std::string blow_off = "arduino/blowing_off";
+        std::string suction = "arduino/suctioning";
 
         // Service Servers
         ros::ServiceServer grasp_task_server;
@@ -121,8 +141,11 @@ class TaskSequencer {
         ros::ServiceServer place_task_server;
         ros::ServiceServer home_task_server;
         ros::ServiceServer handover_task_server;
+        ros::ServiceServer throwing_task_server;//
+
         ros::ServiceServer set_object_server;
         ros::ServiceServer set_place_server;
+        
 
         // The XmlRpc value for parsing complex params
         XmlRpc::XmlRpcValue task_seq_params;
@@ -142,6 +165,15 @@ class TaskSequencer {
         std::vector<double> handover_joints;
         double handover_thresh;
 
+
+        std::vector<double> pre_vacuum_joints;
+
+        std::vector<double> vacuum_transform;
+        geometry_msgs::Pose vacuum_T;
+
+        std::vector<double> throwing_joints;
+       
+        
         std::map<std::string, std::vector<double>> poses_map;               // The map containing the notable poses
 
         std::map<std::string, std::vector<double>> place_joints_map;        // The map containing the notable place joints

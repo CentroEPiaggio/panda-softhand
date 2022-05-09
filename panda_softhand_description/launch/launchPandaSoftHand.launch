@@ -108,7 +108,6 @@
 
         <!-- load the hand controllers in current namespace -->
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller joint_trajectory_controller"/>
-        <node name="controller_stopper" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="--stopped velocity_controller"/>
 
     </group>
 
