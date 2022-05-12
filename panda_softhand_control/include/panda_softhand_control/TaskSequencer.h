@@ -192,6 +192,8 @@ class TaskSequencer {
         // Other execution vars
         ros::Duration waiting_time;
         trajectory_msgs::JointTrajectory tmp_traj;
+        trajectory_msgs::JointTrajectory tmp_traj_arm;
+        trajectory_msgs::JointTrajectory tmp_traj_hand;
         std::vector<double> null_joints;                            // null joints in order to make joint plan from present joints
 
 };
