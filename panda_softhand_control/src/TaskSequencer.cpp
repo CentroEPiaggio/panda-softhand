@@ -52,7 +52,9 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     this->place_task_service_name = "place_task_service";
     this->home_task_service_name = "home_task_service";
     this->handover_task_service_name = "handover_task_service";
-    this->throwing_task_service_name = "throwing_task_service";//
+    this->grasp_task_handtool_service_name = "grasping_handtool_service";//
+    this->throwing_task_service_name = "throwing_service";
+
 
     this->set_object_service_name = "set_object_service";
     this->set_place_service_name = "set_place_service";
@@ -63,8 +65,10 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     this->place_task_server = this->nh.advertiseService(this->place_task_service_name, &TaskSequencer::call_simple_place_task, this);
     this->home_task_server = this->nh.advertiseService(this->home_task_service_name, &TaskSequencer::call_simple_home_task, this);
     this->handover_task_server = this->nh.advertiseService(this->handover_task_service_name, &TaskSequencer::call_simple_handover_task, this);
-    this->throwing_task_server = this->nh.advertiseService(this->throwing_task_service_name, &TaskSequencer::call_throwing_task, this); //
-    
+    this->grasp_handtool_task_server = this->nh.advertiseService(this->grasp_task_handtool_service_name, &TaskSequencer::call_grasp_handtool_task, this); //
+    this->throwing_task_server = this->nh.advertiseService(this->throwing_task_service_name,  &TaskSequencer::call_throwing_task, this );
+
+
     this->set_object_server = this->nh.advertiseService(this->set_object_service_name, &TaskSequencer::call_set_object, this);
     this->set_place_server =  this->nh.advertiseService(this->set_place_service_name, &TaskSequencer::call_set_place, this);
 
@@ -221,6 +225,38 @@ bool TaskSequencer::parse_task_params(){
     if(DEBUG){
         ROS_INFO_STREAM("The place joints map is");
         for(auto it : this->place_joints_map){
+            std::cout << it.first << " : [ ";
+            for(auto vec_it : it.second){
+                std::cout << vec_it << " ";
+            } 
+            std::cout << "]" << std::endl;     
+        }
+    }
+
+    if(!parseParameter(this->task_seq_params, this->pre_vacuum_joints_map, "pre_vacuum_joints_map")){
+        ROS_ERROR("Could not parse the poses map.");
+        success = false;
+    }
+
+    if(DEBUG){
+        ROS_INFO_STREAM("The pre_vacuum_joint map is");
+        for(auto it : this->pre_vacuum_joints_map){
+            std::cout << it.first << " : [ ";
+            for(auto vec_it : it.second){
+                std::cout << vec_it << " ";
+            } 
+            std::cout << "]" << std::endl;     
+        }
+    }
+
+    if(!parseParameter(this->task_seq_params, this->throwing_joints_map, "throwing_joints_map")){
+        ROS_ERROR("Could not parse the poses map.");
+        success = false;
+    }
+
+    if(DEBUG){
+        ROS_INFO_STREAM("The throwing_joint map is");
+        for(auto it : this->throwing_joints_map){
             std::cout << it.first << " : [ ";
             for(auto vec_it : it.second){
                 std::cout << vec_it << " ";
@@ -789,8 +825,8 @@ bool TaskSequencer::call_simple_handover_task(std_srvs::SetBool::Request &req, s
 
 }
 
-// Callback for throwing task service(grasping the hand-tool, vacuuming the object and throwing by using the blow-off function)
-bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
+// Callback for grasping hand-tool 
+bool TaskSequencer::call_grasp_handtool_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
   
     // // Checking the request for correctness
     if(!req.data){
@@ -825,18 +861,18 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
     if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose, present_pose, false, this->tmp_traj_arm, this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified pre grasp pose.");
         res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly!";
+        res.message = "The service call_grasp_handtool was NOT performed correctly!";
         return false;
-    }
+    };
 
     /* EXEC 1*/
 
     if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not go to pre grasp pose.");
         res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly! Error in arm control.";
+        res.message = "The service call_grasp_handtool was NOT performed correctly! Error in arm control.";
         return false;
-    }
+    };
    
     // 2) Going to grasp pose
     
@@ -845,27 +881,27 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
     if(!this->panda_softhand_client.call_slerp_service(grasp_pose, pre_grasp_pose, false, this->tmp_traj_arm, this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        res.message = "The service call_grasp_handtool was NOT performed correctly!";
         return false;
-    }
+    };
 
     /* WAIT 1*/
 
     if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
         ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre grasp from home joints");
         res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
+        res.message = "The service call_grasp_handtool was NOT performed correctly! Error wait in arm control.";
         return false;
-    }
+    };
 
     /* EXEC 2*/
 
     if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not go to grasp pose.");
         res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly! Error in arm control.";
+        res.message = "The service call_grasp_handtool was NOT performed correctly! Error in arm control.";
         return false;
-    }
+    };
     
     // 3) Performing simple grasp with planning, executing and waiting
 
@@ -874,58 +910,74 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
     if(!this->panda_softhand_client.call_hand_plan_service(1.0, 2.0, this->tmp_traj_hand) || !this->franka_ok){
         ROS_ERROR("Could not plan the simple grasp.");
         res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly! Error plan in hand plan.";
+        res.message = "The service call_grasp_handtool was NOT performed correctly! Error plan in hand plan.";
         return false;
-    }
+    };
 
     /* WAIT 2*/
 
     if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
         ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to grasp pose");
         res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
+        res.message = "The service call_grasp_handtool was NOT performed correctly! Error wait in arm control.";
         return false;
-    }
+    };
 
     /* EXEC 3*/
 
     if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj_hand) || !this->franka_ok){
         ROS_ERROR("Could not perform the grasping.");
         res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly! Error plan in hand control.";
+        res.message = "The service call_grasp_handtool was NOT performed correctly! Error plan in hand control.";
         return false;
-    }
+    };
 
-    // Getting current joints
-    std::vector<double> now_joints;
-    double timeout = 3.0;
-    bool found_ik_now = this->performIK(grasp_pose, timeout, now_joints);
-    if (!found_ik_now){
-        ROS_ERROR("Could not perform IK.");
+    /* PLAN 4*/
+
+    if(!this->panda_softhand_client.call_slerp_service(pre_grasp_pose, grasp_pose, false, this->tmp_traj_arm, this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
+        res.message = "The service call_grasp_handtool was NOT performed correctly!";
         return false;
-    }
-
-    /* PLAN 4: Planning towards prevacuuming configuration */
-
-    if(!this->panda_softhand_client.call_joint_service(this->pre_vacuum_joints, now_joints, this->tmp_traj_arm) || !this->franka_ok){
-        ROS_ERROR("Could not lift to the specified pose.");
-        res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly!";
-        return false;
-    }
+    };
     
     /* WAIT 3 */
 
     if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
         ROS_ERROR("Could not perform the simple grasp.");
         res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly! Error plan in hand wait.";
+        res.message = "The service call_grasp_handtool was NOT performed correctly! Error plan in hand wait.";
+        return false;
+    };
+
+    /* EXEC 4 */
+
+    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not go to pre grasp pose.");
+        res.success = false;
+        res.message = "The service call_grasp_handtool was NOT performed correctly! Error in arm control.";
+        return false;
+    };
+
+    return true;
+
+};
+
+// Callback for throwing several objects listed in the YAML file
+bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
+         
+    /* PLAN 1: Planning towards prevacuuming configuration */
+    
+    int n = 7;
+    std::vector<double> now_joints(n,0);
+    if(!this->panda_softhand_client.call_joint_service(this->pre_vacuum_joints, now_joints, this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not lift to the specified pose.");
+        res.success = false;
+        res.message = "The service call_throwing_task was NOT performed correctly!";
         return false;
     }
-     
-    /* EXEC 4: Going to prevacuuming configuration */
+       
+    /* EXEC 1: Going to prevacuuming configuration */
 
     if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not go to prevacuuming pose.");
@@ -934,8 +986,8 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
         return false;
     }
 
-
-    /*PLAN 5 */
+    /* PLAN 2: Planning to vacuuming position from prevacuuming position*/
+    
     // Getting current pose
     
     geometry_msgs::Pose pre_vacuum_pose =  this->performFK(this->pre_vacuum_joints);
@@ -950,28 +1002,27 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
         res.message = "The service call_throwing_task was NOT performed correctly!";
         return false;
     }
-
-    /* WAIT 4 */
+    
+    /* WAIT 1*/
 
     if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
         ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to prevacuuming joints configuration");
         res.success = false;
         res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
         return false;
-    }
+    };
 
+    /* EXEC 2*/
 
-    /* EXEC 5 */
-    
     if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not go to vacuum pose.");
         res.success = false;
         res.message = "The service call_throwing_task was NOT performed correctly! Error in arm control.";
         return false;
     }
-   
-    /*PLAN 6 */
-    
+
+    /* PLAN 3 : planning to prethrowing position from vacuuming position */
+
     std::vector<trajectory_msgs::JointTrajectoryPoint> traj_arm_points = (this->tmp_traj_arm).points;
     trajectory_msgs::JointTrajectoryPoint last_point = traj_arm_points.back();
 
@@ -988,74 +1039,103 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
         res.success = false;
         res.message = "The service call_throwing_task was NOT performed correctly!";
         return false;
-    }
+    };
 
-    /* WAIT 5 */
+    /* WAIT 2: */
 
     if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
-        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to vacuum pose");
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to prevacuuming joints configuration");
         res.success = false;
         res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
         return false;
-    }
+    };
 
     // Activate the Venturi pump for suctioning the object (COVAL)
 
     std_msgs::Empty msg;
     pub_suction.publish(msg);
 
-    /*EXEC 6 */
+
+    /* EXEC 3 */
 
     if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
-        ROS_ERROR("Could not go to prethrowing joint configuration.");
+        ROS_ERROR("Could not go to prethrowing position");
         res.success = false;
         res.message = "The service call_throwing_task was NOT performed correctly! Error in arm control.";
         return false;
-    }
-    
+    };
 
-    /* PLAN 7 */
+    /* PLAN 4: Planning to throwing position from prethrowing position  */
 
     if(!this->panda_softhand_client.call_joint_service(this->throwing_joints, this->pre_vacuum_joints, this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not lift to the specified pose.");
         res.success = false;
         res.message = "The service call_throwing_task was NOT performed correctly!";
         return false;
-    }
+    };
 
-    /* WAIT 6 */
+    /* WAIT 3 */
 
     if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
         ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to prethrowing joint configuration");
         res.success = false;
         res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
         return false;
-    }
-    
-    /* EXEC 7 */
+    };
+   
+    /* EXEC 4 */
 
     if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not go to throwing joint configuration.");
         res.success = false;
         res.message = "The service call_throwing_task was NOT performed correctly! Error in arm control.";
         return false;
-    }
+    };
     
 
-    /* WAIT 7*/
-    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
-        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to throwing joint configuration");
-        res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
-        return false;
-    }
+    // /* WAIT 4*/
+      
+    // if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+    //     ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to throwing joint configuration");
+    //     res.success = false;
+    //     res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
+    //     return false;
+    // };
     
     // Activate the blowing-off function (FESTO), and stop the Venturi pump for suctioning (COVAL)
     std_msgs::Empty msg2;
     pub_blow.publish(msg2);
 
-    return true;
+    /*PLAN 5: PLanning to prethrowing joint configuration from throwing joint configuration*/
 
+    if(!this->panda_softhand_client.call_joint_service(this->pre_vacuum_joints, this->throwing_joints, this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not lift to the specified pose.");
+        res.success = false;
+        res.message = "The service call_throwing_task was NOT performed correctly!";
+        return false;
+    };
+
+    /* WAIT 4*/
+
+     if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to prethrowing joint configuration");
+        res.success = false;
+        res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    };
+
+    /* EXEC 5*/
+
+    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not go to throwing joint configuration.");
+        res.success = false;
+        res.message = "The service call_throwing_task was NOT performed correctly! Error in arm control.";
+        return false;
+    };
+
+
+ 
+    return true;
 };
 
 // Callback for set object task service
@@ -1101,6 +1181,45 @@ bool TaskSequencer::call_set_place(panda_softhand_control::set_object::Request &
     return res.result;
 
 }
+
+bool TaskSequencer::call_set_prevacuum_joints_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res){
+    
+    // Checking if the parsed map contains the requested object
+    auto search = this->pre_vacuum_joints_map.find(req.object_name);
+    if(search == this->pre_vacuum_joints_map.end()){
+        ROS_WARN_STREAM("The object " << req.object_name << " is not present in my pre_vacuum_joints_map memory; using the previously used one or default... Did you spell it correctly? Is it in the yaml?");
+        res.result = false;
+        return res.result;
+    }
+
+    // Setting the place joints as requested
+    this->pre_vacuum_joints = this->pre_vacuum_joints_map.at(req.object_name);
+
+    // Now, everything is ok
+    ROS_INFO_STREAM("Place joints changed. Object set to " << req.object_name << ".");
+    res.result = true;
+    return res.result;
+
+};
+
+bool TaskSequencer::call_set_throwing_joints_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res){
+
+    // Checking if the parsed map contains the requested object
+    auto search = this->throwing_joints_map.find(req.object_name);
+    if(search == this->throwing_joints_map.end()){
+        ROS_WARN_STREAM("The object " << req.object_name << " is not present in my throwing_joints_map memory; using the previously used one or default... Did you spell it correctly? Is it in the yaml?");
+        res.result = false;
+        return res.result;
+    }
+
+    // Setting the place joints as requested
+    this->throwing_joints = this->throwing_joints_map.at(req.object_name);
+
+    // Now, everything is ok
+    ROS_INFO_STREAM("Place joints changed. Object set to " << req.object_name << ".");
+    res.result = true;
+    return res.result;
+};
 
 // FK and IK Functions which makes use of MoveIt
 geometry_msgs::Pose TaskSequencer::performFK(std::vector<double> joints_in){

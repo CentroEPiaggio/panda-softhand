@@ -77,16 +77,26 @@ class TaskSequencer {
         // Callback for simple handover task service
         bool call_simple_handover_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
-        // Callback for throwing task service(grasping the hand-tool, vacuuming the object and throwing by using the blow-off function)
+        // Callback for grasping task service(grasping the hand-tool)
+        bool call_grasp_handtool_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+        
+        // Callback for throwing task service(vacuuming the object and throwing by using the blow-off function)
         bool call_throwing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
-
+   
         // Callback for set object service
         bool call_set_object(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
 
         // Callback for set place joints service
         bool call_set_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
         
-	/// private variables -------------------------------------------------------------------------
+        // Callback for set place prevacuuming joints service
+        bool call_set_prevacuum_joints_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
+
+        // Callback for set place throwing joints service
+        
+        bool call_set_throwing_joints_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
+	
+    /// private variables -------------------------------------------------------------------------
 	private:
 		ros::NodeHandle nh;
 
@@ -124,7 +134,8 @@ class TaskSequencer {
         std::string place_task_service_name;
         std::string home_task_service_name;
         std::string handover_task_service_name;
-        std::string throwing_task_service_name;//
+        std::string grasp_task_handtool_service_name;
+        std::string throwing_task_service_name;
 
         std::string set_object_service_name;
         std::string set_place_service_name;
@@ -141,7 +152,8 @@ class TaskSequencer {
         ros::ServiceServer place_task_server;
         ros::ServiceServer home_task_server;
         ros::ServiceServer handover_task_server;
-        ros::ServiceServer throwing_task_server;//
+        ros::ServiceServer grasp_handtool_task_server;//
+        ros::ServiceServer throwing_task_server;
 
         ros::ServiceServer set_object_server;
         ros::ServiceServer set_place_server;
@@ -177,6 +189,11 @@ class TaskSequencer {
         std::map<std::string, std::vector<double>> poses_map;               // The map containing the notable poses
 
         std::map<std::string, std::vector<double>> place_joints_map;        // The map containing the notable place joints
+        
+
+        std::map<std::string, std::vector<double>> pre_vacuum_joints_map;
+
+        std::map<std::string, std::vector<double>> throwing_joints_map;
 
         // MoveIt stuff and functions for FK and IK
         std::string group_name;

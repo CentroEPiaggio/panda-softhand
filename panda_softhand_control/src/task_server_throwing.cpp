@@ -25,8 +25,8 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(4);
     spinner.start();
     
-    /* 1) Going to home position*/
-    //Create the request and response object
+   /* 1) Going to home position */
+   //Create the request and response object
     
     std_srvs::SetBool::Request req;
     req.data = true;
@@ -34,26 +34,49 @@ int main(int argc, char **argv)
 
     ROS_INFO("Going to home position");
    
-    bool success_home_position = task_sequencer_obj.call_simple_home_task(req,resp);
+   bool success_home_position = task_sequencer_obj.call_simple_home_task(req,resp);
     
-    //Check the success and use of the response
+   //Check the success and use of the response
 
-    if(success_home_position){
-       ROS_INFO_STREAM("Home service completed correctly: " << resp.success);
-    } else {
-       ROS_INFO_STREAM("Failed to completed the service");
-    }
-    
-    /* Calling the throwing task service */
-    ROS_INFO("Going to throwing position");
-    //TO DO
-    bool success_throwing = task_sequencer_obj.call_throwing_task(req,resp);
-    
-   if(success_throwing){
-       ROS_INFO_STREAM("Throwing service completed correctly: " << resp.success);
+   if(success_home_position){
+      ROS_INFO_STREAM("Home service completed correctly: " << resp.success);
    } else {
-       ROS_INFO_STREAM("Failed to completed the throwing service");
+      ROS_INFO_STREAM("Failed to completed the service");
    }
+    
+   /* 2) Going to grasping position */
+
+   ROS_INFO("Going to grasping position for the handtool");
+   
+   //TO DO
+   bool success_grasping = task_sequencer_obj.call_grasp_handtool_task(req,resp);
+    
+   if(success_grasping){
+      ROS_INFO_STREAM("Graspingg service completed correctly: " << resp.success);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the grasping service");
+   }
+     
+   /* 3) Going to throwing position (1) */
+   
+   ROS_INFO("Going to throwing position");
+   
+   //TO DO
+   bool success_throwing = task_sequencer_obj.call_throwing_task(req,resp);
+   if(success_throwing){
+      ROS_INFO_STREAM("Throwing service completed correctly: " << resp.success);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the throwing service");
+   }
+
+
+
+   
+
+
+
+
+
 
    while(ros::ok()){
          // Nothing to do here

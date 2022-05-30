@@ -28,6 +28,7 @@ task_sequencer:
   # vacuum_transform: [0.605, -0.202, 0.380, 1.600, -0.042, -0.207]
   # # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   # pre_vacuum_transform: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
   pre_vacuum_joints: [-0.017161164186504988, -0.07344084915152767, 0.04239066430037482, -2.0952341629050455, -1.594594228201442, 1.5900136547381365, 0.43291287915873]
 
   vacuum_transform: [0.671, -0.121, 0.260, 1.539, 0.202, 0.027]
@@ -35,7 +36,33 @@ task_sequencer:
   ############### JOINT THROWING CONFIGURATION ################################
   
   throwing_joints: [-0.017161164186504988, -0.07344084915152767, 0.09601483657888951, -2.1039716147372594, 1.5923474146955967, 1.711796282915991, 0.06357766470864966]
+  
+  # The personalized place joints maps for different prevacuuming joint configurations
 
+  pre_vacuum_joints_map:
+    "object2" :  [1, 1, 1, 1, 1, 1, 1]
+    "object3" :  [1, 1, 1, 1, 1, 1, 1]
+
+  
+  
+
+
+  throwing_joints_map:
+    "object2" : [1, 1, 1, 1, 1, 1, 1]
+    "object3" : [1, 1, 1, 1, 1, 1, 1]
+
+
+
+
+
+
+
+
+
+
+
+
+  
   # The joint configuration for place
   place_joints: [-0.068, 0.152, 0.193, -2.352, 0.0405, 2.519, 0.117]
   # The joint configuration for handover
