@@ -11,29 +11,31 @@
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/robot_state/conversions.h>
 
+#include <ignition/math/Vector3.hh>
 #include <sdf/sdf.hh>
+
 
 using namespace std;
 
 /* ******************************************************************************************** */
-void setObjectProperties(string name, sdf::Vector3 loc, sdf::Vector3 dim, 
+void setObjectProperties(string name, ignition::math::Vector3d loc, ignition::math::Vector3d dim,
 		moveit_msgs::CollisionObject& object) {
 
 	// Set the name of the object and its link to the world
 	object.id = name;
 
 	// Set the location
-	object.primitive_poses.back().position.x = loc.x;
-	object.primitive_poses.back().position.y = loc.y;
-	object.primitive_poses.back().position.z = loc.z;
+        object.primitive_poses.back().position.x = loc.X();
+        object.primitive_poses.back().position.y = loc.Y();
+        object.primitive_poses.back().position.z = loc.Z();
 	object.primitive_poses.back().orientation.x = 0;
 	object.primitive_poses.back().orientation.y = 0;
 	object.primitive_poses.back().orientation.z = 0;
 
 	// Set the dimensions
-	object.primitives.back().dimensions[0] = dim.x;
-	object.primitives.back().dimensions[1] = dim.y;
-	object.primitives.back().dimensions[2] = dim.z;
+        object.primitives.back().dimensions[0] = dim.X();
+        object.primitives.back().dimensions[1] = dim.Y();
+        object.primitives.back().dimensions[2] = dim.Z();
 }
 
 /* ******************************************************************************************** */
@@ -111,7 +113,8 @@ int main(int argc, char **argv) {
 	//cout << "THE PARSED SDF OF SdfToPlanningScene IS: " << sdfParsed->ToString() << endl;
 
 	// Print the objects
-	sdf::ElementPtr e = sdfParsed->root;
+	
+	sdf::ElementPtr e = sdfParsed->Root();
 	cout << e->GetDescription() << endl;
 	sdf::ElementPtr world = e->GetElement("world");
 	sdf::ElementPtr model = world->GetFirstElement();
@@ -158,10 +161,13 @@ int main(int argc, char **argv) {
 		// Get the pose
 		sdf::ElementPtr poseElem = model->GetElement("pose");
 		assert(poseElem != NULL && "No pose information in model!");
-		sdf::Pose pose;
+		// ignition::math::Pose3d pose;
+        ignition::math::v4::Pose3<double> pose;
+		// sdf::Pose pose;
 		stringstream ss_pose (poseElem->GetValue()->GetAsString());
 		ss_pose >> pose;
 		cout << "Pose: " << pose << endl;
+	
 		
 
 		// Check that the collision object is a box
@@ -178,12 +184,13 @@ int main(int argc, char **argv) {
 		sdf::ElementPtr sizeElem = boxElem->GetElement("size");
 		assert(sizeElem != NULL && "No size element in box!");
 		stringstream ss_size (sizeElem->GetValue()->GetAsString());
-		sdf::Vector3 size;
+		ignition::math::Vector3d size;
+		// sdf::Vector3 size;
 		ss_size >> size;
 		cout << "Box dims: " << size << endl;
-		
 		// Fill the object pose and dimensions into the planning_scene message
-		setObjectProperties(name, pose.pos, size, object);
+		// setObjectProperties(name, pose.pos, size, object);
+	    setObjectProperties(name, pose.Pos(), size, object);
 		planning_scene.world.collision_objects.clear();
 		planning_scene.world.collision_objects.push_back(object);
 
