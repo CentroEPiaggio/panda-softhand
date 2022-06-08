@@ -407,6 +407,7 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
     }
 
     // 3) Going to grasp pose
+
     if(!this->panda_softhand_client.call_slerp_service(grasp_pose, pre_grasp_pose, false, this->tmp_traj, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified grasp pose.");
         res.success = false;
@@ -981,7 +982,7 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
     int n = 7;
     std::vector<double> now_joints(n,0);
 
-    /* PLAN 1: Planning to pre_vacuuming_joints configuration */
+    /* PLAN 1: Planning to pre_throwing_joints configuration */
     
     if(!this->panda_softhand_client.call_joint_service(this->pre_throwing_joints, now_joints, this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not lift to the specified pre_vacuum_joints configuration.");
@@ -990,7 +991,7 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
         return false;
     }
     
-    /* EXEC 1: Going to prevacuuming configuration */
+    /* EXEC 1: Going to throwing configuration */
 
     if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not go to pre_vacuuming configuration");
@@ -999,7 +1000,7 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
         return false;
     };
     
-    /* PLAN 2: Going to pre_vacuuming configuration */
+    /* PLAN 2: Going to pre_throwing configuration */
 
     Eigen::Affine3d object_pose_aff; tf::poseMsgToEigen(this->object_pose_T, object_pose_aff);
     Eigen::Affine3d vacuum_transform_aff; tf::poseMsgToEigen(this->vacuum_T, vacuum_transform_aff);
@@ -1035,20 +1036,34 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
         return false;
     }
 
-    // // 3) Going to grasp pose
-    // if(!this->panda_softhand_client.call_slerp_service(vacuum_pose, pre_vacuum_pose, false, this->tmp_traj_arm, this->tmp_traj_arm) || !this->franka_ok){
-    //     ROS_ERROR("Could not plan to the specified grasp pose.");
-    //     res.success = false;
-    //     res.message = "The service call_simple_grasp_task was NOT performed correctly!";
-    //     return false;
-    // }
+    /* PLAN 3: Going to vacuuming configuration */
 
-    // if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
-    //     ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre grasp from home joints");
-    //     res.success = false;
-    //     res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
-    //     return false;
-    // }
+    if(!this->panda_softhand_client.call_slerp_service(vacuum_pose, pre_vacuum_pose, false, this->tmp_traj_arm, this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not plan to the specified grasp pose.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    /* WAIT 2*/
+
+    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre vacuuming configuration from prethrowing configuration");
+        res.success = false;
+        res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    }
+
+    /*EXEC 3: */
+
+    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not go to vacuuming pose.");
+        res.success = false;
+        res.message = "The service call_throwing_task was NOT performed correctly! Error in arm control.";
+        return false;
+    }
+
+   
 
 
 
