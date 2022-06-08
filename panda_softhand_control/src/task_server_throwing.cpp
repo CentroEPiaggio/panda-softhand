@@ -62,16 +62,13 @@ int main(int argc, char **argv)
    ROS_INFO("Going to throwing position");
    
    //TO DO
+
    bool success_throwing = task_sequencer_obj.call_throwing_task(req,resp);
    if(success_throwing){
       ROS_INFO_STREAM("Throwing service completed correctly: " << resp.success);
    } else {
       ROS_INFO_STREAM("Failed to completed the throwing service");
    }
-
-
-
-   
 
 
 

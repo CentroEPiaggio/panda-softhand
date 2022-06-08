@@ -178,7 +178,8 @@ class TaskSequencer {
         double handover_thresh;
 
 
-        std::vector<double> pre_vacuum_joints;
+        std::vector<double> pre_vacuum_transform;
+        geometry_msgs::Pose pre_vacuum_T;
 
         std::vector<double> vacuum_transform;
         geometry_msgs::Pose vacuum_T;
