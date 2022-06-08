@@ -184,9 +184,9 @@ class TaskSequencer {
         std::vector<double> vacuum_transform;
         geometry_msgs::Pose vacuum_T;
 
-        std::vector<double> throwing_joints;
+        std::vector<double> pre_throwing_joints;
        
-        
+    
         std::map<std::string, std::vector<double>> poses_map;               // The map containing the notable poses
 
         std::map<std::string, std::vector<double>> place_joints_map;        // The map containing the notable place joints

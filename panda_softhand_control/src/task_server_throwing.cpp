@@ -69,12 +69,7 @@ int main(int argc, char **argv)
    } else {
       ROS_INFO_STREAM("Failed to completed the throwing service");
    }
-
-
-
-
-
-
+   
    while(ros::ok()){
          // Nothing to do here
    }

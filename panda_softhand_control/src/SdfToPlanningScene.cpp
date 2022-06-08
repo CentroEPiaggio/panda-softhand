@@ -12,30 +12,52 @@
 #include <moveit/robot_state/conversions.h>
 
 #include <ignition/math/Vector3.hh>
+#include <ignition/math/Quaternion.hh>
 #include <sdf/sdf.hh>
 
+#include <ignition/math/Pose3.hh>
+
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 
 using namespace std;
 
-/* ******************************************************************************************** */
-void setObjectProperties(string name, ignition::math::Vector3d loc, ignition::math::Vector3d dim,
-		moveit_msgs::CollisionObject& object) {
+geometry_msgs::Quaternion quaternion_from_rpy(double roll, double pitch, double yaw)
+{
+  tf2::Quaternion quaternion_tf2;
+  quaternion_tf2.setRPY(roll, pitch, yaw);
+  geometry_msgs::Quaternion quaternion = tf2::toMsg(quaternion_tf2);
+  return quaternion;
+}
 
+/* ******************************************************************************************** */
+void setObjectProperties(string name, ignition::math::Vector3d loc,ignition::math::Quaterniond rot,  ignition::math::Vector3d dim,
+		moveit_msgs::CollisionObject& object) {
+    
 	// Set the name of the object and its link to the world
 	object.id = name;
-
+    
 	// Set the location
-        object.primitive_poses.back().position.x = loc.X();
-        object.primitive_poses.back().position.y = loc.Y();
-        object.primitive_poses.back().position.z = loc.Z();
-	object.primitive_poses.back().orientation.x = 0;
-	object.primitive_poses.back().orientation.y = 0;
-	object.primitive_poses.back().orientation.z = 0;
+
+    object.primitive_poses.back().position.x = loc.X();
+    object.primitive_poses.back().position.y = loc.Y();
+    object.primitive_poses.back().position.z = loc.Z();
+    
+
+	// Set the orientation 
+	geometry_msgs::Quaternion quat = quaternion_from_rpy(rot.X(), rot.Y(), rot.Z());
+    
+	object.primitive_poses.back().orientation.x = quat.x;
+	object.primitive_poses.back().orientation.y = quat.y;
+	object.primitive_poses.back().orientation.z = quat.z;
+	object.primitive_poses.back().orientation.w = quat.w;
 
 	// Set the dimensions
-        object.primitives.back().dimensions[0] = dim.X();
-        object.primitives.back().dimensions[1] = dim.Y();
-        object.primitives.back().dimensions[2] = dim.Z();
+
+    object.primitives.back().dimensions[0] = dim.X();
+    object.primitives.back().dimensions[1] = dim.Y();
+    object.primitives.back().dimensions[2] = dim.Z();
+	
 }
 
 /* ******************************************************************************************** */
@@ -159,6 +181,7 @@ int main(int argc, char **argv) {
 		}
 
 		// Get the pose
+
 		sdf::ElementPtr poseElem = model->GetElement("pose");
 		assert(poseElem != NULL && "No pose information in model!");
 		// ignition::math::Pose3d pose;
@@ -167,9 +190,8 @@ int main(int argc, char **argv) {
 		stringstream ss_pose (poseElem->GetValue()->GetAsString());
 		ss_pose >> pose;
 		cout << "Pose: " << pose << endl;
-	
+	   
 		
-
 		// Check that the collision object is a box
 		sdf::ElementPtr linkElem = model->GetElement("link");
 		assert(linkElem != NULL && "No link element in model!");
@@ -190,10 +212,10 @@ int main(int argc, char **argv) {
 		cout << "Box dims: " << size << endl;
 		// Fill the object pose and dimensions into the planning_scene message
 		// setObjectProperties(name, pose.pos, size, object);
-	    setObjectProperties(name, pose.Pos(), size, object);
+	    setObjectProperties(name, pose.Pos(), pose.Rot(), size, object);
 		planning_scene.world.collision_objects.clear();
 		planning_scene.world.collision_objects.push_back(object);
-
+        
 		// Send the message
 		ROS_INFO("Putting the object back into the environment");
 		planning_scene_diff_publisher.publish(planning_scene);
@@ -207,4 +229,10 @@ int main(int argc, char **argv) {
 
 	return EXIT_SUCCESS;
 }
+
+void setObjectProperties(string , ignition::math::Vector3d , ignition::math::Quaterniond, ignition::math::Vector3d ,
+		moveit_msgs::CollisionObject& );
+
+geometry_msgs::Quaternion quaternion_from_rpy(double, double, double);
+
 /* ******************************************************************************************** */

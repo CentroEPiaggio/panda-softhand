@@ -28,10 +28,11 @@ task_sequencer:
   # vacuum_transform: [0.605, -0.202, 0.380, 1.600, -0.042, -0.207]
   # # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   # pre_vacuum_transform: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-
-  pre_vacuum_transform: [0.659, -0.086, 0.434, 1.578, 0.039, 0.024]
-
-  vacuum_transform: [0.659, -0.086, 0.304, 1.578, 0.039, 0.024]
+  
+  pre_throwing_joints: [0.020080210122173526, -0.31461428480813536, -0.24156380251834267, -2.30914939719754, -1.7265883330714096, 1.8092104921274714, 0.36461395125477397]
+  
+  pre_vacuum_transform: [0.0, 0.1, 0.0, 0.0, 0.0, 0.0]
+  vacuum_transform: [0.579, -0.189, 0.186, 1.573, 0.120, 0.059]
 
   ############### JOINT THROWING CONFIGURATION ################################
   
