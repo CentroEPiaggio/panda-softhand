@@ -136,11 +136,11 @@ bool TaskSequencer::parse_task_params(){
 		success = false;
 	}
 
-    // if(!ros::param::get("/task_sequencer/throwing_joints", this->throwing_joints)){
-	// 	ROS_WARN("The param 'throwing_joints' not found in param server! Using default.");
-	// 	this->throwing_joints = {-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110};
-	// 	success = false;
-	// }
+    if(!ros::param::get("/task_sequencer/throwing_joints", this->throwing_joints)){
+		ROS_WARN("The param 'throwing_joints' not found in param server! Using default.");
+		this->throwing_joints = {-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110};
+		success = false;
+	}
 
     if(!ros::param::get("/task_sequencer/grasp_transform", this->grasp_transform)){
 		ROS_WARN("The param 'grasp_transform' not found in param server! Using default.");
@@ -1093,7 +1093,6 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
     std_msgs::Empty msg;
     pub_suction.publish(msg);
 
-
     /* EXEC 4 */
 
     if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
@@ -1102,6 +1101,41 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
         res.message = "The service call_throwing_task was NOT performed correctly! Error in arm control.";
         return false;
     };
+
+    /* PLAN 5: Planning to throwing configuration */
+
+    if(!this->panda_softhand_client.call_joint_service(this->throwing_joints, this->pre_throwing_joints, this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not lift to the specified pose.");
+        res.success = false;
+        res.message = "The service call_throwing_task was NOT performed correctly!";
+        return false;
+    };
+
+    /* WAIT 4*/
+
+    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to prevacuuming joints configuration");
+        res.success = false;
+        res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    };
+
+    /* EXEC 5: Going to throwing configuration */
+
+    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not go to throwing position");
+        res.success = false;
+        res.message = "The service call_throwing_task was NOT performed correctly! Error in arm control.";
+        return false;
+    };
+
+
+
+
+
+    
+
+
 
 
 
