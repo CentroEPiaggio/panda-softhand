@@ -1094,7 +1094,7 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
     pub_suction.publish(msg);
 
 
-    // /* EXEC 4 */
+    /* EXEC 4 */
 
     if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not go to prethrowing position");

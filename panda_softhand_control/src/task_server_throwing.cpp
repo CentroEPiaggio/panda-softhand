@@ -52,7 +52,7 @@ int main(int argc, char **argv)
    bool success_grasping = task_sequencer_obj.call_grasp_handtool_task(req,resp);
     
    if(success_grasping){
-      ROS_INFO_STREAM("Graspingg service completed correctly: " << resp.success);
+      ROS_INFO_STREAM("Grasping service completed correctly: " << resp.success);
    } else {
       ROS_INFO_STREAM("Failed to completed the grasping service");
    }
