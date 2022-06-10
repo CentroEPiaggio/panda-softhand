@@ -60,8 +60,6 @@ int main(int argc, char **argv)
    /* 3) Going to throwing position (1) */
    
    ROS_INFO("Going to throwing position");
-   
-   //TO DO
 
    bool success_throwing = task_sequencer_obj.call_throwing_task(req,resp);
    if(success_throwing){
@@ -70,6 +68,78 @@ int main(int argc, char **argv)
       ROS_INFO_STREAM("Failed to completed the throwing service");
    }
    
+   /* 4) Set new prethrowing, throwing joint configurations and vacuum transform before calling another throwing task service */
+   
+   //
+   panda_softhand_control::set_object::Request req_prethrowing;
+   req_prethrowing.object_name = "object2";
+   panda_softhand_control::set_object::Response resp_prethrowing;
+   
+   ROS_INFO("Call the call_set_prethrowing_joints_place ");
+
+   bool success_call_prethrowing = task_sequencer_obj.call_set_prethrowing_joints_place(req_prethrowing,resp_prethrowing);
+   
+   if(success_call_prethrowing){
+      ROS_INFO_STREAM("Call_set_prethrowing_joints_place service completed correctly: " << resp_prethrowing.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call_set_prethrowing_joints_place service");
+   }
+
+   //
+
+   panda_softhand_control::set_object::Request req_throwing;
+   req_throwing.object_name = "object2";
+   panda_softhand_control::set_object::Response resp_throwing;
+
+   ROS_INFO("Call the call_set_throwing_joints_place ");
+
+   bool success_call_throwing = task_sequencer_obj.call_set_throwing_joints_place(req_throwing,resp_throwing);
+   
+   if(success_call_throwing){
+      ROS_INFO_STREAM("Call_set_throwing_joints_place service completed correctly: " << resp_throwing.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call_set_throwing_joints_place service");
+   }
+
+   //
+
+   panda_softhand_control::set_object::Request req_vacuum;
+   req_vacuum.object_name = "object2";
+   panda_softhand_control::set_object::Response resp_vacuum;
+
+   ROS_INFO("Call the call_set_vacuum_place ");
+
+   bool success_call_vacuum = task_sequencer_obj.call_set_vacuum_place(req_vacuum,resp_vacuum);
+   
+   if(success_call_vacuum){
+      ROS_INFO_STREAM("Call_set_vacuum_place  service completed correctly: " << resp_throwing.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call_set_vacuum_place service");
+   }
+
+
+   /* 5) Going to throwing position ("object2") */
+   
+   ROS_INFO("Going to throwing position");
+
+   bool success_throwing2 = task_sequencer_obj.call_throwing_task(req,resp);
+   if(success_throwing2){
+      ROS_INFO_STREAM("Throwing service for object2 completed correctly: " << resp.success);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the throwing service for object2");
+   }
+
+
+
+
+
+
+
+
+
+
+
+
    while(ros::ok()){
          // Nothing to do here
    }

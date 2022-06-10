@@ -89,8 +89,10 @@ class TaskSequencer {
         // Callback for set place joints service
         bool call_set_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
         
-        // Callback for set place prevacuuming joints service
-        bool call_set_prevacuum_joints_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
+        // Callback for set place prethrowing joints service
+        bool call_set_prethrowing_joints_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
+
+        bool call_set_vacuum_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
 
         // Callback for set place throwing joints service
         
@@ -189,11 +191,12 @@ class TaskSequencer {
        
     
         std::map<std::string, std::vector<double>> poses_map;               // The map containing the notable poses
+        std::map<std::string, std::vector<double>> vacuum_pose_map; 
 
         std::map<std::string, std::vector<double>> place_joints_map;        // The map containing the notable place joints
         
 
-        std::map<std::string, std::vector<double>> pre_vacuum_joints_map;
+        std::map<std::string, std::vector<double>> pre_throwing_joints_map;
 
         std::map<std::string, std::vector<double>> throwing_joints_map;
 

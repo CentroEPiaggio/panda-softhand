@@ -1,7 +1,9 @@
 <launch>
    <include file="$(find panda_softhand_description)/launch/launchPandaSoftHand.launch" />
+   <!-- <include file="$(find panda_softhand_control)/launch/launchSimulateObjectPose.launch" /> -->
    <include file="$(find panda_softhand_control)/launch/launchControlServer.launch" />   
    <include file="$(find panda_softhand_control)/launch/launchTaskServer.launch" />
+
 
    <!-- Config YAML file for parameters -->
    <!-- <arg name="task_sequences_params" default="$(find panda_softhand_control)/configs/task_sequences_params.yaml"/> -->
