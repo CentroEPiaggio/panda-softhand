@@ -97,7 +97,9 @@ class TaskSequencer {
         // Callback for set place throwing joints service
         
         bool call_set_throwing_joints_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
-	
+	    
+        bool call_set_duty_cycle(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
+    
     /// private variables -------------------------------------------------------------------------
 	private:
 		ros::NodeHandle nh;
@@ -110,6 +112,7 @@ class TaskSequencer {
         
         ros::Publisher pub_blow;
         ros::Publisher pub_suction;
+        ros::Publisher pub_duty;
     
 
         // Subscriber to franka_states for getting tau_ext on joints and other info and Publisher of its norm
@@ -141,12 +144,18 @@ class TaskSequencer {
 
         std::string set_object_service_name;
         std::string set_place_service_name;
+
+        std::string set_pre_throwing_joint_name;
+        std::string set_throwing_joint_name;
+        std::string set_vacuum_name;
+        std::string set_duty_cycle_name;
         
 
         // Topic names for arduino
 
         std::string blow_off = "arduino/blowing_off";
         std::string suction = "arduino/suctioning";
+        std::string duty = "arduino/duty_cycle";
 
         // Service Servers
         ros::ServiceServer grasp_task_server;
@@ -159,7 +168,11 @@ class TaskSequencer {
 
         ros::ServiceServer set_object_server;
         ros::ServiceServer set_place_server;
-        
+
+        ros::ServiceServer set_pre_throwing_server;
+        ros::ServiceServer set_throwing_server;
+        ros::ServiceServer set_vacuum_place_server;
+        ros::ServiceServer set_duty_cycle_server;
 
         // The XmlRpc value for parsing complex params
         XmlRpc::XmlRpcValue task_seq_params;
@@ -186,10 +199,18 @@ class TaskSequencer {
         std::vector<double> vacuum_transform;
         geometry_msgs::Pose vacuum_T;
 
+
+        std::vector<double> pre_throwing_transform;
+        geometry_msgs::Pose pre_throwing_T;
+        
+        std::vector<double> throwing_transform;
+        geometry_msgs::Pose throwing_T;
+
         std::vector<double> pre_throwing_joints;
         std::vector<double> throwing_joints;
-       
-    
+
+        int duty_cycle;
+        
         std::map<std::string, std::vector<double>> poses_map;               // The map containing the notable poses
         std::map<std::string, std::vector<double>> vacuum_pose_map; 
 
@@ -200,6 +221,8 @@ class TaskSequencer {
 
         std::map<std::string, std::vector<double>> throwing_joints_map;
 
+        std::map<std::string, int> duty_cycle_map;
+        
         // MoveIt stuff and functions for FK and IK
         std::string group_name;
         std::string end_effector_name;

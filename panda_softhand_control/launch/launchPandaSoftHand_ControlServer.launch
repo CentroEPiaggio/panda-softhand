@@ -4,10 +4,4 @@
    <include file="$(find panda_softhand_control)/launch/launchControlServer.launch" />   
    <include file="$(find panda_softhand_control)/launch/launchTaskServer.launch" />
 
-
-   <!-- Config YAML file for parameters -->
-   <!-- <arg name="task_sequences_params" default="$(find panda_softhand_control)/configs/task_sequences_params.yaml"/> -->
-	
-	<!-- Loading config YAML file to param server -->
-	<!-- <rosparam command="load" file="$(arg task_sequences_params)"/> -->
 </launch>

@@ -166,13 +166,73 @@ bool PandaSoftHandClient::call_joint_service(std::vector<double> joint_goal, std
     joint_plan_srv.request.joint_goal = joint_goal;
     joint_plan_srv.request.joint_start = joint_start;
 
+    
+    // std::cout << "##############################################"<<"\n";
+    // std::cout << "Joint Start before is: " <<"\n";
+
+    // for(auto j: joint_start){
+
+    //     std::cout << j << std::endl;
+    // }
+
+   
+    // std::cout << "First positions of computed trajectory are: " << std::endl;
+    // trajectory_msgs::JointTrajectory pippo = computed_trajectory;
+    // std::cout << "pippo is: " << std::endl; std::cout << pippo << std::endl;
+    // std::vector<trajectory_msgs::JointTrajectoryPoint> traj_arm_points = pippo.points;
+    // std::cout << "qui ci sono arrivato1"  << std::endl;
+    // std::cout << traj_arm_points.front() << std::endl;
+    // trajectory_msgs::JointTrajectoryPoint first_point = traj_arm_points.front();
+    // std::cout << "qui ci sono arrivato2"  << std::endl;
+    // for (auto t: first_point.positions){
+    //     std::cout << t << std::endl;
+    // }
+
+    // std::cout << "Check the second point of computed trajectory positions :" << std::endl;
+    // trajectory_msgs::JointTrajectoryPoint second_point = traj_arm_points[1];
+    
+    // for (auto t: second_point.positions){
+    //     std::cout << t << std::endl;
+    // }
+
+    // std::cout << "Joint Goal before is: " <<"\n";
+
+    // for(auto l: joint_goal){
+
+    //     std::cout << l << std::endl;
+    // }
+
+    // std::cout << "Last positions of computed trajectory are: " << std::endl;
+    // std::vector<trajectory_msgs::JointTrajectoryPoint> traj_arm_points2 = computed_trajectory.points;
+    // trajectory_msgs::JointTrajectoryPoint last_point = traj_arm_points2.back();
+      
+    // for (auto z: last_point.positions){
+    //     std::cout << z << std::endl;
+    // }
+
     // Calling the service
     if(!this->joint_client.call(joint_plan_srv)){
         ROS_ERROR("Failed to contact the joint plan server. Returning...");
         return false;
     }
+    
+    // std::cout << "Joint Start after is: " <<"\n";
+
+    // for(auto j: joint_start){
+
+    //     std::cout << j << std::endl;
+    // }
+
+    // std::cout << "Joint Goal after is: " <<"\n";
+
+    // for(auto l: joint_goal){
+
+    //     std::cout << l << std::endl;
+    // }
+
 
     computed_trajectory = joint_plan_srv.response.computed_trajectory;
+
     return joint_plan_srv.response.answer;
 }
 

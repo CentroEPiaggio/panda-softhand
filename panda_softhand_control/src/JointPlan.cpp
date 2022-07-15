@@ -59,13 +59,23 @@ bool JointPlan::initialize(panda_softhand_control::joint_plan::Request &req){
     // Converting the float array of request to std vector
     this->joint_goal = req.joint_goal;
     this->joint_now = req.joint_start;  
-    
+        
+     // Print the start joint configuration
+    if(DEBUG){
+        std::cout << "Requested joint configuration start is : [ ";
+        for(auto i : this->joint_now) std::cout << i << " ";
+        std::cout << "]" << std::endl;
+    }
+
+
     // Print the goal end-effector pose
     if(DEBUG){
         std::cout << "Requested joint configuration goal: [ ";
         for(auto i : this->joint_goal) std::cout << i << " ";
         std::cout << "]" << std::endl;
     }
+
+
 
     return true;
 }
@@ -80,16 +90,27 @@ bool JointPlan::performMotionPlan(){
     ros::spinOnce();                                    // May not be necessary
     moveit::core::RobotStatePtr current_state = group.getCurrentState();
     const robot_state::JointModelGroup* joint_model_group = group.getCurrentState()->getJointModelGroup(this->group_name);
+    
 
+    std::cout << "Sono appena prima del check se è una config nulla" << std::endl;
     if (this->is_really_null_config(this->joint_now)) {
         ROS_WARN("The start pose is NULL! PLANNING FROM CURRENT POSE!");
         current_state->copyJointGroupPositions(joint_model_group, this->joint_now);
+        std::cout << "Sono entrato qua dentro" << "\n";
     }
+    std::cout << "Sono appena dopo del check se è una config nulla" << std::endl;
 
     // Checking if the dimensions of the request are correct
     if(this->joint_now.size() != this->joint_goal.size()){
         ROS_ERROR("The size of the requested joint configuration is not correct!");
         return false;
+    }
+
+
+    //
+    std::cout << "joint_now in the middle of performMotionPlan" << std::endl;
+    for(auto x: this->joint_now){
+        std::cout << x << std::endl;
     }
 
     /* If VISUAL is enabled */
@@ -113,13 +134,13 @@ bool JointPlan::performMotionPlan(){
     group.setJointValueTarget(this->joint_goal);
 
     // Planning to joint configuration
-    moveit::planning_interface::MoveGroupInterface::Plan my_plan;
+    moveit::planning_interface::MoveGroupInterface::Plan my_plan; 
     bool success = (group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
     ROS_INFO("Motion Plan towards goal joint configuration %s.", success ? "SUCCEDED" : "FAILED");
-
+    
     // If complete path is not achieved return false, true otherwise
 	if(!success) return false;
-
+    
     /* If VISUAL is enabled */
     #ifdef VISUAL
 
@@ -135,5 +156,28 @@ bool JointPlan::performMotionPlan(){
 
     // Saving the computed trajectory and returning true
     this->computed_trajectory = my_plan.trajectory_.joint_trajectory;
+
+    std::cout << "Couting the computed trajectory inside bool JointPlan::performMotionPlan" << "\n";
+
+    std::vector<trajectory_msgs::JointTrajectoryPoint> traj_arm_points = (this->computed_trajectory).points;
+    
+    trajectory_msgs::JointTrajectoryPoint first = traj_arm_points.front();
+
+    trajectory_msgs::JointTrajectoryPoint second = traj_arm_points.back();
+    
+    std::cout << "First point is: " <<"\n";
+    for(auto s: first.positions){
+        std::cout << s << "\n";
+    }
+
+
+    std::cout << "Last point is: " <<"\n";
+    for(auto q: second.positions){
+        std::cout << q << "\n";
+    }
+
+
+
+
     return true;
 }

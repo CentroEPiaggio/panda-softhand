@@ -33,6 +33,9 @@ bool parseParameter(XmlRpc::XmlRpcValue& params, std::vector<double>& param, std
 /* PARSEINTSTRINGMAPPARAMETER */
 bool parseParameter(XmlRpc::XmlRpcValue& params, std::map<int, std::string>& param, std::string param_name);
 
+/* PARSESTRINGINTMAPPARAMETER */
+bool parseParameter(XmlRpc::XmlRpcValue& params, std::map<std::string, int>& param, std::string param_name);
+
 /* PARSESTRINGSTRINGMAPPARAMETER */
 bool parseParameter(XmlRpc::XmlRpcValue& params, std::map<std::string, std::string>& param, std::string param_name);
 

@@ -13,16 +13,21 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 PosePlan::PosePlan(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_){
         
+        std::cout << "Stefano 2 " << std::endl;
+
         ROS_INFO("Starting to create PosePlan object");
 
         // Initializing node handle
         this->nh = nh_;
-
+         
         // Initializing names
         this->end_effector_name = end_effector_name_;
         this->group_name = group_name_;
 
         ROS_INFO("Finished creating PosePlan object");
+
+        std::cout << "Stefano 3 " << std::endl;
+
 }
 
 PosePlan::~PosePlan(){
@@ -32,6 +37,9 @@ PosePlan::~PosePlan(){
 
 // This is the callback function of the pose plan service
 bool PosePlan::call_pose_plan(panda_softhand_control::pose_plan::Request &req, panda_softhand_control::pose_plan::Response &res){
+    
+
+    std::cout << "Stefano 4" << std::endl;
 
     // Setting up things
     if(!this->initialize(req.goal_pose, req.start_pose, req.is_goal_relative, req.past_trajectory)){
@@ -46,16 +54,19 @@ bool PosePlan::call_pose_plan(panda_softhand_control::pose_plan::Request &req, p
         res.answer = false;
         return false;
     }
+    std::cout << "Stefano 5" << std::endl;
 
     // At this point all is fine, return the computed trajectory
     res.computed_trajectory = this->computed_trajectory;
     res.answer = true;
+    std::cout << "Stefano 6" << std::endl;
     return true;
 }
 
 // Initialize the things for motion planning. Is called by the callback
 bool PosePlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory past_trajectory){
-
+    
+    std::cout << "Inizio initialize" << std::endl;
     // Getting the current ee transform
     try {
 		this->tf_listener.waitForTransform("/world", this->end_effector_name, ros::Time(0), ros::Duration(10.0) );
@@ -101,12 +112,16 @@ bool PosePlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose sta
     // Print the goal end-effector pose
     if(DEBUG) ROS_INFO_STREAM("Endeffector goal Translation: \n" << this->goalPoseAff.translation());
 	if(DEBUG) ROS_INFO_STREAM("Endeffector goal Rotation: \n" << this->goalPoseAff.linear());
-
+    
+    std::cout << "Fine initialize" << std::endl;
     return true;
 }
 
 // Performs motion planning for the end-effector towards goal
 bool PosePlan::performMotionPlan(){
+    
+
+    std::cout << "Stefano Inizio performMotionPlan" << std::endl;
 
     // Move group interface
     moveit::planning_interface::MoveGroupInterface group(this->group_name);
@@ -146,7 +161,10 @@ bool PosePlan::performMotionPlan(){
         start_state.setJointGroupPositions(joint_model_group, last_joints);
         group.setStartState(start_state);
     }
+    
 
+    std::cout << "Master 1 " << std::endl;
+    
     // Planning to Pose
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
     bool success = (group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
@@ -168,8 +186,11 @@ bool PosePlan::performMotionPlan(){
     #endif
 
     #endif
-
+    std::cout << "Master 2 " << std::endl;
     // Saving the computed trajectory and returning true
     this->computed_trajectory = my_plan.trajectory_.joint_trajectory;
+    std::cout << "Stefano fine performMotionPlan" << std::endl;
+
     return true;
+
 }
