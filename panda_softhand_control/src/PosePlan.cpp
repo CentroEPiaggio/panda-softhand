@@ -39,8 +39,6 @@ PosePlan::~PosePlan(){
 bool PosePlan::call_pose_plan(panda_softhand_control::pose_plan::Request &req, panda_softhand_control::pose_plan::Response &res){
     
 
-    std::cout << "Stefano 4" << std::endl;
-
     // Setting up things
     if(!this->initialize(req.goal_pose, req.start_pose, req.is_goal_relative, req.past_trajectory)){
         ROS_ERROR("Could not initialize PosePlan object. Returning...");
@@ -54,7 +52,6 @@ bool PosePlan::call_pose_plan(panda_softhand_control::pose_plan::Request &req, p
         res.answer = false;
         return false;
     }
-    std::cout << "Stefano 5" << std::endl;
 
     // At this point all is fine, return the computed trajectory
     res.computed_trajectory = this->computed_trajectory;
@@ -162,9 +159,7 @@ bool PosePlan::performMotionPlan(){
         group.setStartState(start_state);
     }
     
-
-    std::cout << "Master 1 " << std::endl;
-    
+   
     // Planning to Pose
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
     bool success = (group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);

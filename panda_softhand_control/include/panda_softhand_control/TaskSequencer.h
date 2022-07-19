@@ -99,7 +99,9 @@ class TaskSequencer {
         bool call_set_throwing_joints_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
 	    
         bool call_set_duty_cycle(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
-    
+        
+        bool call_replace_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+
     /// private variables -------------------------------------------------------------------------
 	private:
 		ros::NodeHandle nh;
@@ -141,6 +143,7 @@ class TaskSequencer {
         std::string handover_task_service_name;
         std::string grasp_task_handtool_service_name;
         std::string throwing_task_service_name;
+        std::string replace_task_service_name;
 
         std::string set_object_service_name;
         std::string set_place_service_name;
@@ -165,6 +168,7 @@ class TaskSequencer {
         ros::ServiceServer handover_task_server;
         ros::ServiceServer grasp_handtool_task_server;//
         ros::ServiceServer throwing_task_server;
+        ros::ServiceServer replace_task_server;
 
         ros::ServiceServer set_object_server;
         ros::ServiceServer set_place_server;
@@ -205,6 +209,12 @@ class TaskSequencer {
         
         std::vector<double> throwing_transform;
         geometry_msgs::Pose throwing_T;
+
+        std::vector<double> pre_replace_hand_tool;
+        geometry_msgs::Pose pre_replace_hand_tool_T;
+
+        std::vector<double> replace_hand_tool;
+        geometry_msgs::Pose replace_hand_tool_T;
 
         std::vector<double> pre_throwing_joints;
         std::vector<double> throwing_joints;

@@ -97,7 +97,7 @@
 <!-- box (hand-tool) -->
     <model name="handtool">
 	        
-			<pose>0.65 -0.35 0.5 0 0 0 </pose>
+			<pose>0.65 -0.40 0.5 0 0 0 </pose>
 			<!-- <pose>0.55 -0.65 0.5 0 0 3.1 </pose> -->
 			<static>true</static>
 			<link name='linkhandtool'>
@@ -129,7 +129,7 @@
 	<!-- box (like a wall on the left of the robot) -->
     <model name="wall_left">
 	        
-			<pose>0.6 0.375 0.5 0 0 0 </pose>
+			<pose>0.6 0.475 0.5 0 0 0 </pose>
 			<static>true</static>
 			<link name='linkWallLeft'>
 				<pose>0 0 0 0 0 0</pose>
@@ -160,7 +160,7 @@
 	<!-- box (like a wall on the right of the robot) -->
     <model name="wall_right">
 	        
-			<pose>0.6 -0.35 0.5 0 0 0 </pose>
+			<pose>0.6 -0.40 0.5 0 0 0 </pose>
 			<static>true</static>
 			<link name='linkWallRight'>
 				<pose>0 0 0 0 0 0</pose>

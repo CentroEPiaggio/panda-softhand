@@ -3,5 +3,4 @@
    <!-- <include file="$(find panda_softhand_control)/launch/launchSimulateObjectPose.launch" /> -->
    <include file="$(find panda_softhand_control)/launch/launchControlServer.launch" />   
    <include file="$(find panda_softhand_control)/launch/launchTaskServer.launch" />
-
 </launch>
