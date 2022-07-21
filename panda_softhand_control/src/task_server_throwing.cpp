@@ -106,18 +106,7 @@ int main(int argc, char **argv)
       ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
    }
 
- 
-   /* 3) Going to throwing position (1) */
-   
-   ROS_INFO("Going to throwing position");
 
-   bool success_throwing = task_sequencer_obj.call_throwing_task(req,resp);
-   if(success_throwing){
-      ROS_INFO_STREAM("Throwing service completed correctly: " << resp.success);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the throwing service");
-   }
-   
    // Calling the place joint service 
    
    panda_softhand_control::set_object::Request req_joint_place;
@@ -134,14 +123,26 @@ int main(int argc, char **argv)
       ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
    }
 
+ 
+   /* 3) Going to throwing position (1) */
+   
+   ROS_INFO("Going to throwing position");
+
+   bool success_throwing = task_sequencer_obj.call_throwing_task(req,resp);
+   if(success_throwing){
+      ROS_INFO_STREAM("Throwing service completed correctly: " << resp.success);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the throwing service");
+   }
+   
+
    /* Going to middle12 joint configuration */
 
 
-   ROS_INFO("Going to place joint configuration");
+   // ROS_INFO("Going to place joint configuration");
    
    bool success_place_joint = task_sequencer_obj.call_simple_place_task(req,resp);
    
-
    /*** Update the map for throwing OBJECT 2***/ 
 
    panda_softhand_control::set_object::Request req_throwing2;
@@ -231,7 +232,6 @@ int main(int argc, char **argv)
    }
 
    
-
    panda_softhand_control::set_object::Request req_vacuum3;
    req_vacuum3.object_name = "object3";
    panda_softhand_control::set_object::Response resp_vacuum3;
@@ -245,7 +245,6 @@ int main(int argc, char **argv)
    } else {
       ROS_INFO_STREAM("Failed to completed the call_set_vacuum_place service");
    }
-
 
    panda_softhand_control::set_object::Request req_duty3;
    req_duty3.object_name = "object3";
@@ -261,9 +260,6 @@ int main(int argc, char **argv)
       ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
    }
 
-
-  
-
    /* Going to throwing position ("object3") */
    
    ROS_INFO("Going to throwing position");
@@ -278,9 +274,7 @@ int main(int argc, char **argv)
    } else {
       ROS_INFO_STREAM("Failed to completed the throwing service for object2");
    }
-
-   
-
+ 
    /* Going to middle12 joint configuration */
 
    ROS_INFO("Going to place joint configuration");
@@ -291,7 +285,7 @@ int main(int argc, char **argv)
 
    ROS_INFO("Going to replacing position for the handtool");
    
-   //TO DO
+   
    bool success_replace = task_sequencer_obj.call_replace_task(req,resp);
     
    if(success_replace){

@@ -156,6 +156,39 @@
 			</link>
     </model>
 
+    <!-- box (like a little wall on the left of the robot) -->
+    <model name="wall_little_left">
+	        
+			<pose>0.0 0.3 0.225 0 0 0 </pose>
+			<static>true</static>
+			<link name='linkWallLittleLeft'>
+				<pose>0 0 0 0 0 0</pose>
+
+				<collision name="my_collisionWallLittleLeft">
+		 			<pose>0 0 0 0 0 0</pose>
+					<geometry>
+		        <box>
+		          <size>0.3 0.03 0.4</size>
+		        </box>
+		            </geometry>
+	            </collision>
+
+				<visual name="my_visualWallLittleLeft">
+					<geometry>
+		        <box>
+					<size>0.3 0.03 0.4</size>
+		        </box>
+		           </geometry>
+	      </visual>
+
+				<self_collide>0</self_collide>
+				<gravity>1</gravity>
+			</link>
+    </model>
+
+
+
+
 
 	<!-- box (like a wall on the right of the robot) -->
     <model name="wall_right">

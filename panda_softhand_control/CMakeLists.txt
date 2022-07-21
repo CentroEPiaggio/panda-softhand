@@ -87,6 +87,10 @@ add_library(${PROJECT_NAME}_lib
 )
 target_link_libraries(${PROJECT_NAME}_lib ${catkin_LIBRARIES} ${ROS_LIBRARIES})
 
+# NODE: Throwing angle listener
+add_executable(my_throwing_angle_listener src/throwing_angle_listener.cpp)
+target_link_libraries(my_throwing_angle_listener ${catkin_LIBRARIES})
+
 # NODE: Lower level position controls
 add_executable(control_server src/control_server.cpp ${OBJECTS_SOURCE_FILES})
 add_dependencies(control_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

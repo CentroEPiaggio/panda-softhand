@@ -56,14 +56,13 @@ bool PosePlan::call_pose_plan(panda_softhand_control::pose_plan::Request &req, p
     // At this point all is fine, return the computed trajectory
     res.computed_trajectory = this->computed_trajectory;
     res.answer = true;
-    std::cout << "Stefano 6" << std::endl;
     return true;
 }
 
 // Initialize the things for motion planning. Is called by the callback
 bool PosePlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory past_trajectory){
     
-    std::cout << "Inizio initialize" << std::endl;
+   
     // Getting the current ee transform
     try {
 		this->tf_listener.waitForTransform("/world", this->end_effector_name, ros::Time(0), ros::Duration(10.0) );
@@ -73,7 +72,7 @@ bool PosePlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose sta
       	ros::Duration(1.0).sleep();
         return false;
     }
-
+    
     tf::Transform ee_transform(this->stamp_ee_transform.getRotation(), this->stamp_ee_transform.getOrigin());
     tf::transformTFToEigen(ee_transform, this->end_effector_state);
 
@@ -110,16 +109,12 @@ bool PosePlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose sta
     if(DEBUG) ROS_INFO_STREAM("Endeffector goal Translation: \n" << this->goalPoseAff.translation());
 	if(DEBUG) ROS_INFO_STREAM("Endeffector goal Rotation: \n" << this->goalPoseAff.linear());
     
-    std::cout << "Fine initialize" << std::endl;
     return true;
 }
 
 // Performs motion planning for the end-effector towards goal
 bool PosePlan::performMotionPlan(){
     
-
-    std::cout << "Stefano Inizio performMotionPlan" << std::endl;
-
     // Move group interface
     moveit::planning_interface::MoveGroupInterface group(this->group_name);
 
@@ -181,10 +176,9 @@ bool PosePlan::performMotionPlan(){
     #endif
 
     #endif
-    std::cout << "Master 2 " << std::endl;
+
     // Saving the computed trajectory and returning true
     this->computed_trajectory = my_plan.trajectory_.joint_trajectory;
-    std::cout << "Stefano fine performMotionPlan" << std::endl;
 
     return true;
 

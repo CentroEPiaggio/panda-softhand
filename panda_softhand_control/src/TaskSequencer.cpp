@@ -1260,19 +1260,109 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
         res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
         return false;
     }
+    
+   
+    // Getting the current ee throwing transform 
+    std::cout << "Getting the current righ_hand_ee_link trasnform w.r.t the world" << std::endl;
+    try {
+		this->tf_listener_throwing.waitForTransform("/world", this->end_effector_name, ros::Time(0), ros::Duration(10.0) );
+		this->tf_listener_throwing.lookupTransform("/world", this->end_effector_name, ros::Time(0), this->stamp_ee_transform_throwing);
+        
+        double yaw, pitch, roll;
+        this->stamp_ee_transform_throwing.getBasis().getRPY(roll, pitch, yaw);
+        tf::Quaternion q = this->stamp_ee_transform_throwing.getRotation();
+        tf::Vector3 v = this->stamp_ee_transform_throwing.getOrigin();
+        std::cout << "- Translation: [" << v.getX() << ", " << v.getY() << ", " << v.getZ() << "]" << std::endl;
+        std::cout << "- Rotation: in Quaternion [" << q.getX() << ", " << q.getY() << ", " 
+                  << q.getZ() << ", " << q.getW() << "]" << std::endl
+                  << "            in RPY (radian) [" <<  roll << ", " << pitch << ", " << yaw << "]" << std::endl
+                  << "            in RPY (degree) [" <<  roll*180.0/M_PI << ", " << pitch*180.0/M_PI << ", " << yaw*180.0/M_PI << "]" << std::endl;
+  
+        //print transform
+
+    } catch (tf::TransformException ex){
+      	ROS_ERROR("%s", ex.what());
+      	ros::Duration(1.0).sleep();
+        return false;
+    }
+    
+    tf::Transform ee_transform(this->stamp_ee_transform_throwing.getRotation(), this->stamp_ee_transform_throwing.getOrigin());
+    tf::transformTFToEigen(ee_transform, this->end_effector_state_throwing);
+    
+    // Print the current end-effector pose
+	ROS_INFO_STREAM("Endeffector current throwing Translation: \n" << this->end_effector_state_throwing.translation());
+	ROS_INFO_STREAM("Endeffector current throwing Rotation: \n" << this->end_effector_state_throwing.rotation());
+    
+
+    Eigen::Matrix3d eigen_rot_matrix = this->end_effector_state_throwing.rotation();
+    Eigen::Matrix<double, 3, 3> rotation_matrix = eigen_rot_matrix;
+
+    // Select the 2nd column
+
+    Eigen::Matrix<double, 3, 1> dummy_vec(0.0,1.0,0.0);
+    Eigen::Matrix<double, 3, 1> result = rotation_matrix*dummy_vec;
+    
+    // Assign the previous result to a vector of double
+
+    std::vector<double> versor(3,0.0);
+    
+    for(int i=0; i < versor.size(); ++i){
+        versor[i] = -result[i];
+        std::cout << "the element of versor are: " << versor[i] << std::endl;
+    }
+
+    std::cout << "den" << sqrt(std::pow(versor[0],2)+std::pow(versor[1],2)) << std::endl;
+
+    double den = sqrt(std::pow(versor[0],2)+std::pow(versor[1],2));
+    double throwing_angle_rad = atan2(versor[2],den);
+    
+    std::cout << "The throwing angle [deg] is : " << throwing_angle_rad*(180.0/M_PI) << std::endl;
 
     // Activate the blowing-off function (FESTO), and stop the Venturi pump for suctioning (COVAL)
     
     std_msgs::Empty msg2;
     pub_blow.publish(msg2);
+
+    /* PLAN 6*/
+
+    if(!this->panda_softhand_client.call_joint_service(this->place_joints, this->null_joints, this->tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not plan to the specified place joint config.");
+        res.success = false;
+        res.message = "The service call_simple_place_task was NOT performed correctly!";
+        return false;
+    }
     
-    /* PLAN 6: */
+    /*WAIT 5 */
 
+    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre vacuuming configuration from prethrowing configuration");
+        res.success = false;
+        res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    }
     
+    /* EXEC 6*/
 
+    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
+        ROS_ERROR("Could not go to place joint config.");
+        res.success = false;
+        res.message = "The service call_simple_place_task was NOT performed correctly! Error in arm control.";
+        return false;
+    }
 
+    /* WAIT 6 */
 
-    
+    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to place joint config");
+        res.success = false;
+        res.message = "The service call_simple_place_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    }
+
+    // Now, everything finished well
+    res.success = true;
+    res.message = "The service call_simple_place_task was correctly performed!";
+ 
     return true;
 };
 

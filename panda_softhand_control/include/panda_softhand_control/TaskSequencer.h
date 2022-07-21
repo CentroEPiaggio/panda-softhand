@@ -7,6 +7,10 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "Eigen/Dense"
 #include <eigen_conversions/eigen_msg.h>
 
+#include <tf/transform_listener.h>
+#include <geometry_msgs/Pose.h>
+#include <tf_conversions/tf_eigen.h>
+
 // ROS Service and Message Includes
 #include "std_msgs/Empty.h"
 #include "std_msgs/Float64.h"
@@ -250,5 +254,10 @@ class TaskSequencer {
         trajectory_msgs::JointTrajectory tmp_traj_arm;
         trajectory_msgs::JointTrajectory tmp_traj_hand;
         std::vector<double> null_joints;                            // null joints in order to make joint plan from present joints
+        
 
+        // Tf listener and transform and the tmp eigen
+	    tf::TransformListener tf_listener_throwing;
+        tf::StampedTransform stamp_ee_transform_throwing;
+        Eigen::Affine3d end_effector_state_throwing;
 };
