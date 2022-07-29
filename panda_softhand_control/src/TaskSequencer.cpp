@@ -1325,39 +1325,39 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
 
     /* PLAN 6*/
 
-    if(!this->panda_softhand_client.call_joint_service(this->place_joints, this->null_joints, this->tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not plan to the specified place joint config.");
-        res.success = false;
-        res.message = "The service call_simple_place_task was NOT performed correctly!";
-        return false;
-    }
+    // if(!this->panda_softhand_client.call_joint_service(this->place_joints, this->null_joints, this->tmp_traj) || !this->franka_ok){
+    //     ROS_ERROR("Could not plan to the specified place joint config.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_place_task was NOT performed correctly!";
+    //     return false;
+    // }
     
-    /*WAIT 5 */
+    // /*WAIT 5 */
 
-    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
-        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre vacuuming configuration from prethrowing configuration");
-        res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
-        return false;
-    }
+    // if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
+    //     ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre vacuuming configuration from prethrowing configuration");
+    //     res.success = false;
+    //     res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
+    //     return false;
+    // }
     
-    /* EXEC 6*/
+    // /* EXEC 6*/
 
-    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not go to place joint config.");
-        res.success = false;
-        res.message = "The service call_simple_place_task was NOT performed correctly! Error in arm control.";
-        return false;
-    }
+    // if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
+    //     ROS_ERROR("Could not go to place joint config.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_place_task was NOT performed correctly! Error in arm control.";
+    //     return false;
+    // }
 
     /* WAIT 6 */
 
-    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
-        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to place joint config");
-        res.success = false;
-        res.message = "The service call_simple_place_task was NOT performed correctly! Error wait in arm control.";
-        return false;
-    }
+    // if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
+    //     ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to place joint config");
+    //     res.success = false;
+    //     res.message = "The service call_simple_place_task was NOT performed correctly! Error wait in arm control.";
+    //     return false;
+    // }
 
     // Now, everything finished well
     res.success = true;

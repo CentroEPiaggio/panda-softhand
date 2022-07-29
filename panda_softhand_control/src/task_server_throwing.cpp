@@ -62,7 +62,7 @@ int main(int argc, char **argv)
    /*** Update the map for throwing OBJECT 1***/ 
 
    panda_softhand_control::set_object::Request req_throwing;
-   req_throwing.object_name = "object1";
+   req_throwing.object_name = "object3";
    panda_softhand_control::set_object::Response resp_throwing;
 
    ROS_INFO("Call the call_set_throwing_joints_place ");
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
    
 
    panda_softhand_control::set_object::Request req_vacuum;
-   req_vacuum.object_name = "object1";
+   req_vacuum.object_name = "object3";
    panda_softhand_control::set_object::Response resp_vacuum;
 
    ROS_INFO("Call the call_set_vacuum_place ");
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 
 
    panda_softhand_control::set_object::Request req_duty;
-   req_duty.object_name = "object1";
+   req_duty.object_name = "object3";
    panda_softhand_control::set_object::Response resp_duty;
 
    ROS_INFO("Call the call_set_duty_cycle service");
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
    }
 
 
-   // Calling the place joint service 
+   // // Calling the place joint service 
    
    panda_softhand_control::set_object::Request req_joint_place;
    req_joint_place.object_name = "middle12";
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
    }
 
  
-   /* 3) Going to throwing position (1) */
+   // /* 3) Going to throwing position (1) */
    
    ROS_INFO("Going to throwing position");
 
@@ -135,168 +135,167 @@ int main(int argc, char **argv)
       ROS_INFO_STREAM("Failed to completed the throwing service");
    }
    
-
    /* Going to middle12 joint configuration */
 
 
    // ROS_INFO("Going to place joint configuration");
    
-   bool success_place_joint = task_sequencer_obj.call_simple_place_task(req,resp);
+   // bool success_place_joint = task_sequencer_obj.call_simple_place_task(req,resp);
    
    /*** Update the map for throwing OBJECT 2***/ 
 
-   panda_softhand_control::set_object::Request req_throwing2;
-   req_throwing2.object_name = "object2";
-   panda_softhand_control::set_object::Response resp_throwing2;
+   // panda_softhand_control::set_object::Request req_throwing2;
+   // req_throwing2.object_name = "object2";
+   // panda_softhand_control::set_object::Response resp_throwing2;
 
-   ROS_INFO("Call the call_set_throwing_joints_place ");
+   // ROS_INFO("Call the call_set_throwing_joints_place ");
 
-   bool success_call_throwing2 = task_sequencer_obj.call_set_throwing_joints_place(req_throwing2,resp_throwing2);
+   // bool success_call_throwing2 = task_sequencer_obj.call_set_throwing_joints_place(req_throwing2,resp_throwing2);
    
-   if(success_call_throwing2){
-      ROS_INFO_STREAM("Call_set_throwing_joints_place service completed correctly: " << resp_throwing2.result);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the call_set_throwing_joints_place service");
-   }
-
-   
-
-   panda_softhand_control::set_object::Request req_vacuum2;
-   req_vacuum2.object_name = "object2";
-   panda_softhand_control::set_object::Response resp_vacuum2;
-
-   ROS_INFO("Call the call_set_vacuum_place ");
-
-   bool success_call_vacuum2 = task_sequencer_obj.call_set_vacuum_place(req_vacuum2,resp_vacuum2);
-   
-   if(success_call_vacuum2){
-      ROS_INFO_STREAM("Call_set_vacuum_place  service completed correctly: " << resp_vacuum2.result);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the call_set_vacuum_place service");
-   }
-
-
-   panda_softhand_control::set_object::Request req_duty2;
-   req_duty2.object_name = "object2";
-   panda_softhand_control::set_object::Response resp_duty2;
-
-   ROS_INFO("Call the call_set_duty_cycle service");
-
-   bool success_call_duty2 = task_sequencer_obj.call_set_duty_cycle(req_duty2,resp_duty2);
-   
-   if(success_call_duty2){
-      ROS_INFO_STREAM("Call_set_duty_cycle service completed correctly: " << resp_duty2.result);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
-   }
-
-
-   /* Going to throwing position ("object2") */
-   
-   ROS_INFO("Going to throwing position");
-
-   std_srvs::SetBool::Request req2;
-   req2.data = true;
-   std_srvs::SetBool::Response resp2;
-
-   bool success_throwing2 = task_sequencer_obj.call_throwing_task(req2,resp2);
-   if(success_throwing2){
-      ROS_INFO_STREAM("Throwing service for object2 completed correctly: " << resp2.success);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the throwing service for object2");
-   }
-
-
-   /* Going to middle12 joint configuration */
-
-
-   ROS_INFO("Going to place joint configuration");
-   
-   bool success_place_joint2 = task_sequencer_obj.call_simple_place_task(req,resp);
-   
-   
-   /*** Update the map for throwing OBJECT 3 ***/ 
-
-   panda_softhand_control::set_object::Request req_throwing3;
-   req_throwing3.object_name = "object3";
-   panda_softhand_control::set_object::Response resp_throwing3;
-
-   ROS_INFO("Call the call_set_throwing_joints_place ");
-
-   bool success_call_throwing3 = task_sequencer_obj.call_set_throwing_joints_place(req_throwing3,resp_throwing3);
-   
-   if(success_call_throwing3){
-      ROS_INFO_STREAM("Call_set_throwing_joints_place service completed correctly: " << resp_throwing2.result);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the call_set_throwing_joints_place service");
-   }
+   // if(success_call_throwing2){
+   //    ROS_INFO_STREAM("Call_set_throwing_joints_place service completed correctly: " << resp_throwing2.result);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the call_set_throwing_joints_place service");
+   // }
 
    
-   panda_softhand_control::set_object::Request req_vacuum3;
-   req_vacuum3.object_name = "object3";
-   panda_softhand_control::set_object::Response resp_vacuum3;
 
-   ROS_INFO("Call the call_set_vacuum_place ");
+   // panda_softhand_control::set_object::Request req_vacuum2;
+   // req_vacuum2.object_name = "object2";
+   // panda_softhand_control::set_object::Response resp_vacuum2;
 
-   bool success_call_vacuum3 = task_sequencer_obj.call_set_vacuum_place(req_vacuum3,resp_vacuum3);
+   // ROS_INFO("Call the call_set_vacuum_place ");
+
+   // bool success_call_vacuum2 = task_sequencer_obj.call_set_vacuum_place(req_vacuum2,resp_vacuum2);
    
-   if(success_call_vacuum3){
-      ROS_INFO_STREAM("Call_set_vacuum_place  service completed correctly: " << resp_vacuum2.result);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the call_set_vacuum_place service");
-   }
+   // if(success_call_vacuum2){
+   //    ROS_INFO_STREAM("Call_set_vacuum_place  service completed correctly: " << resp_vacuum2.result);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the call_set_vacuum_place service");
+   // }
 
-   panda_softhand_control::set_object::Request req_duty3;
-   req_duty3.object_name = "object3";
-   panda_softhand_control::set_object::Response resp_duty3;
 
-   ROS_INFO("Call the call_set_duty_cycle service");
+   // panda_softhand_control::set_object::Request req_duty2;
+   // req_duty2.object_name = "object2";
+   // panda_softhand_control::set_object::Response resp_duty2;
 
-   bool success_call_duty3 = task_sequencer_obj.call_set_duty_cycle(req_duty3,resp_duty3);
+   // ROS_INFO("Call the call_set_duty_cycle service");
+
+   // bool success_call_duty2 = task_sequencer_obj.call_set_duty_cycle(req_duty2,resp_duty2);
    
-   if(success_call_duty3){
-      ROS_INFO_STREAM("Call_set_duty_cycle service completed correctly: " << resp_duty3.result);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
-   }
+   // if(success_call_duty2){
+   //    ROS_INFO_STREAM("Call_set_duty_cycle service completed correctly: " << resp_duty2.result);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
+   // }
 
-   /* Going to throwing position ("object3") */
+
+   // /* Going to throwing position ("object2") */
    
-   ROS_INFO("Going to throwing position");
+   // ROS_INFO("Going to throwing position");
 
-   std_srvs::SetBool::Request req3;
-   req3.data = true;
-   std_srvs::SetBool::Response resp3;
+   // std_srvs::SetBool::Request req2;
+   // req2.data = true;
+   // std_srvs::SetBool::Response resp2;
 
-   bool success_throwing3 = task_sequencer_obj.call_throwing_task(req3,resp3);
-   if(success_throwing3){
-      ROS_INFO_STREAM("Throwing service for object2 completed correctly: " << resp3.success);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the throwing service for object2");
-   }
+   // bool success_throwing2 = task_sequencer_obj.call_throwing_task(req2,resp2);
+   // if(success_throwing2){
+   //    ROS_INFO_STREAM("Throwing service for object2 completed correctly: " << resp2.success);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the throwing service for object2");
+   // }
+
+
+   // /* Going to middle12 joint configuration */
+
+
+   // ROS_INFO("Going to place joint configuration");
+   
+   // bool success_place_joint2 = task_sequencer_obj.call_simple_place_task(req,resp);
+   
+   
+   // /*** Update the map for throwing OBJECT 3 ***/ 
+
+   // panda_softhand_control::set_object::Request req_throwing3;
+   // req_throwing3.object_name = "object3";
+   // panda_softhand_control::set_object::Response resp_throwing3;
+
+   // ROS_INFO("Call the call_set_throwing_joints_place ");
+
+   // bool success_call_throwing3 = task_sequencer_obj.call_set_throwing_joints_place(req_throwing3,resp_throwing3);
+   
+   // if(success_call_throwing3){
+   //    ROS_INFO_STREAM("Call_set_throwing_joints_place service completed correctly: " << resp_throwing2.result);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the call_set_throwing_joints_place service");
+   // }
+
+   
+   // panda_softhand_control::set_object::Request req_vacuum3;
+   // req_vacuum3.object_name = "object3";
+   // panda_softhand_control::set_object::Response resp_vacuum3;
+
+   // ROS_INFO("Call the call_set_vacuum_place ");
+
+   // bool success_call_vacuum3 = task_sequencer_obj.call_set_vacuum_place(req_vacuum3,resp_vacuum3);
+   
+   // if(success_call_vacuum3){
+   //    ROS_INFO_STREAM("Call_set_vacuum_place  service completed correctly: " << resp_vacuum2.result);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the call_set_vacuum_place service");
+   // }
+
+   // panda_softhand_control::set_object::Request req_duty3;
+   // req_duty3.object_name = "object3";
+   // panda_softhand_control::set_object::Response resp_duty3;
+
+   // ROS_INFO("Call the call_set_duty_cycle service");
+
+   // bool success_call_duty3 = task_sequencer_obj.call_set_duty_cycle(req_duty3,resp_duty3);
+   
+   // if(success_call_duty3){
+   //    ROS_INFO_STREAM("Call_set_duty_cycle service completed correctly: " << resp_duty3.result);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
+   // }
+
+   // /* Going to throwing position ("object3") */
+   
+   // ROS_INFO("Going to throwing position");
+
+   // std_srvs::SetBool::Request req3;
+   // req3.data = true;
+   // std_srvs::SetBool::Response resp3;
+
+   // bool success_throwing3 = task_sequencer_obj.call_throwing_task(req3,resp3);
+   // if(success_throwing3){
+   //    ROS_INFO_STREAM("Throwing service for object2 completed correctly: " << resp3.success);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the throwing service for object2");
+   // }
  
    /* Going to middle12 joint configuration */
 
-   ROS_INFO("Going to place joint configuration");
+   // ROS_INFO("Going to place joint configuration");
    
-   bool success_place_joint3 = task_sequencer_obj.call_simple_place_task(req,resp);
+   // bool success_place_joint3 = task_sequencer_obj.call_simple_place_task(req,resp);
   
-   /**/
+   // /**/
 
-   ROS_INFO("Going to replacing position for the handtool");
+   // ROS_INFO("Going to replacing position for the handtool");
    
    
-   bool success_replace = task_sequencer_obj.call_replace_task(req,resp);
+   // bool success_replace = task_sequencer_obj.call_replace_task(req,resp);
     
-   if(success_replace){
-      ROS_INFO_STREAM("Replacing service completed correctly: " << resp.success);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the replacing service");
-   }
+   // if(success_replace){
+   //    ROS_INFO_STREAM("Replacing service completed correctly: " << resp.success);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the replacing service");
+   // }
 
-   ROS_INFO("Going to home position");
+   // ROS_INFO("Going to home position");
    
-   bool success_home_position2 = task_sequencer_obj.call_simple_home_task(req,resp);
+   // bool success_home_position2 = task_sequencer_obj.call_simple_home_task(req,resp);
 
    while(ros::ok()){
          // Nothing to do here
