@@ -27,6 +27,7 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_core
   franka_msgs
   franka_control
+  eigen_conversions
 )
 
 add_service_files(FILES
@@ -49,7 +50,8 @@ generate_messages(DEPENDENCIES
   trajectory_msgs
 )
 
-find_package(SDFormat REQUIRED)
+# find_package(SDFormat REQUIRED)
+find_package(sdformat10 REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include

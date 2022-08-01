@@ -31,7 +31,7 @@ geometry_msgs::Quaternion quaternion_from_rpy(double roll, double pitch, double 
 }
 
 /* ******************************************************************************************** */
-void setObjectProperties(string name, ignition::math::Vector3d loc,ignition::math::Quaterniond rot,  ignition::math::Vector3d dim,
+void setObjectProperties(string name, ignition::math::v6::Vector3d loc,ignition::math::v6::Quaterniond rot,  ignition::math::Vector3d dim,
 		moveit_msgs::CollisionObject& object) {
     
 	// Set the name of the object and its link to the world
@@ -43,7 +43,7 @@ void setObjectProperties(string name, ignition::math::Vector3d loc,ignition::mat
     object.primitive_poses.back().position.y = loc.Y();
     object.primitive_poses.back().position.z = loc.Z();
     
-
+    
 	// Set the orientation 
 	geometry_msgs::Quaternion quat = quaternion_from_rpy(rot.X(), rot.Y(), rot.Z());
     
@@ -181,16 +181,20 @@ int main(int argc, char **argv) {
 		}
 
 		// Get the pose
-
+        
 		sdf::ElementPtr poseElem = model->GetElement("pose");
 		assert(poseElem != NULL && "No pose information in model!");
 		// ignition::math::Pose3d pose;
-        ignition::math::v4::Pose3<double> pose;
+        
+		// ignition::math::v4::Pose3<double> pose;
+
+        ignition::math::v6::Pose3<double> pose;
+
 		// sdf::Pose pose;
 		stringstream ss_pose (poseElem->GetValue()->GetAsString());
 		ss_pose >> pose;
 		cout << "Pose: " << pose << endl;
-	   
+	
 		
 		// Check that the collision object is a box
 		sdf::ElementPtr linkElem = model->GetElement("link");
@@ -211,7 +215,8 @@ int main(int argc, char **argv) {
 		ss_size >> size;
 		cout << "Box dims: " << size << endl;
 		// Fill the object pose and dimensions into the planning_scene message
-		// setObjectProperties(name, pose.pos, size, object);
+		// setObjectProperties(name, pose.pos, size, object); 
+		
 	    setObjectProperties(name, pose.Pos(), pose.Rot(), size, object);
 		planning_scene.world.collision_objects.clear();
 		planning_scene.world.collision_objects.push_back(object);
@@ -230,7 +235,7 @@ int main(int argc, char **argv) {
 	return EXIT_SUCCESS;
 }
 
-void setObjectProperties(string , ignition::math::Vector3d , ignition::math::Quaterniond, ignition::math::Vector3d ,
+void setObjectProperties(string , ignition::math::v6::Vector3d , ignition::math::v6::Quaterniond, ignition::math::Vector3d ,
 		moveit_msgs::CollisionObject& );
 
 geometry_msgs::Quaternion quaternion_from_rpy(double, double, double);
