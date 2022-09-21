@@ -268,19 +268,9 @@ bool TaskSequencer::parse_task_params(){
     this->replace_hand_tool_T = this->convert_vector_to_pose(this->replace_hand_tool);
 
 
-
-
-
-
-
-
-
-
-
-
     if(!ros::param::get("/task_sequencer/handover_joints", this->handover_joints)){
 		ROS_WARN("The param 'handover_joints' not found in param server! Using default.");
-		this->handover_joints = {-0.101, 0.161, 0.159, -1.651, 2.023, 2.419, -0.006};
+		this->handover_joints = {0.07661606385153637, 0.33422404886526574, 0.150294620860357, -1.1043230171470189, -0.05647621116425888, 1.5700528297424314, 0.061656965438109404};
 		success = false;
 	}
 
@@ -409,9 +399,6 @@ bool TaskSequencer::parse_task_params(){
             std::cout << "]" << std::endl;     
         }
     }
-
-    std::cout << "Fine" << std::endl;
-
 
     return success;
 }
@@ -927,47 +914,47 @@ bool TaskSequencer::call_simple_handover_task(std_srvs::SetBool::Request &req, s
         return false;
     }
 
-    // 2) Waiting for threshold or for some time
-    sleep(1);       // Sleeping for a second to avoid robot stopping peaks
-    bool hand_open = false; ros::Time init_time = ros::Time::now(); ros::Time now_time;
-    double base_tau_ext = this->tau_ext_norm;           // Saving the present tau for later computation of variation
-    while(!hand_open){
-        now_time = ros::Time::now();
-        usleep(500);                         // Don't know why, but the threshold works with this sleeping
-        if(std::abs(this->tau_ext_norm - base_tau_ext) > this->handover_thresh){
-            hand_open = true;
-            if(DEBUG) ROS_WARN_STREAM("Opening condition reached!" << " SOMEONE PULLED!");
-            if(DEBUG) ROS_WARN_STREAM("The tau_ext difference is " << std::abs(this->tau_ext_norm - base_tau_ext) << " and the threshold is " << this->handover_thresh << ".");
-        }
-        if((now_time - init_time) > ros::Duration(10, 0)){
-            hand_open = true;
-            if(DEBUG) ROS_WARN_STREAM("Opening condition reached!" << " TIMEOUT!");
-            if(DEBUG) ROS_WARN_STREAM("The initial time was " << init_time << ", now it is " << now_time 
-                << ", the difference is " << (now_time - init_time) << " and the timeout thresh is " << ros::Duration(10, 0));
-        }
-    }
+    // // 2) Waiting for threshold or for some time
+    // sleep(1);       // Sleeping for a second to avoid robot stopping peaks
+    // bool hand_open = false; ros::Time init_time = ros::Time::now(); ros::Time now_time;
+    // double base_tau_ext = this->tau_ext_norm;           // Saving the present tau for later computation of variation
+    // while(!hand_open){
+    //     now_time = ros::Time::now();
+    //     usleep(500);                         // Don't know why, but the threshold works with this sleeping
+    //     if(std::abs(this->tau_ext_norm - base_tau_ext) > this->handover_thresh){
+    //         hand_open = true;
+    //         if(DEBUG) ROS_WARN_STREAM("Opening condition reached!" << " SOMEONE PULLED!");
+    //         if(DEBUG) ROS_WARN_STREAM("The tau_ext difference is " << std::abs(this->tau_ext_norm - base_tau_ext) << " and the threshold is " << this->handover_thresh << ".");
+    //     }
+    //     if((now_time - init_time) > ros::Duration(10, 0)){
+    //         hand_open = true;
+    //         if(DEBUG) ROS_WARN_STREAM("Opening condition reached!" << " TIMEOUT!");
+    //         if(DEBUG) ROS_WARN_STREAM("The initial time was " << init_time << ", now it is " << now_time 
+    //             << ", the difference is " << (now_time - init_time) << " and the timeout thresh is " << ros::Duration(10, 0));
+    //     }
+    // }
 
-    // 3) Opening hand
-    if(!this->panda_softhand_client.call_hand_plan_service(0.0, 2.0, this->tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not plan the simple open.");
-        res.success = false;
-        res.message = "The service call_simple_handover_task was NOT performed correctly! Error plan in hand plan.";
-        return false;
-    }
+    // // 3) Opening hand
+    // if(!this->panda_softhand_client.call_hand_plan_service(0.0, 2.0, this->tmp_traj) || !this->franka_ok){
+    //     ROS_ERROR("Could not plan the simple open.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_handover_task was NOT performed correctly! Error plan in hand plan.";
+    //     return false;
+    // }
 
-    if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj) || !this->franka_ok){
-        ROS_ERROR("Could not perform the simple open.");
-        res.success = false;
-        res.message = "The service call_simple_handover_task was NOT performed correctly! Error plan in hand control.";
-        return false;
-    }
+    // if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj) || !this->franka_ok){
+    //     ROS_ERROR("Could not perform the simple open.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_handover_task was NOT performed correctly! Error plan in hand control.";
+    //     return false;
+    // }
 
-    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
-        ROS_ERROR("Could not wait the simple open.");
-        res.success = false;
-        res.message = "The service call_simple_handover_task was NOT performed correctly! Error plan in hand wait.";
-        return false;
-    }
+    // if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+    //     ROS_ERROR("Could not wait the simple open.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_handover_task was NOT performed correctly! Error plan in hand wait.";
+    //     return false;
+    // }
 
     // Now, everything finished well
     res.success = true;
@@ -1117,6 +1104,34 @@ bool TaskSequencer::call_grasp_handtool_task(std_srvs::SetBool::Request &req, st
 // Callback for throwing several objects listed in the YAML file
 bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
     
+    /* PLAN 1 */
+
+    if(!this->panda_softhand_client.call_joint_service(this->place_joints, this->null_joints, this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not plan to the specified place joint config.");
+        res.success = false;
+        res.message = "The service call_simple_place_task was NOT performed correctly!";
+        return false;
+    }
+        
+    /* EXEC 1*/
+
+    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not go to place joint config.");
+        res.success = false;
+        res.message = "The service call_simple_place_task was NOT performed correctly! Error in arm control.";
+        return false;
+    }
+
+    /* WAIT 1*/
+
+    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre vacuuming configuration from prethrowing configuration");
+        res.success = false;
+        res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    }
+
+
     /* PLAN 2: PLanning to pre_throwing pose */
 
     Eigen::Affine3d object_pose_aff; tf::poseMsgToEigen(this->object_pose_T, object_pose_aff);
@@ -1252,7 +1267,7 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
         return false;
     };
     
-    /* WAIT 5*/
+    /* WAIT 5: questo wait non ci dovrebbe essere...*/
 
     if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
         ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre vacuuming configuration from prethrowing configuration");
@@ -1323,7 +1338,22 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
     std_msgs::Empty msg2;
     pub_blow.publish(msg2);
 
-    /* PLAN 6*/
+
+    std::vector<trajectory_msgs::JointTrajectoryPoint> traj_arm_points4 = (this->tmp_traj_arm).points;
+    trajectory_msgs::JointTrajectoryPoint last_point4 = traj_arm_points4.back();
+    
+    std::vector<double> now_joints_last(n,0.0);
+
+    for(int i=0; i < now_joints_last.size(); i++){
+        now_joints_last.at(i) = last_point4.positions[i];
+    }
+
+    for(auto k: now_joints_last){
+        std::cout << "Joint positions are: " << k << std::endl;
+    }
+
+   
+    // /* PLAN 6*/
 
     // if(!this->panda_softhand_client.call_joint_service(this->place_joints, this->null_joints, this->tmp_traj) || !this->franka_ok){
     //     ROS_ERROR("Could not plan to the specified place joint config.");
@@ -1331,8 +1361,16 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
     //     res.message = "The service call_simple_place_task was NOT performed correctly!";
     //     return false;
     // }
-    
-    // /*WAIT 5 */
+    // std::cout << "Sto per fare l'ultima pianificazione" << std::endl;
+
+    // if(!this->panda_softhand_client.call_joint_service(this->place_joints, now_joints_last, this->tmp_traj_arm) || !this->franka_ok){
+    //     ROS_ERROR("Could not plan to the specified place joint config.");
+    //     res.success = false;
+    //     res.message = "The service call_simple_place_task was NOT performed correctly!";
+    //     return false;
+    // }
+
+    // /*WAIT 5*/
 
     // if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
     //     ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre vacuuming configuration from prethrowing configuration");
@@ -1340,24 +1378,23 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
     //     res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
     //     return false;
     // }
-    
+        
     // /* EXEC 6*/
 
-    // if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj) || !this->franka_ok){
+    // if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
     //     ROS_ERROR("Could not go to place joint config.");
     //     res.success = false;
     //     res.message = "The service call_simple_place_task was NOT performed correctly! Error in arm control.";
     //     return false;
     // }
 
-    /* WAIT 6 */
-
-    // if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){        // WAITING FOR END EXEC
-    //     ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to place joint config");
+    // if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
+    //     ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre vacuuming configuration from prethrowing configuration");
     //     res.success = false;
-    //     res.message = "The service call_simple_place_task was NOT performed correctly! Error wait in arm control.";
+    //     res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
     //     return false;
     // }
+
 
     // Now, everything finished well
     res.success = true;
@@ -1504,7 +1541,6 @@ bool TaskSequencer::call_set_duty_cycle(panda_softhand_control::set_object::Requ
 
 bool TaskSequencer::call_replace_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
        
-  
     /* Computing the grasp and pregrasp pose and converting to geometry_msgs Pose */
 
     Eigen::Affine3d object_pose_aff; tf::poseMsgToEigen(this->object_pose_T, object_pose_aff);

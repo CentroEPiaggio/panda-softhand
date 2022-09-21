@@ -20,10 +20,7 @@ task_sequencer:
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
   # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default)
 
-  grasp_transform: [0.648, -0.182, 0.560, 1.528, 0.013, 0.062]
 
-  # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
-  pre_grasp_transform: [0.0, 0.0, -0.1, 0.0, 0.0, 0.0]
 
   ################# PREVACUUM JOINTS CONFIGURATION AND VACUUM TRANSFORM ########
   # # Transform from object frame to vacuum pose frame (xyzrpy) (DEFAULT)
@@ -51,10 +48,9 @@ task_sequencer:
 
   duty_cycle: 255
 
-  # The joint configuration for place
-  place_joints: [-0.068, 0.152, 0.193, -2.352, 0.0405, 2.519, 0.117]
+ 
   # The joint configuration for handover
-  handover_joints: [-0.101, 0.161, 0.159, -1.651, 2.023, 2.419, -0.006]
+  handover_joints: [0.07661606385153637, 0.33422404886526574, 0.150294620860357, -1.1043230171470189, -0.05647621116425888, 1.5700528297424314, 0.061656965438109404]
   # The threshold on tau_ext for handover hand opening
   handover_thresh: 1.0
 
@@ -71,25 +67,36 @@ task_sequencer:
   # DARKO: Update map for throwing different objects
 
   duty_cycle_map:
-    "object1" : 200
+    "object1" : 70
     "object2" : 200
-    "object3" : 200
+    "object3" : 110
 
   vacuum_pose_map:
-    "object1" : [0.659, 0.047, 0.282, 1.612, -0.044, 0.169]
-    "object2" : [0.659, 0.047, 0.282, 1.612, -0.044, 0.169]
-    "object3" : [0.659, 0.047, 0.282, 1.612, -0.044, 0.169]
+    "object1" : [0.639, 0.499, 0.240, 1.519, -0.006, 1.233]
+    "object2" : [0.745, 0.445, 0.256, 1.566, 0.014, 0.847]
+    "object3" : [0.654, 0.050, 0.263, 1.563, 0.010, 0.322]
   
-  pre_vacuum_transform: [0.0, 0.12, 0.0, 0.0, 0.0, 0.0]
+  pre_vacuum_transform: [0.0, 0.18, 0.0, 0.0, 0.0, 0.0]
 
   throwing_joints_map: 
-    "object1" : [0.02540348443652077, -0.18720486238631742, -0.05494041982513448, -1.9509170009211487, 1.4688969827360576, 1.742439166060752, 0.6695532953675154]
-    "object2" : [0.03751108860477447, -0.24810663210509112, -0.05270184238593884, -1.9638007991192772, 1.5095280083641442, 1.5830251730138303, 1.051777264139391]
-    "object3" : [0.05331022987106843, -0.24793158693471035, -0.0339393377675464, -2.131727426662779, 1.589026137259271, 1.622215093478781, 0.19338969808034875]
+    "object1" : [-0.1336853157227047, 0.133847571910326, 0.48415129621436326, -1.5803019100713969, 1.2641777587599226, 2.2101005425378424, 0.9810796240315391]
+    "object2" : [-0.1336853157227047, 0.133847571910326, 0.48415129621436326, -1.5803019100713969, 1.2641777587599226, 2.2101005425378424, 0.9810796240315391]
+    "object3" : [0.04785265325537481, -0.02243984555387706, -0.06327913601347288, -1.6321566662691276, 1.509167721337742, 1.701924193056093, 1.1743330643145264]
   
-  # The personalized place joints maps 
-  place_joints_map:
-    "middle12" : [0.07661606385153637, 0.33422404886526574, 0.150294620860357, -1.1043230171470189, -0.05647621116425888, 1.5700528297424314, 0.061656965438109404]
+  # The joint configuration for place
+  place_joints: [0.05980157623531709, 0.3964425940178988, 0.5259775984331729, -1.5303934152335452, -1.7882577368207608, 1.5728729495935967, 0.28803116412371965]
 
-  replace_hand_tool : [0.658, -0.199, 0.560, 1.569, 0.037, 0.271]
+  # The personalized place joints maps for updating place_joints (above)
+   
+  place_joints_map:
+    "object12" : [0.05980157623531709, 0.3964425940178988, 0.5259775984331729, -1.5303934152335452, -1.7882577368207608, 1.5728729495935967, 0.28803116412371965]
+
+  replace_hand_tool : [0.636, -0.210, 0.556, 1.574, 0.040, 0.520]
   pre_replace_hand_tool: [0.0, 0.0, -0.05, 0.0, 0.0, 0.0]
+  
+  # Position and RPY for grasping the hand-tool
+
+  grasp_transform: [0.630, -0.207, 0.556, 1.528, 0.012, 0.444]
+
+  # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
+  pre_grasp_transform: [0.0, 0.0, -0.1, 0.0, 0.0, 0.0]

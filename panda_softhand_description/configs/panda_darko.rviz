@@ -720,8 +720,7 @@ Visualization Manager:
       Marker Topic: /rviz_visual_tools
       Name: Goal Pose
       Namespaces:
-        Text: true
-        goal pose: true
+        {}
       Queue Size: 100
       Value: true
     - Class: moveit_rviz_plugin/Trajectory
@@ -997,25 +996,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.9754735231399536
+      Distance: 3.646022319793701
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.6879296898841858
-        Y: -0.13347016274929047
-        Z: 0.24538008868694305
+        X: 0.4599078595638275
+        Y: 0.4517252743244171
+        Z: 0.3151259422302246
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3452044427394867
+      Pitch: 0.29020342230796814
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.3203686773777008
+      Yaw: 0.015361442230641842
     Saved: ~
 Window Geometry:
   Displays:
