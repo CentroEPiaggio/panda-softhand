@@ -45,7 +45,7 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>1 0.7 0.05</size>
+		          <size>1 0.9 0.05</size>
 		        </box>
 		      </geometry>
 	      </collision>
@@ -53,7 +53,7 @@
 				<visual name="my_visualTable">
 					<geometry>
 		        <box>
-					<size>1 0.7 0.05</size>
+					<size>1 0.9 0.05</size>
 		        </box>
 		      </geometry>
 	      </visual>
@@ -75,7 +75,7 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>1 0.7 0.05</size>
+		          <size>1 5 0.05</size>
 		        </box>
 		      </geometry>
 	      </collision>
@@ -83,7 +83,7 @@
 				<visual name="my_visualTableright">
 					<geometry>
 		        <box>
-					<size>1 0.7 0.05</size>
+					<size>1 5 0.05</size>
 		        </box>
 		      </geometry>
 	      </visual>
@@ -127,7 +127,7 @@
 
 
 	<!-- box (like a wall on the left of the robot) -->
-    <model name="wall_left">
+    <!-- <model name="wall_left">
 	        
 			<pose>0.6 0.475 0.5 0 0 0 </pose>
 			<static>true</static>
@@ -154,12 +154,12 @@
 				<self_collide>0</self_collide>
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model> -->
 
     <!-- box (like a little wall on the left of the robot) -->
     <model name="wall_little_left">
 	        
-			<pose>0.0 0.3 0.225 0 0 0 </pose>
+			<pose>0.0 0.20 0.215 0 0 0 </pose>
 			<static>true</static>
 			<link name='linkWallLittleLeft'>
 				<pose>0 0 0 0 0 0</pose>
@@ -168,7 +168,7 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>0.3 0.03 0.4</size>
+		          <size>0.3 0.03 0.3</size>
 		        </box>
 		            </geometry>
 	            </collision>
@@ -176,7 +176,7 @@
 				<visual name="my_visualWallLittleLeft">
 					<geometry>
 		        <box>
-					<size>0.3 0.03 0.4</size>
+					<size>0.3 0.03 0.3</size>
 		        </box>
 		           </geometry>
 	      </visual>
@@ -186,9 +186,7 @@
 			</link>
     </model>
 
-
-
-
+	
 
 	<!-- box (like a wall on the right of the robot) -->
     <model name="wall_right">
@@ -223,7 +221,7 @@
     <!-- box (like a little wall on the right of the robot) -->
     <model name="wall_little_right">
 	        
-			<pose>0.0 -0.3 0.225 0 0 0 </pose>
+			<pose>0.0 -0.20 0.215 0 0 0 </pose>
 			<static>true</static>
 			<link name='linkWallLittleRight'>
 				<pose>0 0 0 0 0 0</pose>
@@ -232,7 +230,7 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>0.3 0.03 0.4</size>
+		          <size>0.3 0.03 0.3</size>
 		        </box>
 		            </geometry>
 	            </collision>
@@ -240,7 +238,7 @@
 				<visual name="my_visualWallLittleRight">
 					<geometry>
 		        <box>
-					<size>0.3 0.03 0.4</size>
+					<size>0.3 0.03 0.3</size>
 		        </box>
 		           </geometry>
 	      </visual>
@@ -283,7 +281,7 @@
 
 	<!-- box (like a wall behind) -->
     <model name="wall_behind">
-			<pose> -0.30 -0.20 0.5 0 0 0</pose>
+			<pose> -0.175 -0.2 0.15 0 0 0</pose>
 			<static>true</static>
 			<link name='linkWallBehind'>
 				<pose>0 0 0 0 0 0</pose>
@@ -292,12 +290,73 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>0.05 1 1</size>
+		          <size>0.05 1 0.4</size>
 		        </box>
 		      </geometry>
 	      </collision>
 				
 				<visual name="my_visualWallBehind">
+					<geometry>
+		        <box>
+					<size>0.05 1 0.4</size>
+		        </box>
+		      </geometry>
+	      </visual>
+				
+				<self_collide>0</self_collide>		
+				<gravity>1</gravity>
+			</link>
+    </model>
+
+    <!-- box (like a little wall in front of the robot) -->
+
+	<model name="wall_front">
+			<pose> 0.175 0 0.2 0 0 0</pose>
+			<static>true</static>
+			<link name='linkWallFront'>
+				<pose>0 0 0 0 0 0</pose>
+				
+				<collision name="my_collisionWallFront">
+		 			<pose>0 0 0 0 0 0</pose>
+					<geometry>
+		        <box>
+		          <size>0.05 0.4 0.3</size>
+		        </box>
+		      </geometry>
+	      </collision>
+				
+				<visual name="my_visualWallFront">
+					<geometry>
+		        <box>
+					<size>0.05 0.4 0.3</size>
+		        </box>
+		      </geometry>
+	      </visual>
+				
+				<self_collide>0</self_collide>		
+				<gravity>1</gravity>
+			</link>
+    </model>
+
+
+
+	<!-- box (like a wall behind2) -->
+    <model name="wall_behind2">
+			<pose> 0.105 0.75 0.55 0 0 0</pose>
+			<static>true</static>
+			<link name='linkWallBehind2'>
+				<pose>0 0 0 0 0 0</pose>
+				
+				<collision name="my_collisionWallBehind2">
+		 			<pose>0 0 0 0 0 0</pose>
+					<geometry>
+		        <box>
+		          <size>0.05 1 1</size>
+		        </box>
+		      </geometry>
+	      </collision>
+				
+				<visual name="my_visualWallBehind2">
 					<geometry>
 		        <box>
 					<size>0.05 1 1</size>
@@ -310,92 +369,6 @@
 			</link>
     </model>
 
-	<!-- box (like a wall near the camera) -->
-    <!-- <model name="wall_camera">
-			<pose> 0.20 -0.45 0.5 0 0 0</pose>
-			<static>true</static>
-			<link name='linkWallCamera'>
-				<pose>0 0 0 0 0 0</pose>
-				
-				<collision name="my_collisionWallCamera">
-		 			<pose>0 0 0 0 0 0</pose>
-					<geometry>
-		        <box>
-		          <size>1.5 0.02 1</size>
-		        </box>
-		      </geometry>
-	      </collision>
-				
-				<visual name="my_visualWallCamera">
-					<geometry>
-		        <box>
-					<size>1.5 0.02 1</size>
-		        </box>
-		      </geometry>
-	      </visual>
-				
-				<self_collide>0</self_collide>		
-				<gravity>1</gravity>
-			</link>
-    </model> -->
-
-	<!-- box (like a wall near the control pc) -->
-    <!-- <model name="wall_pc">
-			<pose> 0.20 0.30 0.5 0 0 0</pose>
-			<static>true</static>
-			<link name='linkWallPc'>
-				<pose>0 0 0 0 0 0</pose>
-				
-				<collision name="my_collisionWallPc">
-		 			<pose>0 0 0 0 0 0</pose>
-					<geometry>
-		        <box>
-		          <size>1.5 0.02 1</size>
-		        </box>
-		      </geometry>
-	      </collision>
-				
-				<visual name="my_visualWallPc">
-					<geometry>
-		        <box>
-					<size>1.5 0.02 1</size>
-		        </box>
-		      </geometry>
-	      </visual>
-				
-				<self_collide>0</self_collide>		
-				<gravity>1</gravity>
-			</link>
-    </model> -->
-
-	<!-- box (like a container for placing) -->
-    <!-- <model name="box_container">
-			<pose> 0.87 0.00 0.01 0 0 0</pose>
-			<static>true</static>
-			<link name='linkBoxContainer'>
-				<pose>0 0 0 0 0 0</pose>
-				
-				<collision name="my_collisionBoxContainer">
-		 			<pose>0 0 0 0 0 0</pose>
-					<geometry>
-		        <box>
-		          <size>0.18 0.85 0.08</size>
-		        </box>
-		      </geometry>
-	      </collision>
-				
-				<visual name="my_visualBoxContainer">
-					<geometry>
-		        <box>
-					<size>0.18 0.85 0.08</size>
-		        </box>
-		      </geometry>
-	      </visual>
-				
-				<self_collide>0</self_collide>		
-				<gravity>1</gravity>
-			</link>
-    </model> -->
 
   </world>
   

@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+<node pkg="rosbag" name="record" type="record" args="-O /home/frankacrosslab/rosbag_lanci/throwing_angle60.89/duty_80/10.bag arduino/blowing_off arduino/suctioning arduino/duty_cycle /panda_arm/franka_state_controller/franka_states
+  tf panda_arm/joint_states" />
+</launch>

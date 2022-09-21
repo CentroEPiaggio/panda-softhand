@@ -7,7 +7,10 @@
 
   <!-- MODELS -->
   <xacro:include filename="$(find franka_description)/robots/panda_arm.xacro"/>
-  <xacro:include filename="$(find soft_hand_description)/model/soft_hand_soma_panda.urdf.xacro"/>
+  <xacro:include filename="$(find soft_hand_description)/model/soft_hand_soma_panda.urdf.xacro"/> 
+
+  <!-- con flangia -->
+  <!-- <xacro:include filename="$(find soft_hand_description)/model/soft_hand_darko_panda.urdf.xacro"/> -->
 
   <!-- WORLD -->
   <link name="world"/>
@@ -26,14 +29,21 @@
     <origin xyz="0 0 0" rpy="0 0 3.1415"/>
   </xacro:soft_hand_soma_panda>
 
-  <!-- EXTRA ENDEFFECTOR -->
+  <!-- EXTRA ENDEFFECTOR-CON FLANGIA ANGOLATA -->
   <joint name="right_hand_ee_joint" type="fixed">
     <origin xyz="0.130 0.000 0.035" rpy="0 0 0"/>
     <parent link="panda_link8" />
     <child link="right_hand_ee_link" />
   </joint>
 
+  <!-- EXTRA ENDEFFECTOR-SENZA FLANGIA -->
+  <!-- <joint name="right_hand_ee_joint" type="fixed">
+    <origin xyz="0.000 0.000 0.110" rpy="-1.5714 1.5714 0"/>
+    <parent link="panda_link8" />
+    <child link="right_hand_ee_link" />
+  </joint> -->
+
   <link name="right_hand_ee_link">
-  </link>
+  </link> 
 
 </robot>
