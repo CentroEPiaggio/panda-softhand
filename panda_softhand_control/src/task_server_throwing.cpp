@@ -116,26 +116,6 @@ int main(int argc, char **argv)
    } else {
       ROS_INFO_STREAM("Failed to completed the throwing service");
    }
-
-   // // Calling the place joint service 
-   
-   // panda_softhand_control::set_object::Request req_joint_place;
-   // req_joint_place.object_name = "object12";
-   // panda_softhand_control::set_object::Response resp_joint_place;
-
-   // ROS_INFO("Call the call_set_joint_place service");
-
-   // bool success_joint_place = task_sequencer_obj.call_set_place(req_joint_place,resp_joint_place);
-   
-   // if(success_joint_place){
-   //    ROS_INFO_STREAM("Call_set_joint_place service completed correctly: " << resp_joint_place.result);
-   // } else {
-   //    ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
-   // }
-   
-   // ROS_INFO("Going to place joint configuration");
-   
-   // bool success_place_joint2 = task_sequencer_obj.call_simple_place_task(req,resp);
    
    
    // /*** Update the map for throwing OBJECT 2***/ 
