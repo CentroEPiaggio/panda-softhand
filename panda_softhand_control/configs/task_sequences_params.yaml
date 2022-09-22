@@ -67,7 +67,7 @@ task_sequencer:
   # DARKO: Update map for throwing different objects
 
   duty_cycle_map:
-    "object1" : 70
+    "object1" : 110
     "object2" : 200
     "object3" : 110
 
