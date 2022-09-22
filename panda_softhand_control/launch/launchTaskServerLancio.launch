@@ -2,6 +2,6 @@
 <launch>
 <!-- Load main node for throwing task service -->
     <include file="$(find panda_softhand_control)/launch/launchTaskServer.launch" />
-    <include file="$(find panda_softhand_control)/launch/ros_bag_record.launch" />
+    <!-- <include file="$(find panda_softhand_control)/launch/ros_bag_record.launch" /> -->
   	<node name="task_server_node_throwing" pkg="panda_softhand_control" type="task_server_throwing" output="screen"/>	
 </launch>

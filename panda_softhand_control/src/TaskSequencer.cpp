@@ -1122,14 +1122,6 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
         return false;
     }
 
-    /* WAIT 1*/
-
-    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
-        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre vacuuming configuration from prethrowing configuration");
-        res.success = false;
-        res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
-        return false;
-    }
 
 
     /* PLAN 2: PLanning to pre_throwing pose */
@@ -1148,11 +1140,12 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
     std::cout << "Object orientation is \n" << object_pose_aff.rotation() << std::endl;
 
     // Setting zero pose as starting from present
-    geometry_msgs::Pose present_pose = geometry_msgs::Pose();
-    present_pose.position.x = 0.0; present_pose.position.y = 0.0; present_pose.position.z = 0.0;
-    present_pose.orientation.x = 0.0; present_pose.orientation.y = 0.0; present_pose.orientation.z = 0.0; present_pose.orientation.w = 1.0;
+    // geometry_msgs::Pose present_pose = geometry_msgs::Pose();
+    // present_pose.position.x = 0.0; present_pose.position.y = 0.0; present_pose.position.z = 0.0;
+    // present_pose.orientation.x = 0.0; present_pose.orientation.y = 0.0; present_pose.orientation.z = 0.0; present_pose.orientation.w = 1.0;
     
-
+    geometry_msgs::Pose present_pose = performFK(this->place_joints);
+   
     
     if(!this->panda_softhand_client.call_pose_service(pre_vacuum_pose, present_pose, false, this->tmp_traj_arm, this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified pre grasp pose.");
@@ -1160,6 +1153,16 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
         return false; 
     }
+
+    /* WAIT 1*/
+
+    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre vacuuming configuration from prethrowing configuration");
+        res.success = false;
+        res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    }
+
     
        
     /* EXEC 2: Going to prevacuuming pose */

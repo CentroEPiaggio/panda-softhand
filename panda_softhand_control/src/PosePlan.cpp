@@ -13,8 +13,6 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 PosePlan::PosePlan(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_){
         
-        std::cout << "Stefano 2 " << std::endl;
-
         ROS_INFO("Starting to create PosePlan object");
 
         // Initializing node handle
@@ -25,8 +23,6 @@ PosePlan::PosePlan(ros::NodeHandle& nh_, std::string group_name_, std::string en
         this->group_name = group_name_;
 
         ROS_INFO("Finished creating PosePlan object");
-
-        std::cout << "Stefano 3 " << std::endl;
 
 }
 
