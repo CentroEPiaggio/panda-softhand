@@ -1,0 +1,4 @@
+<launch>
+   <include file="$(find panda_softhand_control)/launch/launchPandaSoftHand_ControlServer.launch" />
+   <include file="$(find panda_softhand_control)/launch/launchTaskServerLancio.launch" />   
+</launch>

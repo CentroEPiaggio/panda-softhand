@@ -449,7 +449,6 @@ void TaskSequencer::get_object_pose(const geometry_msgs::Pose::ConstPtr &msg){
     this->object_pose_T = *msg;
 }
 
-
 // Callback for franka state subscriber
 void TaskSequencer::get_franka_state(const franka_msgs::FrankaState::ConstPtr &msg){
 

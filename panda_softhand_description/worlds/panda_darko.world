@@ -342,7 +342,7 @@
 
 	<!-- box (like a wall behind2) -->
     <model name="wall_behind2">
-			<pose> 0.105 0.75 0.55 0 0 0</pose>
+			<pose> 0.2 0.65 0.55 0 0 -1.4</pose>
 			<static>true</static>
 			<link name='linkWallBehind2'>
 				<pose>0 0 0 0 0 0</pose>
