@@ -57,6 +57,11 @@ class TaskSequencer {
 
         // To switch the controllers
         bool switch_controllers(std::string robot_name, std::string from_controller, std::string to_controller);
+        
+
+        // Callback for emergency 
+
+        void get_emergency_flag(const std_msgs::Bool::ConstPtr &msg);
 
         // Callback for object pose subscriber
         void get_object_pose(const geometry_msgs::Pose::ConstPtr &msg);
@@ -113,6 +118,11 @@ class TaskSequencer {
         // Subscriber to object pose and the pose
         ros::Subscriber object_sub;
         geometry_msgs::Pose object_pose_T;
+
+        // Subscriber to emergency
+
+        ros::Subscriber emergency;
+        bool stop = false;
         
         // Publishers for arduino(blowing_off and suctioning function)
         
@@ -159,7 +169,8 @@ class TaskSequencer {
         
 
         // Topic names for arduino
-
+        
+        std::string emergency_stop = "emergency/flag_stop";
         std::string blow_off = "arduino/blowing_off";
         std::string suction = "arduino/suctioning";
         std::string duty = "arduino/duty_cycle";

@@ -8,6 +8,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "utils/parsing_utilities.h"
 #include "panda_softhand_control/TaskSequencer.h"
 #include <std_msgs/UInt8.h>
+#include <std_msgs/Bool.h>
 
 TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     
@@ -22,6 +23,9 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     // Initializing the object subscriber and waiting (the object topic name is parsed now)
     this->object_sub = this->nh.subscribe(this->object_topic_name, 1, &TaskSequencer::get_object_pose, this);
     ros::topic::waitForMessage<geometry_msgs::Pose>(this->object_topic_name, ros::Duration(2.0));
+
+
+    this->emergency = this->nh.subscribe(this->emergency_stop, 1, &TaskSequencer::get_emergency_flag, this);
     
     this->pub_blow = (this->nh).advertise<std_msgs::Empty>(this->blow_off,1);
     this->pub_suction = (this->nh).advertise<std_msgs::Empty>(this->suction,1);
@@ -441,6 +445,20 @@ bool TaskSequencer::switch_controllers(std::string robot_name, std::string from_
     // Swithching controller by calling the service
     return ros::service::call<controller_manager_msgs::SwitchController>(robot_name + this->switch_service_name, this->switch_controller);
 }
+
+
+void TaskSequencer::get_emergency_flag(const std_msgs::Bool::ConstPtr &msg){
+   
+   if(msg->data){
+     
+    this->stop = true;
+
+   }else{
+    
+    this->stop = false;
+
+   }
+};
 
 // Callback for object pose subscriber
 void TaskSequencer::get_object_pose(const geometry_msgs::Pose::ConstPtr &msg){
@@ -1258,7 +1276,7 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
         res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
         return false;
     }
-
+    
 
     /* EXEC 5 */
 
@@ -1334,6 +1352,14 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
     double throwing_angle_rad = atan2(versor[2],den);
     
     std::cout << "The throwing angle [deg] is : " << throwing_angle_rad*(180.0/M_PI) << std::endl;
+
+
+    // Check the emergency condition
+
+    while((this->stop) == true && ros::ok()){
+       usleep(10000);
+    }
+
 
     // Activate the blowing-off function (FESTO), and stop the Venturi pump for suctioning (COVAL)
     

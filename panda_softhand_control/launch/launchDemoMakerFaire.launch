@@ -1,4 +1,5 @@
 <launch>
    <include file="$(find panda_softhand_control)/launch/launchPandaSoftHand_ControlServer.launch" />
    <include file="$(find panda_softhand_control)/launch/launchTaskServerLancio.launch" />   
+   <!-- <include file="$(find hl_planning)/launch/launchDemoMakerFaire2022_Marco.launch" /> -->
 </launch>
