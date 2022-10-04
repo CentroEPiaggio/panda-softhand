@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(4);
     spinner.start();
 
-   while(ros::ok()){
+
 
 
    /* 1) Going to home position */
@@ -354,7 +354,7 @@ int main(int argc, char **argv)
 
    // while(ros::ok()){
    //       // Nothing to do here
-   
+   while(ros::ok()){
    }
 
    spinner.stop();

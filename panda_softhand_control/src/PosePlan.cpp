@@ -137,8 +137,8 @@ bool PosePlan::performMotionPlan(){
 
     // Setting the pose target of the move group
     group.setPoseTarget(this->goalPose);
-    group.setMaxAccelerationScalingFactor(0.65);
-    group.setMaxVelocityScalingFactor(0.85);
+    group.setMaxAccelerationScalingFactor(0.9);
+    group.setMaxVelocityScalingFactor(0.9);
 
     if(DEBUG) ROS_INFO("Done setting the target pose in MoveIt Group.");
 

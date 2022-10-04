@@ -452,12 +452,32 @@ void TaskSequencer::get_emergency_flag(const std_msgs::Bool::ConstPtr &msg){
    if(msg->data){
      
     this->stop = true;
+    this->counter++;
 
    }else{
     
     this->stop = false;
+    this->counter++;
+
 
    }
+
+   this->buffer_flag[this->counter]=this->stop;
+   int counter2 = 0;
+
+   for(int i=0; i< 10; i++){
+      if(this->buffer_flag[i] == true){
+        counter2++;
+      }
+   }
+   this->filtered_flag = false;
+//    for (auto x: this->buffer_flag){
+//     if(x) counter2++;
+//    } 
+   if(counter2>=3) this->filtered_flag=true;
+   if(this->counter==9)
+    this->counter=0;
+
 };
 
 // Callback for object pose subscriber
@@ -1355,11 +1375,12 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
 
 
     // Check the emergency condition
-
-    while((this->stop) == true && ros::ok()){
+    std::cout << "Filtered Flag è: " << this->filtered_flag << std::endl;
+    while((this->filtered_flag) == true && ros::ok()){
        usleep(10000);
     }
-
+    
+    std::cout << "Ho sparato" << std::endl;
 
     // Activate the blowing-off function (FESTO), and stop the Venturi pump for suctioning (COVAL)
     
@@ -1379,50 +1400,6 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
     for(auto k: now_joints_last){
         std::cout << "Joint positions are: " << k << std::endl;
     }
-
-   
-    // /* PLAN 6*/
-
-    // if(!this->panda_softhand_client.call_joint_service(this->place_joints, this->null_joints, this->tmp_traj) || !this->franka_ok){
-    //     ROS_ERROR("Could not plan to the specified place joint config.");
-    //     res.success = false;
-    //     res.message = "The service call_simple_place_task was NOT performed correctly!";
-    //     return false;
-    // }
-    // std::cout << "Sto per fare l'ultima pianificazione" << std::endl;
-
-    // if(!this->panda_softhand_client.call_joint_service(this->place_joints, now_joints_last, this->tmp_traj_arm) || !this->franka_ok){
-    //     ROS_ERROR("Could not plan to the specified place joint config.");
-    //     res.success = false;
-    //     res.message = "The service call_simple_place_task was NOT performed correctly!";
-    //     return false;
-    // }
-
-    // /*WAIT 5*/
-
-    // if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
-    //     ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre vacuuming configuration from prethrowing configuration");
-    //     res.success = false;
-    //     res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
-    //     return false;
-    // }
-        
-    // /* EXEC 6*/
-
-    // if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
-    //     ROS_ERROR("Could not go to place joint config.");
-    //     res.success = false;
-    //     res.message = "The service call_simple_place_task was NOT performed correctly! Error in arm control.";
-    //     return false;
-    // }
-
-    // if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
-    //     ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre vacuuming configuration from prethrowing configuration");
-    //     res.success = false;
-    //     res.message = "The service call_throwing_task was NOT performed correctly! Error wait in arm control.";
-    //     return false;
-    // }
-
 
     // Now, everything finished well
     res.success = true;

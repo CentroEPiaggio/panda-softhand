@@ -123,6 +123,8 @@ class TaskSequencer {
 
         ros::Subscriber emergency;
         bool stop = false;
+        bool filtered_flag = false;
+        int counter = 0;
         
         // Publishers for arduino(blowing_off and suctioning function)
         
@@ -168,7 +170,7 @@ class TaskSequencer {
         std::string set_duty_cycle_name;
         
 
-        // Topic names for arduino
+        // Topic names for arduino and emergency
         
         std::string emergency_stop = "emergency/flag_stop";
         std::string blow_off = "arduino/blowing_off";
@@ -271,4 +273,7 @@ class TaskSequencer {
 	    tf::TransformListener tf_listener_throwing;
         tf::StampedTransform stamp_ee_transform_throwing;
         Eigen::Affine3d end_effector_state_throwing;
+
+
+        bool buffer_flag[10];
 };

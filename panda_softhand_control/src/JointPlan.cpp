@@ -121,6 +121,10 @@ bool JointPlan::performMotionPlan(){
     // Setting the joint config target of the move group
     group.setJointValueTarget(this->joint_goal);
 
+
+
+    
+
     // Planning to joint configuration
     moveit::planning_interface::MoveGroupInterface::Plan my_plan; 
     bool success = (group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
