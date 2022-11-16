@@ -94,36 +94,6 @@
     </model>
 
 
-<!-- box (hand-tool) -->
-    <model name="handtool">
-	        
-			<pose>0.65 -0.40 0.5 0 0 0 </pose>
-			<!-- <pose>0.55 -0.65 0.5 0 0 3.1 </pose> -->
-			<static>true</static>
-			<link name='linkhandtool'>
-				<pose>0 0 0 0 0 0</pose>
-
-				<collision name="my_collisionhandtool">
-		 			<pose>0 0 0 0 0 0</pose>
-					<geometry>
-		        <box>
-		          <size>0.05 0.2 1</size>
-		        </box>
-		            </geometry>
-	            </collision>
-
-				<visual name="my_visualhandtool">
-					<geometry>
-		        <box>
-					<size>0.05 0.2 1</size>
-		        </box>
-		      </geometry>
-	      </visual>
-
-				<self_collide>0</self_collide>
-				<gravity>1</gravity>
-			</link>
-    </model>
 
 
 	<!-- box (like a wall on the left of the robot) -->
@@ -168,7 +138,7 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>0.3 0.03 0.3</size>
+		          <size>0.3 0.03 0.35</size>
 		        </box>
 		            </geometry>
 	            </collision>
@@ -176,7 +146,7 @@
 				<visual name="my_visualWallLittleLeft">
 					<geometry>
 		        <box>
-					<size>0.3 0.03 0.3</size>
+					<size>0.3 0.03 0.35</size>
 		        </box>
 		           </geometry>
 	      </visual>
@@ -189,7 +159,7 @@
 	
 
 	<!-- box (like a wall on the right of the robot) -->
-    <model name="wall_right">
+    <!--<model name="wall_right">
 	        
 			<pose>0.6 -0.40 0.5 0 0 0 </pose>
 			<static>true</static>
@@ -216,7 +186,7 @@
 				<self_collide>0</self_collide>
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model>-->
     
     <!-- box (like a little wall on the right of the robot) -->
     <model name="wall_little_right">
@@ -230,7 +200,7 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>0.3 0.03 0.3</size>
+		          <size>0.3 0.03 0.5</size>
 		        </box>
 		            </geometry>
 	            </collision>
@@ -238,7 +208,7 @@
 				<visual name="my_visualWallLittleRight">
 					<geometry>
 		        <box>
-					<size>0.3 0.03 0.3</size>
+					<size>0.3 0.03 0.5</size>
 		        </box>
 		           </geometry>
 	      </visual>
@@ -252,7 +222,7 @@
 
 	<!-- box (like a roof) -->
     <model name="roof">
-			<pose> 0.6 -0.35 1 0 0 0</pose>
+			<pose> 0.45 -0.35 1.15 0 0 0</pose>
 			<static>true</static>
 			<link name='linkRoof'>
 				<pose>0 0 0 0 0 0</pose>
@@ -261,7 +231,7 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>1 1.4 0.05</size>
+		          <size>1.2 1.6 0.05</size>
 		        </box>
 		      </geometry>
 	      </collision>
@@ -269,7 +239,7 @@
 				<visual name="my_visualRoof">
 					<geometry>
 		        <box>
-					<size>1 1.4 0.05</size>
+					<size>1.2 1.6 0.05</size>
 		        </box>
 		      </geometry>
 	      </visual>
@@ -290,7 +260,7 @@
 		 			<pose>0 0 0 0 0 0</pose>
 					<geometry>
 		        <box>
-		          <size>0.05 1 0.4</size>
+		          <size>0.05 1 0.3</size>
 		        </box>
 		      </geometry>
 	      </collision>
@@ -298,7 +268,7 @@
 				<visual name="my_visualWallBehind">
 					<geometry>
 		        <box>
-					<size>0.05 1 0.4</size>
+					<size>0.05 1 0.3</size>
 		        </box>
 		      </geometry>
 	      </visual>
@@ -342,7 +312,7 @@
 
 	<!-- box (like a wall on the left-scaffalatura) -->
     <model name="wall_left2">
-			<pose> 0.5 0.65 0.65 -2.5 0 0</pose>
+			<pose> 0.75 0.65 0.7 -2.5 0 0</pose>
 			<static>true</static>
 			<link name='wall_left2'>
 				<pose>0 0 0 0 0 0</pose>
@@ -365,6 +335,105 @@
 	      </visual>
 				
 				<self_collide>0</self_collide>		
+				<gravity>1</gravity>
+			</link>
+    </model>
+
+
+
+
+	<!-- box (hand-tool) -->
+    <model name="handtool">
+	        
+			<pose>0.225 0.7 0.5 0 0 0 </pose>
+			<!-- <pose>0.55 -0.65 0.5 0 0 3.1 </pose> -->
+			<static>true</static>
+			<link name='linkhandtool'>
+				<pose>0 0 0 0 0 0</pose>
+
+				<collision name="my_collisionhandtool">
+		 			<pose>0 0 0 0 0 0</pose>
+					<geometry>
+		        <box>
+		          <size>0.05 0.4 1</size>
+		        </box>
+		            </geometry>
+	            </collision>
+
+				<visual name="my_visualhandtool">
+					<geometry>
+		        <box>
+					<size>0.05 0.4 1</size>
+		        </box>
+		      </geometry>
+	      </visual>
+
+				<self_collide>0</self_collide>
+				<gravity>1</gravity>
+			</link>
+    </model>
+
+
+	<!-- box (hand-tool-little) -->
+    <model name="handtool_little">
+	        
+			<pose>0.225 0.35 0.3 0 0 0 </pose>
+			<!-- <pose>0.55 -0.65 0.5 0 0 3.1 </pose> -->
+			<static>true</static>
+			<link name='linkhandtool'>
+				<pose>0 0 0 0 0 0</pose>
+
+				<collision name="my_collisionhandtoollittle">
+		 			<pose>0 0 0 0 0 0</pose>
+					<geometry>
+		        <box>
+		          <size>0.05 0.4 0.55</size>
+		        </box>
+		            </geometry>
+	            </collision>
+
+				<visual name="my_visualhandtoollittle">
+					<geometry>
+		        <box>
+					<size>0.05 0.4 0.55</size>
+		        </box>
+		      </geometry>
+	      </visual>
+
+				<self_collide>0</self_collide>
+				<gravity>1</gravity>
+			</link>
+    </model>
+
+
+
+	<!-- box (camera_wall) -->
+    <model name="camera">
+	        
+			<pose>-0.45 0 0.3 0 0 0 </pose>
+			<!-- <pose>0.55 -0.65 0.5 0 0 3.1 </pose> -->
+			<static>true</static>
+			<link name='linkcamera'>
+				<pose>0 0 0 0 0 0</pose>
+
+				<collision name="my_collisionlinkcamera">
+		 			<pose>0 0 0 0 0 0</pose>
+					<geometry>
+		        <box>
+		          <size>0.05 0.7 0.65</size>
+		        </box>
+		            </geometry>
+	            </collision>
+
+				<visual name="my_collisionlinkcamera">
+					<geometry>
+		        <box>
+					<size>0.05 0.7 0.65</size>
+		        </box>
+		      </geometry>
+	      </visual>
+
+				<self_collide>0</self_collide>
 				<gravity>1</gravity>
 			</link>
     </model>

@@ -122,15 +122,14 @@ class TaskSequencer {
         // Subscriber to emergency
 
         ros::Subscriber emergency;
-        bool stop = false;
-        bool filtered_flag = false;
-        int counter = 0;
+    
         
         // Publishers for arduino(blowing_off and suctioning function)
         
         ros::Publisher pub_blow;
         ros::Publisher pub_suction;
         ros::Publisher pub_duty;
+        
     
 
         // Subscriber to franka_states for getting tau_ext on joints and other info and Publisher of its norm
@@ -276,4 +275,9 @@ class TaskSequencer {
 
 
         bool buffer_flag[10];
+        bool stop = false;
+        bool filtered_flag = false;
+        int counter = 0;
+        int counter2 = 0;
+        
 };
