@@ -62,23 +62,23 @@
     </include>
 
     <!-- CHOMP -->
-    <include file="$(dirname)/planning_pipeline.launch.xml">
+    <!-- <include file="$(dirname)/planning_pipeline.launch.xml">
       <arg name="pipeline" value="chomp" />
       <arg name="arm_id" value="$(arg arm_id)" />
-    </include>
+    </include> -->
 
     <!-- Pilz Industrial Motion -->
-    <include file="$(dirname)/planning_pipeline.launch.xml">
+    <!-- <include file="$(dirname)/planning_pipeline.launch.xml">
       <arg name="pipeline" value="pilz_industrial_motion_planner" />
       <arg name="arm_id" value="$(arg arm_id)" />
-    </include>
+    </include> -->
 
     <!-- Support custom planning pipeline -->
-    <include if="$(eval arg('pipeline') not in ['ompl', 'chomp', 'pilz_industrial_motion_planner'])"
+    <!-- <include if="$(eval arg('pipeline') not in ['ompl', 'chomp', 'pilz_industrial_motion_planner'])"
              file="$(dirname)/planning_pipeline.launch.xml">
       <arg name="pipeline" value="$(arg pipeline)" />
       <arg name="arm_id" value="$(arg arm_id)" />
-    </include>
+    </include> -->
   </group>
 
   <!-- Trajectory Execution Functionality -->
@@ -87,9 +87,9 @@
   </include>
 
   <!-- Sensors Functionality -->
-  <include ns="move_group" file="$(dirname)/sensor_manager.launch.xml" if="$(arg allow_trajectory_execution)">
+  <!-- <include ns="move_group" file="$(dirname)/sensor_manager.launch.xml" if="$(arg allow_trajectory_execution)">
     <arg name="moveit_sensor_manager" value="panda" />
-  </include>
+  </include> -->
 
   <!-- Start the actual move_group node/action server -->
   <node name="move_group" launch-prefix="$(arg launch_prefix)" pkg="moveit_ros_move_group" type="move_group" respawn="false" output="screen" args="$(arg command_args)">
