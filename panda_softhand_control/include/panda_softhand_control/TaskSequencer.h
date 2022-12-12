@@ -129,6 +129,7 @@ class TaskSequencer {
         ros::Publisher pub_blow;
         ros::Publisher pub_suction;
         ros::Publisher pub_duty;
+        ros::Publisher pub_dt;
         
     
 
@@ -175,6 +176,7 @@ class TaskSequencer {
         std::string blow_off = "arduino/blowing_off";
         std::string suction = "arduino/suctioning";
         std::string duty = "arduino/duty_cycle";
+        std::string opening_time = "arduino/Festo";
 
         // Service Servers
         ros::ServiceServer grasp_task_server;
@@ -236,6 +238,7 @@ class TaskSequencer {
         std::vector<double> throwing_joints;
 
         int duty_cycle;
+        int valve_time_opening;
         
         std::map<std::string, std::vector<double>> poses_map;               // The map containing the notable poses
         std::map<std::string, std::vector<double>> vacuum_pose_map; 
@@ -248,6 +251,7 @@ class TaskSequencer {
         std::map<std::string, std::vector<double>> throwing_joints_map;
 
         std::map<std::string, int> duty_cycle_map;
+        std::map<std::string, int> valve_time_opening_map;
         
         // MoveIt stuff and functions for FK and IK
         std::string group_name;

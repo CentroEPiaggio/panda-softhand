@@ -47,6 +47,8 @@ task_sequencer:
 
   duty_cycle: 255
 
+  valve_time_opening: 200
+
  
   # The joint configuration for handover
   handover_joints: [0.07661606385153637, 0.33422404886526574, 0.150294620860357, -1.1043230171470189, -0.05647621116425888, 1.5700528297424314, 0.061656965438109404]
@@ -70,6 +72,12 @@ task_sequencer:
     "object2" : 70
     "object3" : 50
     "object4" : 50
+
+
+
+  valve_time_opening_map:
+    "object1" : 200
+ 
 
   vacuum_pose_map:
     "object1" : [0.603, 0.269, 0.656, -0.929, 0.045, 0.079]

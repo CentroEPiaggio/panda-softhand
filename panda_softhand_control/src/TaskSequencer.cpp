@@ -175,6 +175,13 @@ bool TaskSequencer::parse_task_params(){
 		
 	}
 
+    /*dt valve opening time FESTO*/
+
+    if(!ros::param::get("/task_sequencer/valve_time_opening", this->valve_time_opening)){
+		ROS_WARN("The param 'valve_time_opening' not found in param server!");
+		
+	}
+
     if(!ros::param::get("/task_sequencer/grasp_transform", this->grasp_transform)){
 		ROS_WARN("The param 'grasp_transform' not found in param server! Using default.");
 		this->grasp_transform.resize(6);
@@ -395,7 +402,6 @@ bool TaskSequencer::parse_task_params(){
         
     }
     
-    std::cout << "Inizio" << std::endl;
 
     if(DEBUG){
         ROS_INFO_STREAM("The duty_cycle map is");
@@ -405,6 +411,26 @@ bool TaskSequencer::parse_task_params(){
             std::cout << "]" << std::endl;     
         }
     }
+
+    /*Parsing dt_valve_opening_time_map*/
+    
+    if(!parseParameter(this->task_seq_params, this->valve_time_opening_map, "valve_time_opening_map")){
+        ROS_ERROR("Could not parse the valve_time_opening_map map.");
+        success = false;
+        
+    }
+    
+
+    if(DEBUG){
+        ROS_INFO_STREAM("The valve_time_opening_map map is");
+        for(auto it : this->valve_time_opening_map){
+            std::cout << it.first << " : [ ";
+            std::cout << it.second << " ";
+            std::cout << "]" << std::endl;     
+        }
+    }
+
+
 
     return success;
 }
