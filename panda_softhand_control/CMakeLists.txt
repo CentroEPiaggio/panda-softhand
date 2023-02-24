@@ -43,8 +43,6 @@ generate_messages(DEPENDENCIES
   geometry_msgs
 )
 
-find_package(SDFormat REQUIRED)
-
 catkin_package(
   INCLUDE_DIRS include
   CATKIN_DEPENDS actionlib_msgs moveit_ros_planning_interface message_runtime std_msgs std_srvs
@@ -65,10 +63,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   /usr/include/eigen3
-  ${SDFormat_INCLUDE_DIRS}
 )
-
-link_directories(${SDFormat_LIBRARY_DIRS})
 
 ## Declare a C++ library
 set(LIB_SOURCE_FILES
@@ -88,10 +83,6 @@ target_link_libraries(control_server ${catkin_LIBRARIES} ${ROS_LIBRARIES})
 add_executable(task_server src/task_server.cpp ${OBJECTS_SOURCE_FILES})
 add_dependencies(task_server ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(task_server ${catkin_LIBRARIES} ${ROS_LIBRARIES})
-
-# NODE: Utility to publish collision objects to planning scene from world file
-add_executable(world_to_planning_scene_node src/SdfToPlanningScene.cpp)
-target_link_libraries(world_to_planning_scene_node ${catkin_LIBRARIES} ${ROS_LIBRARIES} ${SDFormat_LIBRARIES})
 
 # Mark cpp header files for installation
 install(TARGETS ${PROJECT_NAME}_lib
