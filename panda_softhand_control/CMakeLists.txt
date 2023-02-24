@@ -27,6 +27,7 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_core
   franka_msgs
   franka_control
+  eigen_conversions
 )
 
 add_service_files(FILES
