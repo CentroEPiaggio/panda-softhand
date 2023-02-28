@@ -10,8 +10,7 @@ controller_list:
       - panda_joint7
   - name: fake_hand_controller
     joints:
-      - panda_finger_joint1
-      - panda_finger_joint2
+      - right_hand_synergy_joint
 initial:
   - group: panda_arm_hand
     pose: ready

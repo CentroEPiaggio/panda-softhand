@@ -11,3 +11,9 @@
       - panda_joint5
       - panda_joint6
       - panda_joint7
+  - name: /right_hand/joint_trajectory_controller
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - right_hand_synergy_joint

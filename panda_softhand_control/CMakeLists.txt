@@ -27,6 +27,7 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_core
   franka_msgs
   franka_control
+  eigen_conversions  
 )
 
 add_service_files(FILES
@@ -43,7 +44,6 @@ generate_messages(DEPENDENCIES
   geometry_msgs
 )
 
-find_package(SDFormat REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -65,10 +65,8 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   /usr/include/eigen3
-  ${SDFormat_INCLUDE_DIRS}
 )
 
-link_directories(${SDFormat_LIBRARY_DIRS})
 
 ## Declare a C++ library
 set(LIB_SOURCE_FILES

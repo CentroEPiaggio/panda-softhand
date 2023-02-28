@@ -2,7 +2,7 @@
   <name>panda_softhand_moveit_config</name>
   <version>1.0.0</version>
   <description>
-     A package, based on panda_moveit_config, with all the configuration and launch files for using the Panda and Pisa/IIT SoftHand with MoveIt!
+     A package, based on panda_softhand_moveit_config, with all the configuration and launch files for using the Panda and Pisa/IIT SoftHand with MoveIt!
   </description>
   <author email="georgejose.pollayil@phd.unipi.it">George Jose Pollayil</author>
   <maintainer email="mathewjose.pollayil@phd.unipi.it">Mathew Jose Pollayil</maintainer>

@@ -27,7 +27,7 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     ros::topic::waitForMessage<franka_msgs::FrankaState>("/" + this->robot_name + this->franka_state_topic_name, ros::Duration(2.0));
 
     // Initializing the tau_ext norm and franka recovery publishers
-    this->pub_franka_recovery = this->nh.advertise<franka_control::ErrorRecoveryActionGoal>("/" + this->robot_name + "/franka_control/error_recovery/goal", 1);
+    this->pub_franka_recovery = this->nh.advertise<franka_msgs::ErrorRecoveryActionGoal>("/" + this->robot_name + "/franka_control/error_recovery/goal", 1);
     this->pub_tau_ext_norm = this->nh.advertise<std_msgs::Float64>("tau_ext_norm", 1);
 
     // Initializing Panda SoftHand Client (TODO: Return error if initialize returns false)
