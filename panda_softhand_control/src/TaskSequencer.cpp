@@ -33,12 +33,16 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     // Initializing Panda SoftHand Client (TODO: Return error if initialize returns false)
     this->panda_softhand_client.initialize(this->nh);
 
-    // Setting the task service names
+    // Setting the task service names (TODO: get these from yaml)
     this->grasp_task_service_name = "grasp_task_service";
+    this->place_task_service_name = "place_task_service";
+    this->handover_task_service_name = "handover_task_service";
     this->set_object_service_name = "set_object_service";
 
     // Advertising the services
     this->grasp_task_server = this->nh.advertiseService(this->grasp_task_service_name, &TaskSequencer::call_simple_grasp_task, this);
+    this->place_task_server = this->nh.advertiseService(this->place_task_service_name, &TaskSequencer::call_simple_place_task, this);
+    this->handover_task_server = this->nh.advertiseService(this->handover_task_service_name, &TaskSequencer::call_simple_handover_task, this);
     this->set_object_server = this->nh.advertiseService(this->set_object_service_name, &TaskSequencer::call_set_object, this);
 
     // Spinning once
@@ -308,42 +312,6 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
-    // 6) Going to handover joint config
-    if(!this->panda_softhand_client.call_joint_service(this->handover_joints) || !this->franka_ok){
-        ROS_ERROR("Could not go to the specified handover joint config.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
-        return false;
-    }
-
-    // 7) Waiting for threshold or for some time
-    sleep(1);       // Sleeping for a second to avoid robot stopping peaks
-    bool hand_open = false; ros::Time init_time = ros::Time::now(); ros::Time now_time;
-    double base_tau_ext = this->tau_ext_norm;           // Saving the present tau for later computation of variation
-    while(!hand_open){
-        now_time = ros::Time::now();
-        usleep(500);                         // Don't know why, but the threshold works with this sleeping
-        if(std::abs(this->tau_ext_norm - base_tau_ext) > this->handover_thresh){
-            hand_open = true;
-            if(DEBUG) ROS_WARN_STREAM("Opening condition reached!" << " SOMEONE PULLED!");
-            if(DEBUG) ROS_WARN_STREAM("The tau_ext difference is " << std::abs(this->tau_ext_norm - base_tau_ext) << " and the threshold is " << this->handover_thresh << ".");
-        }
-        if((now_time - init_time) > ros::Duration(10, 0)){
-            hand_open = true;
-            if(DEBUG) ROS_WARN_STREAM("Opening condition reached!" << " TIMEOUT!");
-            if(DEBUG) ROS_WARN_STREAM("The initial time was " << init_time << ", now it is " << now_time 
-                << ", the difference is " << (now_time - init_time) << " and the timeout thresh is " << ros::Duration(10, 0));
-        }
-    }
-
-    // 8) Opening hand 
-    if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
-        ROS_ERROR("Could not open the hand.");
-        res.success = false;
-        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
-        return false;
-    }
-
     // Now, everything finished well
     res.success = true;
     res.message = "The service call_simple_grasp_task was correctly performed!";
@@ -386,7 +354,7 @@ bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
-    // 2) Opening hand
+    // 4) Opening hand
     if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
         ROS_ERROR("Could not open the hand.");
         res.success = false;
@@ -401,7 +369,61 @@ bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_
 
 }
 
-// Callback for handshake task service
+// Callback for simple handover task service
+bool TaskSequencer::call_simple_handover_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
+
+    // Checking the request for correctness
+    if(!req.data){
+        ROS_WARN("Did you really want to call the simple handover task service with data = false?");
+        res.success = true;
+        res.message = "The service call_simple_handover_task done correctly with false request!";
+        return true;
+    }
+
+    // 1) Going to handover joint config
+    if(!this->panda_softhand_client.call_joint_service(this->handover_joints) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified handover joint config.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    // 2) Waiting for threshold or for some time
+    sleep(1);       // Sleeping for a second to avoid robot stopping peaks
+    bool hand_open = false; ros::Time init_time = ros::Time::now(); ros::Time now_time;
+    double base_tau_ext = this->tau_ext_norm;           // Saving the present tau for later computation of variation
+    while(!hand_open){
+        now_time = ros::Time::now();
+        usleep(500);                         // Don't know why, but the threshold works with this sleeping
+        if(std::abs(this->tau_ext_norm - base_tau_ext) > this->handover_thresh){
+            hand_open = true;
+            if(DEBUG) ROS_WARN_STREAM("Opening condition reached!" << " SOMEONE PULLED!");
+            if(DEBUG) ROS_WARN_STREAM("The tau_ext difference is " << std::abs(this->tau_ext_norm - base_tau_ext) << " and the threshold is " << this->handover_thresh << ".");
+        }
+        if((now_time - init_time) > ros::Duration(10, 0)){
+            hand_open = true;
+            if(DEBUG) ROS_WARN_STREAM("Opening condition reached!" << " TIMEOUT!");
+            if(DEBUG) ROS_WARN_STREAM("The initial time was " << init_time << ", now it is " << now_time 
+                << ", the difference is " << (now_time - init_time) << " and the timeout thresh is " << ros::Duration(10, 0));
+        }
+    }
+
+    // 3) Opening hand 
+    if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
+        ROS_ERROR("Could not open the hand.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    // Now, everything finished well
+    res.success = true;
+    res.message = "The service call_simple_handover_task was correctly performed!";
+    return true;
+
+}
+
+// Callback for setting object poses service
 bool TaskSequencer::call_set_object(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res){
 
     // Checking if the parsed map contains the requested object
@@ -418,20 +440,28 @@ bool TaskSequencer::call_set_object(panda_softhand_control::set_object::Request 
         return res.result;
     }
 
+    bool obj_set_success = set_object_maps(req.object_name);
+
+    // Now, everything is ok
+    res.result = true;
+    return res.result;
+}
+
+// Auxiliary function for setting object maps
+bool TaskSequencer::set_object_maps(std::string obj_name){
     // Setting the grasp pose as requested
-    this->grasp_transform = this->grasp_poses_map.at(req.object_name);
+    this->grasp_transform = this->grasp_poses_map.at(obj_name);
 
     // Converting the grasp_transform vector to geometry_msgs Pose
     this->grasp_T = this->convert_vector_to_pose(this->grasp_transform);
 
     // Setting the place pose as requested
-    this->place_transform = this->place_poses_map.at(req.object_name);
+    this->place_transform = this->place_poses_map.at(obj_name);
 
     // Converting the place_transform vector to geometry_msgs Pose
     this->place_T = this->convert_vector_to_pose(this->place_transform);
 
-    // Now, everything is ok
-    ROS_INFO_STREAM("Grasp pose changed. Object set to " << req.object_name << ".");
-    res.result = true;
-    return res.result;
+    ROS_INFO_STREAM("Grasp pose changed. Object set to " << obj_name << ".");
+
+    return true;
 }

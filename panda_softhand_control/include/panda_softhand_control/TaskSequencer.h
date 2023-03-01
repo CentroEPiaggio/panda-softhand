@@ -59,6 +59,9 @@ class TaskSequencer {
         // Callback for simple place task service
         bool call_simple_place_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
+        // Callback for simple handover task service
+        bool call_simple_handover_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+
         // Callback for set object service
         bool call_set_object(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
 
@@ -92,11 +95,13 @@ class TaskSequencer {
         std::string franka_state_topic_name = "/franka_state_controller/franka_states";
         std::string grasp_task_service_name;
         std::string place_task_service_name;
+        std::string handover_task_service_name;
         std::string set_object_service_name;
 
         // Service Servers
         ros::ServiceServer grasp_task_server;
         ros::ServiceServer place_task_server;
+        ros::ServiceServer handover_task_server;
         ros::ServiceServer set_object_server;
 
         // The XmlRpc value for parsing complex params
@@ -125,5 +130,8 @@ class TaskSequencer {
 
         std::map<std::string, std::vector<double>> grasp_poses_map;     // The map containing the parsed grasp poses
         std::map<std::string, std::vector<double>> place_poses_map;     // The map containing the parsed place poses
+
+        // Auxiliary function for setting object maps
+        bool set_object_maps(std::string obj_name);
 
 };
