@@ -23,7 +23,7 @@ int main(int argc, char **argv)
 
     ROS_INFO("Creating the arm client pointer");
 
-    std::string arm_jt_topic = "/panda_arm/position_joint_trajectory_controller/follow_joint_trajectory/";
+    std::string arm_jt_topic = "/panda_arm/effort_joint_trajectory_controller/follow_joint_trajectory/";
     boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> arm_client_ptr_(new actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>(arm_jt_topic, true));
 
     ROS_INFO("Creating the hand client pointer");
@@ -49,10 +49,10 @@ int main(int argc, char **argv)
     
     ROS_INFO("Advertising the services");
 
-    ros::ServiceServer slerp_service = nh_.advertiseService("slerp_control_service", &SlerpControl::call_slerp_control, &slerp_control_obj);
-    ros::ServiceServer hand_service = nh_.advertiseService("hand_control_service", &HandControl::call_hand_control, &hand_control_obj);
-    ros::ServiceServer pose_service = nh_.advertiseService("pose_control_service", &PoseControl::call_pose_control, &pose_control_obj);
-    ros::ServiceServer joint_service = nh_.advertiseService("joint_control_service", &JointControl::call_joint_control, &joint_control_obj);
+    ros::ServiceServer slerp_service = nh_.advertiseService("/slerp_control_service", &SlerpControl::call_slerp_control, &slerp_control_obj);
+    ros::ServiceServer hand_service = nh_.advertiseService("/hand_control_service", &HandControl::call_hand_control, &hand_control_obj);
+    ros::ServiceServer pose_service = nh_.advertiseService("/pose_control_service", &PoseControl::call_pose_control, &pose_control_obj);
+    ros::ServiceServer joint_service = nh_.advertiseService("/joint_control_service", &JointControl::call_joint_control, &joint_control_obj);
 
     ROS_INFO("The main service server is running. Running as fast as possible!");
 

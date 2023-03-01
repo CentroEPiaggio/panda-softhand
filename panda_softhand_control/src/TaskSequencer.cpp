@@ -85,6 +85,18 @@ bool TaskSequencer::parse_task_params(){
 		success = false;
 	}
 
+    if(!ros::param::get("/task_sequencer/handover_joints", this->handover_joints)){
+		ROS_WARN("The param 'handover_joints' not found in param server! Using default.");
+		this->handover_joints = {-0.101, 0.161, 0.159, -1.651, 2.023, 2.419, -0.006};
+		success = false;
+	}
+
+    if(!ros::param::get("/task_sequencer/handover_thresh", this->handover_thresh)){
+		ROS_WARN("The param 'handover_thresh' not found in param server! Using default.");
+		this->handover_thresh = 4.5;
+		success = false;
+	}
+
     if(!ros::param::get("/task_sequencer/grasp_transform", this->grasp_transform)){
 		ROS_WARN("The param 'grasp_transform' not found in param server! Using default.");
 		this->grasp_transform.resize(6);
@@ -105,17 +117,25 @@ bool TaskSequencer::parse_task_params(){
     // Converting the pre_grasp_transform vector to geometry_msgs Pose
     this->pre_grasp_T = this->convert_vector_to_pose(this->pre_grasp_transform);
 
-    if(!ros::param::get("/task_sequencer/handover_joints", this->handover_joints)){
-		ROS_WARN("The param 'handover_joints' not found in param server! Using default.");
-		this->handover_joints = {-0.101, 0.161, 0.159, -1.651, 2.023, 2.419, -0.006};
+    if(!ros::param::get("/task_sequencer/place_transform", this->place_transform)){
+		ROS_WARN("The param 'place_transform' not found in param server! Using default.");
+		this->place_transform.resize(6);
+        std::fill(this->place_transform.begin(), this->place_transform.end(), 0.0);
 		success = false;
 	}
 
-    if(!ros::param::get("/task_sequencer/handover_thresh", this->handover_thresh)){
-		ROS_WARN("The param 'handover_thresh' not found in param server! Using default.");
-		this->handover_thresh = 4.5;
+    // Converting the place_transform vector to geometry_msgs Pose
+    this->place_T = this->convert_vector_to_pose(this->place_transform);
+
+    if(!ros::param::get("/task_sequencer/pre_place_transform", this->pre_place_transform)){
+		ROS_WARN("The param 'pre_place_transform' not found in param server! Using default.");
+		this->pre_place_transform.resize(6);
+        std::fill(this->pre_place_transform.begin(), this->pre_place_transform.end(), 0.0);
 		success = false;
 	}
+
+    // Converting the pre_place_transform vector to geometry_msgs Pose
+    this->pre_place_T = this->convert_vector_to_pose(this->pre_place_transform);
 
     // Getting the XmlRpc value and parsing
     if(!this->nh.getParam("/task_sequencer", this->task_seq_params)){
@@ -123,20 +143,25 @@ bool TaskSequencer::parse_task_params(){
         success = false;
     }
 
-    if(!parseParameter(this->task_seq_params, this->poses_map, "poses_map")){
-        ROS_ERROR("Could not parse the poses map.");
+    if(!parseParameter(this->task_seq_params, this->grasp_poses_map, "grasp_poses_map")){
+        ROS_ERROR("Could not parse the grasp poses map.");
         success = false;
     }
 
     if(DEBUG){
-        ROS_INFO_STREAM("The poses map is");
-        for(auto it : this->poses_map){
+        ROS_INFO_STREAM("The grasp poses map is");
+        for(auto it : this->grasp_poses_map){
             std::cout << it.first << " : [ ";
             for(auto vec_it : it.second){
                 std::cout << vec_it << " ";
             } 
             std::cout << "]" << std::endl;     
         }
+    }
+
+    if(!parseParameter(this->task_seq_params, this->place_poses_map, "place_poses_map")){
+        ROS_ERROR("Could not parse the place poses map.");
+        success = false;
     }
 
     return success;
@@ -325,22 +350,85 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
     return true;
 }
 
+// Callback for simple place task service
+bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
+
+    // Checking the request for correctness
+    if(!req.data){
+        ROS_WARN("Did you really want to call the simple place task service with data = false?");
+        res.success = true;
+        res.message = "The service call_simple_place_task done correctly with false request!";
+        return true;
+    }
+
+    // Computing the place and preplace pose and converting to geometry_msgs Pose
+    Eigen::Affine3d object_pose_aff; tf::poseMsgToEigen(this->object_pose_T, object_pose_aff);
+    Eigen::Affine3d place_transform_aff; tf::poseMsgToEigen(this->place_T, place_transform_aff);
+    Eigen::Affine3d pre_place_transform_aff; tf::poseMsgToEigen(this->pre_place_T, pre_place_transform_aff);
+
+    geometry_msgs::Pose pre_place_pose; geometry_msgs::Pose place_pose;
+    tf::poseEigenToMsg(object_pose_aff * place_transform_aff * pre_place_transform_aff, pre_place_pose);
+    tf::poseEigenToMsg(object_pose_aff * place_transform_aff, place_pose);
+
+    // 2) Going to preplace pose
+    if(!this->panda_softhand_client.call_pose_service(pre_place_pose, false) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified pre place pose.");
+        res.success = false;
+        res.message = "The service call_simple_place_task was NOT performed correctly!";
+        return false;
+    }
+
+    // 3) Going to place pose
+    if(!this->panda_softhand_client.call_slerp_service(place_pose, false) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified place pose.");
+        res.success = false;
+        res.message = "The service call_simple_place_task was NOT performed correctly!";
+        return false;
+    }
+
+    // 2) Opening hand
+    if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
+        ROS_ERROR("Could not open the hand.");
+        res.success = false;
+        res.message = "The service call_simple_place_task was NOT performed correctly!";
+        return false;
+    }
+
+    // Now, everything finished well
+    res.success = true;
+    res.message = "The service call_simple_place_task was correctly performed!";
+    return true;
+
+}
+
 // Callback for handshake task service
 bool TaskSequencer::call_set_object(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res){
 
     // Checking if the parsed map contains the requested object
-    auto search = this->poses_map.find(req.object_name);
-    if(search == this->poses_map.end()){
-        ROS_WARN_STREAM("The object " << req.object_name << " is not present in my memory; using the previously used one or default... Did you spell it correctly? Is it in the yaml?");
+    auto search_grasp = this->grasp_poses_map.find(req.object_name);
+    auto search_place = this->place_poses_map.find(req.object_name);
+    if(search_grasp == this->grasp_poses_map.end()){
+        ROS_WARN_STREAM("The object " << req.object_name << " is not present in my grasp poses memory; using the previously used one or default... Did you spell it correctly? Is it in the yaml?");
+        res.result = false;
+        return res.result;
+    }
+    if(search_place == this->place_poses_map.end()){
+        ROS_WARN_STREAM("The object " << req.object_name << " is not present in my place memory; using the previously used one or default... Did you spell it correctly? Is it in the yaml?");
         res.result = false;
         return res.result;
     }
 
     // Setting the grasp pose as requested
-    this->grasp_transform = this->poses_map.at(req.object_name);
+    this->grasp_transform = this->grasp_poses_map.at(req.object_name);
 
     // Converting the grasp_transform vector to geometry_msgs Pose
     this->grasp_T = this->convert_vector_to_pose(this->grasp_transform);
+
+    // Setting the place pose as requested
+    this->place_transform = this->place_poses_map.at(req.object_name);
+
+    // Converting the place_transform vector to geometry_msgs Pose
+    this->place_T = this->convert_vector_to_pose(this->place_transform);
 
     // Now, everything is ok
     ROS_INFO_STREAM("Grasp pose changed. Object set to " << req.object_name << ".");

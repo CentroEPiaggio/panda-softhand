@@ -56,6 +56,9 @@ class TaskSequencer {
         // Callback for simple grasp task service
         bool call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
+        // Callback for simple place task service
+        bool call_simple_place_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+
         // Callback for set object service
         bool call_set_object(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
 
@@ -88,10 +91,12 @@ class TaskSequencer {
         std::string object_topic_name;
         std::string franka_state_topic_name = "/franka_state_controller/franka_states";
         std::string grasp_task_service_name;
+        std::string place_task_service_name;
         std::string set_object_service_name;
 
         // Service Servers
         ros::ServiceServer grasp_task_server;
+        ros::ServiceServer place_task_server;
         ros::ServiceServer set_object_server;
 
         // The XmlRpc value for parsing complex params
@@ -103,13 +108,22 @@ class TaskSequencer {
         std::string pos_controller;                 // Name of position controller
         std::string imp_controller;                 // Name of impedance controller
         std::vector<double> home_joints;
+        std::vector<double> handover_joints;
+        double handover_thresh;
+        
+        // Grasp poses
         std::vector<double> grasp_transform;
         geometry_msgs::Pose grasp_T;
         std::vector<double> pre_grasp_transform;
         geometry_msgs::Pose pre_grasp_T;
-        std::vector<double> handover_joints;
-        double handover_thresh;
 
-        std::map<std::string, std::vector<double>> poses_map;     // The map containing the notable poses
+        // Place poses
+        std::vector<double> place_transform;
+        geometry_msgs::Pose place_T;
+        std::vector<double> pre_place_transform;
+        geometry_msgs::Pose pre_place_T;
+
+        std::map<std::string, std::vector<double>> grasp_poses_map;     // The map containing the parsed grasp poses
+        std::map<std::string, std::vector<double>> place_poses_map;     // The map containing the parsed place poses
 
 };
