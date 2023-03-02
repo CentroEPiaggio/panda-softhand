@@ -59,6 +59,9 @@ class TaskSequencer {
         // Callback for simple place task service
         bool call_simple_place_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
+        // Callback for simple look task service
+        bool call_simple_look_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+
         // Callback for simple handover task service
         bool call_simple_handover_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
@@ -95,12 +98,14 @@ class TaskSequencer {
         std::string franka_state_topic_name = "/franka_state_controller/franka_states";
         std::string grasp_task_service_name;
         std::string place_task_service_name;
+        std::string look_task_service_name;
         std::string handover_task_service_name;
         std::string set_object_service_name;
 
         // Service Servers
         ros::ServiceServer grasp_task_server;
         ros::ServiceServer place_task_server;
+        ros::ServiceServer look_task_server;
         ros::ServiceServer handover_task_server;
         ros::ServiceServer set_object_server;
 
@@ -112,6 +117,7 @@ class TaskSequencer {
         std::string robot_joints_name;              // Name of the robot joints (without the number of the joints)
         std::string pos_controller;                 // Name of position controller
         std::string imp_controller;                 // Name of impedance controller
+        bool use_vision;                            // Boolean for using vision or blind pre-programmed grasping
         std::vector<double> home_joints;
         std::vector<double> handover_joints;
         double handover_thresh;
@@ -127,6 +133,10 @@ class TaskSequencer {
         geometry_msgs::Pose place_T;
         std::vector<double> pre_place_transform;
         geometry_msgs::Pose pre_place_T;
+
+        // Look poses
+        std::vector<double> look_transform;
+        geometry_msgs::Pose look_T;
 
         std::map<std::string, std::vector<double>> grasp_poses_map;     // The map containing the parsed grasp poses
         std::map<std::string, std::vector<double>> place_poses_map;     // The map containing the parsed place poses

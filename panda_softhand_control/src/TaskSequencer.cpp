@@ -36,12 +36,14 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     // Setting the task service names (TODO: get these from yaml)
     this->grasp_task_service_name = "grasp_task_service";
     this->place_task_service_name = "place_task_service";
+    this->look_task_service_name = "look_task_service";
     this->handover_task_service_name = "handover_task_service";
     this->set_object_service_name = "set_object_service";
 
     // Advertising the services
     this->grasp_task_server = this->nh.advertiseService(this->grasp_task_service_name, &TaskSequencer::call_simple_grasp_task, this);
     this->place_task_server = this->nh.advertiseService(this->place_task_service_name, &TaskSequencer::call_simple_place_task, this);
+    this->look_task_server = this->nh.advertiseService(this->look_task_service_name, &TaskSequencer::call_simple_look_task, this);
     this->handover_task_server = this->nh.advertiseService(this->handover_task_service_name, &TaskSequencer::call_simple_handover_task, this);
     this->set_object_server = this->nh.advertiseService(this->set_object_service_name, &TaskSequencer::call_set_object, this);
 
@@ -83,6 +85,12 @@ bool TaskSequencer::parse_task_params(){
 		success = false;
 	}
 
+    if(!ros::param::get("/task_sequencer/use_vision", this->use_vision)){
+		ROS_WARN("The param 'use_vision' not found in param server! Using default.");
+		this->use_vision = false;
+		success = false;
+	}
+
 	if(!ros::param::get("/task_sequencer/home_joints", this->home_joints)){
 		ROS_WARN("The param 'home_joints' not found in param server! Using default.");
 		this->home_joints = {-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110};
@@ -121,6 +129,13 @@ bool TaskSequencer::parse_task_params(){
     // Converting the pre_grasp_transform vector to geometry_msgs Pose
     this->pre_grasp_T = this->convert_vector_to_pose(this->pre_grasp_transform);
 
+    if(!ros::param::get("/task_sequencer/pre_place_transform", this->pre_place_transform)){
+		ROS_WARN("The param 'pre_place_transform' not found in param server! Using default.");
+		this->pre_place_transform.resize(6);
+        std::fill(this->pre_place_transform.begin(), this->pre_place_transform.end(), 0.0);
+		success = false;
+	}
+
     if(!ros::param::get("/task_sequencer/place_transform", this->place_transform)){
 		ROS_WARN("The param 'place_transform' not found in param server! Using default.");
 		this->place_transform.resize(6);
@@ -131,15 +146,18 @@ bool TaskSequencer::parse_task_params(){
     // Converting the place_transform vector to geometry_msgs Pose
     this->place_T = this->convert_vector_to_pose(this->place_transform);
 
-    if(!ros::param::get("/task_sequencer/pre_place_transform", this->pre_place_transform)){
-		ROS_WARN("The param 'pre_place_transform' not found in param server! Using default.");
-		this->pre_place_transform.resize(6);
-        std::fill(this->pre_place_transform.begin(), this->pre_place_transform.end(), 0.0);
+    // Converting the pre_place_transform vector to geometry_msgs Pose
+    this->pre_place_T = this->convert_vector_to_pose(this->pre_place_transform);
+
+    if(!ros::param::get("/task_sequencer/look_transform", this->look_transform)){
+		ROS_WARN("The param 'look_transform' not found in param server! Using default.");
+		this->look_transform.resize(6);
+        std::fill(this->look_transform.begin(), this->look_transform.end(), 0.0);
 		success = false;
 	}
 
-    // Converting the pre_place_transform vector to geometry_msgs Pose
-    this->pre_place_T = this->convert_vector_to_pose(this->pre_place_transform);
+    // Converting the look_transform vector to geometry_msgs Pose
+    this->look_T = this->convert_vector_to_pose(this->look_transform);
 
     // Getting the XmlRpc value and parsing
     if(!this->nh.getParam("/task_sequencer", this->task_seq_params)){
@@ -271,7 +289,7 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
-    // Computing the grasp and pregrasp pose and converting to geometry_msgs Pose
+    // Computing the grasp and pregrasp pose and converting to geometry_msgs Pose  (ATTENTION! wrt OBJECT)
     Eigen::Affine3d object_pose_aff; tf::poseMsgToEigen(this->object_pose_T, object_pose_aff);
     Eigen::Affine3d grasp_transform_aff; tf::poseMsgToEigen(this->grasp_T, grasp_transform_aff);
     Eigen::Affine3d pre_grasp_transform_aff; tf::poseMsgToEigen(this->pre_grasp_T, pre_grasp_transform_aff);
@@ -329,16 +347,15 @@ bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_
         return true;
     }
 
-    // Computing the place and preplace pose and converting to geometry_msgs Pose
-    Eigen::Affine3d object_pose_aff; tf::poseMsgToEigen(this->object_pose_T, object_pose_aff);
+    // Computing the place and preplace pose and converting to geometry_msgs Pose (ATTENTION! wrt WORLD)
     Eigen::Affine3d place_transform_aff; tf::poseMsgToEigen(this->place_T, place_transform_aff);
     Eigen::Affine3d pre_place_transform_aff; tf::poseMsgToEigen(this->pre_place_T, pre_place_transform_aff);
 
     geometry_msgs::Pose pre_place_pose; geometry_msgs::Pose place_pose;
-    tf::poseEigenToMsg(object_pose_aff * place_transform_aff * pre_place_transform_aff, pre_place_pose);
-    tf::poseEigenToMsg(object_pose_aff * place_transform_aff, place_pose);
+    tf::poseEigenToMsg(place_transform_aff * pre_place_transform_aff, pre_place_pose);
+    tf::poseEigenToMsg(place_transform_aff, place_pose);
 
-    // 2) Going to preplace pose
+    // 2) Going to place pose
     if(!this->panda_softhand_client.call_pose_service(pre_place_pose, false) || !this->franka_ok){
         ROS_ERROR("Could not go to the specified pre place pose.");
         res.success = false;
@@ -365,6 +382,46 @@ bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_
     // Now, everything finished well
     res.success = true;
     res.message = "The service call_simple_place_task was correctly performed!";
+    return true;
+
+}
+
+// Callback for simple look task service
+bool TaskSequencer::call_simple_look_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
+
+    // 1) Opening hand
+    if(!this->panda_softhand_client.call_hand_service(0.0, 2.0) || !this->franka_ok){
+        ROS_ERROR("Could not open the hand.");
+        res.success = false;
+        res.message = "The service call_simple_look_task was NOT performed correctly!";
+        return false;
+    }
+
+    // 2) Going to home configuration
+    if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified home joint configuration.");
+        res.success = false;
+        res.message = "The service call_simple_look_task was NOT performed correctly!";
+        return false;
+    }
+
+    // 3) Going to look pose
+    if(!this->panda_softhand_client.call_pose_service(this->look_T, false) || !this->franka_ok){
+        ROS_ERROR("Could not go to the specified look pose.");
+        res.success = false;
+        res.message = "The service call_simple_look_task was NOT performed correctly!";
+        return false;
+    }
+
+    // 4) If using vision, save the object pose obtained from vision
+    if(this->use_vision){
+        ROS_INFO("SAVING OBJECT POSE FROM VISION!");
+        // Code this!!!
+    }
+
+    // Now, everything finished well
+    res.success = true;
+    res.message = "The service call_simple_look_task was correctly performed!";
     return true;
 
 }
