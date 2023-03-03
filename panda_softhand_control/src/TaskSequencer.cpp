@@ -22,6 +22,10 @@ TaskSequencer::TaskSequencer(ros::NodeHandle& nh_){
     this->object_sub = this->nh.subscribe(this->object_topic_name, 1, &TaskSequencer::get_object_pose, this);
     ros::topic::waitForMessage<geometry_msgs::Pose>(this->object_topic_name, ros::Duration(2.0));
 
+    // Initializing object pose with null values for ease of checking "emptiness" (TODO: more intelligent way)
+    object_pose_T.position.x = 0.0; object_pose_T.position.y = 0.0; object_pose_T.position.z = 0.0;
+    object_pose_T.orientation.w = 0.0; object_pose_T.orientation.x = 0.0; object_pose_T.orientation.y = 0.0; object_pose_T.orientation.z = 0.0;
+
     // Initializing the franka_state_sub subscriber and waiting
     this->franka_state_sub = this->nh.subscribe("/" + this->robot_name + this->franka_state_topic_name, 1, &TaskSequencer::get_franka_state, this);
     ros::topic::waitForMessage<franka_msgs::FrankaState>("/" + this->robot_name + this->franka_state_topic_name, ros::Duration(2.0));
@@ -82,12 +86,6 @@ bool TaskSequencer::parse_task_params(){
     if(!ros::param::get("/task_sequencer/imp_controller", this->imp_controller)){
 		ROS_WARN("The param 'imp_controller' not found in param server! Using default.");
 		this->imp_controller = "cartesian_impedance_controller_softbots_stiff_matrix";
-		success = false;
-	}
-
-    if(!ros::param::get("/task_sequencer/use_vision", this->use_vision)){
-		ROS_WARN("The param 'use_vision' not found in param server! Using default.");
-		this->use_vision = false;
 		success = false;
 	}
 
@@ -281,6 +279,14 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return true;
     }
 
+    // Checking if the object pose is set; otherwise, error
+    if (this->is_empty_geom_msg(this->object_pose_T)){
+        ROS_ERROR("The object pose is not set. Cannot do grasp!!!");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
     // 1) Going to home configuration
     if(!this->panda_softhand_client.call_joint_service(this->home_joints) || !this->franka_ok){
         ROS_ERROR("Could not go to the specified home joint configuration.");
@@ -413,11 +419,9 @@ bool TaskSequencer::call_simple_look_task(std_srvs::SetBool::Request &req, std_s
         return false;
     }
 
-    // 4) If using vision, save the object pose obtained from vision
-    if(this->use_vision){
-        ROS_INFO("SAVING OBJECT POSE FROM VISION!");
-        // Code this!!!
-    }
+    // ATTENTION! This works because, if using vision, by looking with the in-hand-camera 
+    // the object pose is saved through the subscriber
+    
 
     // Now, everything finished well
     res.success = true;

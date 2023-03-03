@@ -117,7 +117,6 @@ class TaskSequencer {
         std::string robot_joints_name;              // Name of the robot joints (without the number of the joints)
         std::string pos_controller;                 // Name of position controller
         std::string imp_controller;                 // Name of impedance controller
-        bool use_vision;                            // Boolean for using vision or blind pre-programmed grasping
         std::vector<double> home_joints;
         std::vector<double> handover_joints;
         double handover_thresh;
@@ -143,5 +142,13 @@ class TaskSequencer {
 
         // Auxiliary function for setting object maps
         bool set_object_maps(std::string obj_name);
+
+        // Auxiliary function to check if geometry msg is all zero
+        inline bool is_empty_geom_msg(geometry_msgs::Pose pose){
+            bool pos_zero = pose.position.x == 0.0 && pose.position.y == 0.0 && pose.position.z == 0;
+            bool ori_zero = pose.orientation.w == 0.0 && pose.orientation.x == 0.0 && pose.orientation.y == 0.0 && pose.orientation.z == 0;
+            if (pos_zero && ori_zero) return true;
+            return false;
+        }
 
 };
