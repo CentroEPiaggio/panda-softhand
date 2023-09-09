@@ -34,7 +34,7 @@ SlerpPlan::~SlerpPlan(){
 }
 
 // This is the callback function of the slerp plan service
-bool SlerpPlan::call_slerp_plan(panda_softhand_control::slerp_plan::Request &req, panda_softhand_control::slerp_plan::Response &res){
+bool SlerpPlan::call_slerp_plan(panda_softhand_msgs::slerp_plan::Request &req, panda_softhand_msgs::slerp_plan::Response &res){
 
     // Setting up things
     if(!this->initialize(req.goal_pose, req.start_pose, req.is_goal_relative, req.past_trajectory)){

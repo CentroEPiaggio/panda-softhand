@@ -637,7 +637,7 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
 }
 
 // Callback for complex grasp task service (goes to specified pose)
-bool TaskSequencer::call_complex_grasp_task(panda_softhand_control::complex_grasp::Request &req, panda_softhand_control::complex_grasp::Response &res){
+bool TaskSequencer::call_complex_grasp_task(panda_softhand_msgs::complex_grasp::Request &req, panda_softhand_msgs::complex_grasp::Response &res){
 
     // Checking the request for correctness
     if(!req.data){
@@ -1367,7 +1367,7 @@ bool TaskSequencer::call_throwing_task(std_srvs::SetBool::Request &req, std_srvs
 };
 
 // Callback for set object task service
-bool TaskSequencer::call_set_object(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res){
+bool TaskSequencer::call_set_object(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res){
 
     // Checking if the parsed map contains the requested object
     auto search = this->poses_map.find(req.object_name);
@@ -1390,7 +1390,7 @@ bool TaskSequencer::call_set_object(panda_softhand_control::set_object::Request 
 }
 
 // Callback for set place joints service
-bool TaskSequencer::call_set_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res){
+bool TaskSequencer::call_set_place(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res){
 
     // Checking if the parsed map contains the requested object
     auto search = this->place_joints_map.find(req.object_name);
@@ -1411,7 +1411,7 @@ bool TaskSequencer::call_set_place(panda_softhand_control::set_object::Request &
 }
 
 /**/
-bool TaskSequencer::call_set_prethrowing_joints_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res){
+bool TaskSequencer::call_set_prethrowing_joints_place(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res){
     
     // Checking if the parsed map contains the requested object
 
@@ -1432,7 +1432,7 @@ bool TaskSequencer::call_set_prethrowing_joints_place(panda_softhand_control::se
 
 };
 
-bool TaskSequencer::call_set_vacuum_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res){
+bool TaskSequencer::call_set_vacuum_place(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res){
     
     // Checking if the parsed map contains the requested object
 
@@ -1457,7 +1457,7 @@ bool TaskSequencer::call_set_vacuum_place(panda_softhand_control::set_object::Re
     
 };
 
-bool TaskSequencer::call_set_throwing_joints_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res){
+bool TaskSequencer::call_set_throwing_joints_place(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res){
 
     // Checking if the parsed map contains the requested object
 
@@ -1477,7 +1477,7 @@ bool TaskSequencer::call_set_throwing_joints_place(panda_softhand_control::set_o
     return res.result;
 };
 
-bool TaskSequencer::call_set_duty_cycle(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res){
+bool TaskSequencer::call_set_duty_cycle(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res){
    
     auto search = this->duty_cycle_map.find(req.object_name);
     if(search == this->duty_cycle_map.end()){

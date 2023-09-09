@@ -14,7 +14,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <trajectory_msgs/JointTrajectory.h>
 
 // Custom msg and srv includes
-#include "panda_softhand_control/pose_plan.h"
+#include "panda_softhand_msgs/pose_plan.h"
 
 // MoveIt! includes
 #include <moveit/move_group_interface/move_group_interface.h>
@@ -33,7 +33,7 @@ class PosePlan {
         ~PosePlan();
 
         // This is the callback function of the pose plan service
-	  	bool call_pose_plan(panda_softhand_control::pose_plan::Request &req, panda_softhand_control::pose_plan::Response &res);
+	  	bool call_pose_plan(panda_softhand_msgs::pose_plan::Request &req, panda_softhand_msgs::pose_plan::Response &res);
 
 	  	// Initialize the things for motion planning. It is called by the callback
 	  	bool initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory past_trajectory);

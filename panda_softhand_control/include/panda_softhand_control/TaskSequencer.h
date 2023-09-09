@@ -16,8 +16,8 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "std_msgs/Float64.h"
 #include "std_msgs/Bool.h"
 #include "std_srvs/SetBool.h"
-#include "panda_softhand_control/set_object.h"
-#include "panda_softhand_control/complex_grasp.h"
+#include "panda_softhand_msgs/set_object.h"
+#include "panda_softhand_msgs/complex_grasp.h"
 #include "geometry_msgs/Pose.h"
 #include <controller_manager_msgs/SwitchController.h>
 #include <franka_msgs/FrankaState.h>
@@ -70,7 +70,7 @@ class TaskSequencer {
         bool call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
         // Callback for complex grasp task service (goes to specified pose)
-        bool call_complex_grasp_task(panda_softhand_control::complex_grasp::Request &req, panda_softhand_control::complex_grasp::Response &res);
+        bool call_complex_grasp_task(panda_softhand_msgs::complex_grasp::Request &req, panda_softhand_msgs::complex_grasp::Response &res);
 
         // Callback for simple place task service
         bool call_simple_place_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
@@ -88,21 +88,21 @@ class TaskSequencer {
         bool call_throwing_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
    
         // Callback for set object service
-        bool call_set_object(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
+        bool call_set_object(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
 
         // Callback for set place joints service
-        bool call_set_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
+        bool call_set_place(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
         
         // Callback for set place prethrowing joints service
-        bool call_set_prethrowing_joints_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
+        bool call_set_prethrowing_joints_place(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
 
-        bool call_set_vacuum_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
+        bool call_set_vacuum_place(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
 
         // Callback for set place throwing joints service
         
-        bool call_set_throwing_joints_place(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
+        bool call_set_throwing_joints_place(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
 	    
-        bool call_set_duty_cycle(panda_softhand_control::set_object::Request &req, panda_softhand_control::set_object::Response &res);
+        bool call_set_duty_cycle(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
         
         bool call_replace_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 

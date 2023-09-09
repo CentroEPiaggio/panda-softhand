@@ -3,7 +3,7 @@ project(panda_softhand_description)
 
 find_package(catkin REQUIRED
 	franka_description
-	soft_hand_description
+	qb_hand_description
 )
 
 

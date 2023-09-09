@@ -30,7 +30,7 @@ JointPlan::~JointPlan(){
 }
 
 // This is the callback function of the joint plan service
-bool JointPlan::call_joint_plan(panda_softhand_control::joint_plan::Request &req, panda_softhand_control::joint_plan::Response &res){
+bool JointPlan::call_joint_plan(panda_softhand_msgs::joint_plan::Request &req, panda_softhand_msgs::joint_plan::Response &res){
 
     // Setting up things
     if(!this->initialize(req)){
@@ -54,7 +54,7 @@ bool JointPlan::call_joint_plan(panda_softhand_control::joint_plan::Request &req
 
 
 // Initialize the things for motion planning. Is called by the callback
-bool JointPlan::initialize(panda_softhand_control::joint_plan::Request &req){
+bool JointPlan::initialize(panda_softhand_msgs::joint_plan::Request &req){
 
     // Converting the float array of request to std vector
     this->joint_goal = req.joint_goal;

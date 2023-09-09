@@ -51,7 +51,6 @@ int main(int argc, char **argv)
     
     ROS_INFO("Advertising the services");
 
-    
     ros::ServiceServer hand_plan_service = nh_.advertiseService("hand_plan_service", &HandPlan::call_hand_plan, &hand_plan_obj);
     ros::ServiceServer hand_wait_service = nh_.advertiseService("hand_wait_service", &HandControl::call_hand_wait, &hand_control_obj);
     ros::ServiceServer hand_service = nh_.advertiseService("hand_control_service", &HandControl::call_hand_control, &hand_control_obj);

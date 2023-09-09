@@ -45,28 +45,28 @@ bool PandaSoftHandClient::initialize(ros::NodeHandle& nh_){
 
     // Initializing service clients after waiting
     if(!ros::service::waitForService(this->hand_plan_service_name, ros::Duration(1.0))) return false;
-    this->hand_plan_client = this->nh.serviceClient<panda_softhand_control::hand_plan>(this->hand_plan_service_name);
+    this->hand_plan_client = this->nh.serviceClient<panda_softhand_msgs::hand_plan>(this->hand_plan_service_name);
 
     if(!ros::service::waitForService(this->hand_control_service_name, ros::Duration(1.0))) return false;
-    this->hand_control_client = this->nh.serviceClient<panda_softhand_control::hand_control>(this->hand_control_service_name);
+    this->hand_control_client = this->nh.serviceClient<panda_softhand_msgs::hand_control>(this->hand_control_service_name);
 
     if(!ros::service::waitForService(this->hand_wait_service_name, ros::Duration(1.0))) return false;
-    this->hand_wait_client = this->nh.serviceClient<panda_softhand_control::hand_wait>(this->hand_wait_service_name);
+    this->hand_wait_client = this->nh.serviceClient<panda_softhand_msgs::hand_wait>(this->hand_wait_service_name);
 
     if(!ros::service::waitForService(this->arm_control_service_name, ros::Duration(1.0))) return false;
-    this->arm_control_client = this->nh.serviceClient<panda_softhand_control::arm_control>(this->arm_control_service_name);
+    this->arm_control_client = this->nh.serviceClient<panda_softhand_msgs::arm_control>(this->arm_control_service_name);
 
     if(!ros::service::waitForService(this->arm_wait_service_name, ros::Duration(1.0))) return false;
-    this->arm_wait_client = this->nh.serviceClient<panda_softhand_control::arm_wait>(this->arm_wait_service_name);
+    this->arm_wait_client = this->nh.serviceClient<panda_softhand_msgs::arm_wait>(this->arm_wait_service_name);
 
     if(!ros::service::waitForService(this->joint_service_name, ros::Duration(1.0))) return false;
-    this->joint_client = this->nh.serviceClient<panda_softhand_control::joint_plan>(this->joint_service_name);
+    this->joint_client = this->nh.serviceClient<panda_softhand_msgs::joint_plan>(this->joint_service_name);
 
     if(!ros::service::waitForService(this->pose_service_name, ros::Duration(1.0))) return false;
-    this->pose_client = this->nh.serviceClient<panda_softhand_control::pose_plan>(this->pose_service_name);
+    this->pose_client = this->nh.serviceClient<panda_softhand_msgs::pose_plan>(this->pose_service_name);
 
     if(!ros::service::waitForService(this->slerp_service_name, ros::Duration(1.0))) return false;
-    this->slerp_client = this->nh.serviceClient<panda_softhand_control::slerp_plan>(this->slerp_service_name);
+    this->slerp_client = this->nh.serviceClient<panda_softhand_msgs::slerp_plan>(this->slerp_service_name);
 
     // At this point initializing completed
     return true;
@@ -76,7 +76,7 @@ bool PandaSoftHandClient::initialize(ros::NodeHandle& nh_){
 bool PandaSoftHandClient::call_hand_plan_service(double goal_syn, double goal_duration, trajectory_msgs::JointTrajectory& computed_trajectory){
 
     // Creating and filling up the request
-    panda_softhand_control::hand_plan hand_plan_srv;
+    panda_softhand_msgs::hand_plan hand_plan_srv;
     hand_plan_srv.request.goal_syn = goal_syn;
     hand_plan_srv.request.goal_duration = goal_duration;
 
@@ -94,7 +94,7 @@ bool PandaSoftHandClient::call_hand_plan_service(double goal_syn, double goal_du
 bool PandaSoftHandClient::call_hand_control_service(trajectory_msgs::JointTrajectory& computed_trajectory){
 
     // Creating and filling up the request
-    panda_softhand_control::hand_control hand_control_srv;
+    panda_softhand_msgs::hand_control hand_control_srv;
     hand_control_srv.request.computed_trajectory = computed_trajectory;
 
     // Calling the service
@@ -110,7 +110,7 @@ bool PandaSoftHandClient::call_hand_control_service(trajectory_msgs::JointTrajec
 bool PandaSoftHandClient::call_hand_wait_service(ros::Duration wait_time){
 
     // Creating and filling up the request
-    panda_softhand_control::hand_wait hand_wait_srv;
+    panda_softhand_msgs::hand_wait hand_wait_srv;
     std_msgs::Duration wait_duration_msg;
     wait_duration_msg.data = wait_time;
     hand_wait_srv.request.wait_duration = wait_duration_msg;
@@ -128,7 +128,7 @@ bool PandaSoftHandClient::call_hand_wait_service(ros::Duration wait_time){
 bool PandaSoftHandClient::call_arm_control_service(trajectory_msgs::JointTrajectory& computed_trajectory){
 
     // Creating and filling up the request
-    panda_softhand_control::arm_control arm_control_srv;
+    panda_softhand_msgs::arm_control arm_control_srv;
     arm_control_srv.request.computed_trajectory = computed_trajectory;
 
     // Calling the service
@@ -144,7 +144,7 @@ bool PandaSoftHandClient::call_arm_control_service(trajectory_msgs::JointTraject
 bool PandaSoftHandClient::call_arm_wait_service(ros::Duration wait_time){
 
     // Creating and filling up the request
-    panda_softhand_control::arm_wait arm_wait_srv;
+    panda_softhand_msgs::arm_wait arm_wait_srv;
     std_msgs::Duration wait_duration_msg;
     wait_duration_msg.data = wait_time;
     arm_wait_srv.request.wait_duration = wait_duration_msg;
@@ -162,74 +162,15 @@ bool PandaSoftHandClient::call_arm_wait_service(ros::Duration wait_time){
 bool PandaSoftHandClient::call_joint_service(std::vector<double> joint_goal, std::vector<double> joint_start, trajectory_msgs::JointTrajectory& computed_trajectory){
 
     // Creating and filling up the request
-    panda_softhand_control::joint_plan joint_plan_srv;
+    panda_softhand_msgs::joint_plan joint_plan_srv;
     joint_plan_srv.request.joint_goal = joint_goal;
     joint_plan_srv.request.joint_start = joint_start;
-
-    
-    // std::cout << "##############################################"<<"\n";
-    // std::cout << "Joint Start before is: " <<"\n";
-
-    // for(auto j: joint_start){
-
-    //     std::cout << j << std::endl;
-    // }
-
-   
-    // std::cout << "First positions of computed trajectory are: " << std::endl;
-    // trajectory_msgs::JointTrajectory pippo = computed_trajectory;
-    // std::cout << "pippo is: " << std::endl; std::cout << pippo << std::endl;
-    // std::vector<trajectory_msgs::JointTrajectoryPoint> traj_arm_points = pippo.points;
-    // std::cout << "qui ci sono arrivato1"  << std::endl;
-    // std::cout << traj_arm_points.front() << std::endl;
-    // trajectory_msgs::JointTrajectoryPoint first_point = traj_arm_points.front();
-    // std::cout << "qui ci sono arrivato2"  << std::endl;
-    // for (auto t: first_point.positions){
-    //     std::cout << t << std::endl;
-    // }
-
-    // std::cout << "Check the second point of computed trajectory positions :" << std::endl;
-    // trajectory_msgs::JointTrajectoryPoint second_point = traj_arm_points[1];
-    
-    // for (auto t: second_point.positions){
-    //     std::cout << t << std::endl;
-    // }
-
-    // std::cout << "Joint Goal before is: " <<"\n";
-
-    // for(auto l: joint_goal){
-
-    //     std::cout << l << std::endl;
-    // }
-
-    // std::cout << "Last positions of computed trajectory are: " << std::endl;
-    // std::vector<trajectory_msgs::JointTrajectoryPoint> traj_arm_points2 = computed_trajectory.points;
-    // trajectory_msgs::JointTrajectoryPoint last_point = traj_arm_points2.back();
-      
-    // for (auto z: last_point.positions){
-    //     std::cout << z << std::endl;
-    // }
 
     // Calling the service
     if(!this->joint_client.call(joint_plan_srv)){
         ROS_ERROR("Failed to contact the joint plan server. Returning...");
         return false;
     }
-    
-    // std::cout << "Joint Start after is: " <<"\n";
-
-    // for(auto j: joint_start){
-
-    //     std::cout << j << std::endl;
-    // }
-
-    // std::cout << "Joint Goal after is: " <<"\n";
-
-    // for(auto l: joint_goal){
-
-    //     std::cout << l << std::endl;
-    // }
-
 
     computed_trajectory = joint_plan_srv.response.computed_trajectory;
 
@@ -241,7 +182,7 @@ bool PandaSoftHandClient::call_pose_service(geometry_msgs::Pose goal_pose, geome
                                             trajectory_msgs::JointTrajectory& computed_trajectory, trajectory_msgs::JointTrajectory past_trajectory){
 
     // Creating and filling up the request
-    panda_softhand_control::pose_plan pose_plan_srv;
+    panda_softhand_msgs::pose_plan pose_plan_srv;
     pose_plan_srv.request.goal_pose = goal_pose;
     pose_plan_srv.request.start_pose = start_pose;
     pose_plan_srv.request.is_goal_relative = is_goal_relative;
@@ -262,7 +203,7 @@ bool PandaSoftHandClient::call_slerp_service(geometry_msgs::Pose goal_pose, geom
                                             trajectory_msgs::JointTrajectory& computed_trajectory, trajectory_msgs::JointTrajectory past_trajectory){
 
     // Creating and filling up the request
-    panda_softhand_control::slerp_plan slerp_plan_srv;
+    panda_softhand_msgs::slerp_plan slerp_plan_srv;
     slerp_plan_srv.request.goal_pose = goal_pose;
     slerp_plan_srv.request.start_pose = start_pose;
     slerp_plan_srv.request.is_goal_relative = is_goal_relative;

@@ -1,8 +1,8 @@
- controller_list:
-  - name: /panda_arm/position_joint_trajectory_controller
+controller_list:
+  - name: panda_arm_controller
     action_ns: follow_joint_trajectory
     type: FollowJointTrajectory
-    default: true
+    default: True
     joints:
       - panda_joint1
       - panda_joint2

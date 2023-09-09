@@ -10,8 +10,8 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <control_msgs/FollowJointTrajectoryAction.h>
 
 // Custom msg and srv includes
-#include "panda_softhand_control/arm_control.h"
-#include "panda_softhand_control/arm_wait.h"
+#include "panda_softhand_msgs/arm_control.h"
+#include "panda_softhand_msgs/arm_wait.h"
 
 // ROS action includes
 #include <actionlib/client/simple_action_client.h>
@@ -32,13 +32,13 @@ class ArmControl {
         ~ArmControl();
 
         // This is the callback function of the arm control service
-	  	bool call_arm_control(panda_softhand_control::arm_control::Request &req, panda_softhand_control::arm_control::Response &res);
+	  	bool call_arm_control(panda_softhand_msgs::arm_control::Request &req, panda_softhand_msgs::arm_control::Response &res);
 
 		// Sends trajectory to the joint_traj controller
 		bool sendJointTrajectory(trajectory_msgs::JointTrajectory trajectory);
 
         // This is the callback function of the arm wait service
-	  	bool call_arm_wait(panda_softhand_control::arm_wait::Request &req, panda_softhand_control::arm_wait::Response &res);
+	  	bool call_arm_wait(panda_softhand_msgs::arm_wait::Request &req, panda_softhand_msgs::arm_wait::Response &res);
 
 	/// private variables -------------------------------------------------------------------------
 	private:

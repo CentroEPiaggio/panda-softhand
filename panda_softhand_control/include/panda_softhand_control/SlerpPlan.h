@@ -15,7 +15,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <control_msgs/FollowJointTrajectoryAction.h>
 
 // Custom msg and srv includes
-#include "panda_softhand_control/slerp_plan.h"
+#include "panda_softhand_msgs/slerp_plan.h"
 
 // MoveIt! includes
 #include <moveit/move_group_interface/move_group_interface.h>
@@ -34,7 +34,7 @@ class SlerpPlan {
         ~SlerpPlan();
 
         // This is the callback function of the slerp plan service
-	  	bool call_slerp_plan(panda_softhand_control::slerp_plan::Request &req, panda_softhand_control::slerp_plan::Response &res);
+	  	bool call_slerp_plan(panda_softhand_msgs::slerp_plan::Request &req, panda_softhand_msgs::slerp_plan::Response &res);
 
 	  	// Initialize the things for motion planning. It is called by the callback
 	  	bool initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, trajectory_msgs::JointTrajectory past_trajectory);

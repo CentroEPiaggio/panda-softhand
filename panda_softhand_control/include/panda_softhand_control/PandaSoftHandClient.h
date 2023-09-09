@@ -11,16 +11,16 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <trajectory_msgs/JointTrajectory.h>
 
 // Custom msg and srv includes
-#include "panda_softhand_control/hand_plan.h"
-#include "panda_softhand_control/hand_wait.h"
-#include "panda_softhand_control/hand_control.h"
+#include "panda_softhand_msgs/hand_plan.h"
+#include "panda_softhand_msgs/hand_wait.h"
+#include "panda_softhand_msgs/hand_control.h"
 
-#include "panda_softhand_control/arm_wait.h"
-#include "panda_softhand_control/arm_control.h"
+#include "panda_softhand_msgs/arm_wait.h"
+#include "panda_softhand_msgs/arm_control.h"
 
-#include "panda_softhand_control/joint_plan.h"
-#include "panda_softhand_control/pose_plan.h"
-#include "panda_softhand_control/slerp_plan.h"
+#include "panda_softhand_msgs/joint_plan.h"
+#include "panda_softhand_msgs/pose_plan.h"
+#include "panda_softhand_msgs/slerp_plan.h"
 
 // Defines
 #define     DEBUG   1       // Prints out additional stuff

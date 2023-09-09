@@ -11,7 +11,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <sensor_msgs/JointState.h>
 
 // Custom msg and srv includes
-#include "panda_softhand_control/hand_plan.h"
+#include "panda_softhand_msgs/hand_plan.h"
 
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
@@ -25,7 +25,7 @@ class HandPlan {
         ~HandPlan();
 
         // This is the callback function of the hand plan service
-	  	bool call_hand_plan(panda_softhand_control::hand_plan::Request &req, panda_softhand_control::hand_plan::Response &res);
+	  	bool call_hand_plan(panda_softhand_msgs::hand_plan::Request &req, panda_softhand_msgs::hand_plan::Response &res);
 
         // The callback function for the joint states subscriber
 	  	void joints_callback(const sensor_msgs::JointState::ConstPtr &jnt_msg);

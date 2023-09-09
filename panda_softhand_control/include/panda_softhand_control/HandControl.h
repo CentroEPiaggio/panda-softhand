@@ -11,9 +11,9 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <sensor_msgs/JointState.h>
 
 // Custom msg and srv includes
-#include "panda_softhand_control/hand_control.h"
-#include "panda_softhand_control/hand_plan.h"
-#include "panda_softhand_control/hand_wait.h"
+#include "panda_softhand_msgs/hand_control.h"
+#include "panda_softhand_msgs/hand_plan.h"
+#include "panda_softhand_msgs/hand_wait.h"
 
 // ROS action includes
 #include <actionlib/client/simple_action_client.h>
@@ -32,13 +32,13 @@ class HandControl {
         ~HandControl();
 
         // This is the callback function of the hand control service
-	  	bool call_hand_control(panda_softhand_control::hand_control::Request &req, panda_softhand_control::hand_control::Response &res);
+	  	bool call_hand_control(panda_softhand_msgs::hand_control::Request &req, panda_softhand_msgs::hand_control::Response &res);
 
 		// Sends trajectory to the hand joint trajectory controller
 		bool sendHandTrajectory(trajectory_msgs::JointTrajectory trajectory);
 
         // Waits for the completion of the execution by hand joint trajectory controller
-		bool call_hand_wait(panda_softhand_control::hand_wait::Request &req, panda_softhand_control::hand_wait::Response &res);
+		bool call_hand_wait(panda_softhand_msgs::hand_wait::Request &req, panda_softhand_msgs::hand_wait::Response &res);
 
 	/// private variables -------------------------------------------------------------------------
 	private:

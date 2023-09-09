@@ -13,8 +13,6 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 PosePlan::PosePlan(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_){
         
-        std::cout << "Stefano 2 " << std::endl;
-
         ROS_INFO("Starting to create PosePlan object");
 
         // Initializing node handle
@@ -25,9 +23,6 @@ PosePlan::PosePlan(ros::NodeHandle& nh_, std::string group_name_, std::string en
         this->group_name = group_name_;
 
         ROS_INFO("Finished creating PosePlan object");
-
-        std::cout << "Stefano 3 " << std::endl;
-
 }
 
 PosePlan::~PosePlan(){
@@ -36,7 +31,7 @@ PosePlan::~PosePlan(){
 }
 
 // This is the callback function of the pose plan service
-bool PosePlan::call_pose_plan(panda_softhand_control::pose_plan::Request &req, panda_softhand_control::pose_plan::Response &res){
+bool PosePlan::call_pose_plan(panda_softhand_msgs::pose_plan::Request &req, panda_softhand_msgs::pose_plan::Response &res){
     
 
     // Setting up things

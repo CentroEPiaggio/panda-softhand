@@ -8,7 +8,6 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <string>
 
 #include "panda_softhand_control/ArmControl.h"
-
 #include <moveit_visual_tools/moveit_visual_tools.h>
 
 ArmControl::ArmControl(ros::NodeHandle& nh_,
@@ -31,7 +30,7 @@ ArmControl::~ArmControl(){
 }
 
 // This is the callback function of the arm control service
-bool ArmControl::call_arm_control(panda_softhand_control::arm_control::Request &req, panda_softhand_control::arm_control::Response &res){
+bool ArmControl::call_arm_control(panda_softhand_msgs::arm_control::Request &req, panda_softhand_msgs::arm_control::Response &res){
 
     // Saving the callback msg (Here we hope that the traj has been created correctly)
     this->computed_trajectory = req.computed_trajectory;
@@ -77,7 +76,7 @@ bool ArmControl::sendJointTrajectory(trajectory_msgs::JointTrajectory trajectory
 
 
 // This is the callback function of the arm wait service
-bool ArmControl::call_arm_wait(panda_softhand_control::arm_wait::Request &req, panda_softhand_control::arm_wait::Response &res){
+bool ArmControl::call_arm_wait(panda_softhand_msgs::arm_wait::Request &req, panda_softhand_msgs::arm_wait::Response &res){
 
      if(!this->arm_client_ptr->waitForResult(req.wait_duration.data)){
         ROS_ERROR("The arm client is taking too to complete goal execution. Returning...");

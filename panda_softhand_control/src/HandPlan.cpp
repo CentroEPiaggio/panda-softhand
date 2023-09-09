@@ -25,7 +25,7 @@ HandPlan::~HandPlan(){
 }
 
 // This is the callback function of the hand plan service
-bool HandPlan::call_hand_plan(panda_softhand_control::hand_plan::Request &req, panda_softhand_control::hand_plan::Response &res){
+bool HandPlan::call_hand_plan(panda_softhand_msgs::hand_plan::Request &req, panda_softhand_msgs::hand_plan::Response &res){
 
     // Saving the callback msgs and checking limits (saturating)
     this->goal_value = req.goal_syn;

@@ -61,9 +61,9 @@ int main(int argc, char **argv)
 
    /*** Update the map for throwing OBJECT 1***/ 
 
-   panda_softhand_control::set_object::Request req_throwing;
+   panda_softhand_msgs::set_object::Request req_throwing;
    req_throwing.object_name = "object3";
-   panda_softhand_control::set_object::Response resp_throwing;
+   panda_softhand_msgs::set_object::Response resp_throwing;
 
    ROS_INFO("Call the call_set_throwing_joints_place ");
 
@@ -77,9 +77,9 @@ int main(int argc, char **argv)
 
    
 
-   panda_softhand_control::set_object::Request req_vacuum;
+   panda_softhand_msgs::set_object::Request req_vacuum;
    req_vacuum.object_name = "object3";
-   panda_softhand_control::set_object::Response resp_vacuum;
+   panda_softhand_msgs::set_object::Response resp_vacuum;
 
    ROS_INFO("Call the call_set_vacuum_place ");
 
@@ -92,9 +92,9 @@ int main(int argc, char **argv)
    }
 
 
-   panda_softhand_control::set_object::Request req_duty;
+   panda_softhand_msgs::set_object::Request req_duty;
    req_duty.object_name = "object3";
-   panda_softhand_control::set_object::Response resp_duty;
+   panda_softhand_msgs::set_object::Response resp_duty;
 
    ROS_INFO("Call the call_set_duty_cycle service");
 
@@ -109,9 +109,9 @@ int main(int argc, char **argv)
 
    // // Calling the place joint service 
    
-   panda_softhand_control::set_object::Request req_joint_place;
+   panda_softhand_msgs::set_object::Request req_joint_place;
    req_joint_place.object_name = "middle12";
-   panda_softhand_control::set_object::Response resp_joint_place;
+   panda_softhand_msgs::set_object::Response resp_joint_place;
 
    ROS_INFO("Call the call_set_joint_place service");
 
