@@ -6,7 +6,7 @@
   <xacro:arg name="robot_ns" default="panda"/>
 
   <!-- MODELS -->
-  <xacro:include filename="$(find franka_description)/robots/common/franka_robot.xacro"/>
+  <xacro:include filename="$(find franka_description)/robots/panda_arm.xacro"/>
   <xacro:include filename="$(find qb_hand_description)/urdf/qbhand.utils.xacro"/>
   
   <!-- WORLD -->
@@ -19,11 +19,9 @@
   </joint>
 
   <!-- PANDA ARM -->
-  <xacro:franka_robot arm_id="$(arg arm_id)"
-      joint_limits="${xacro.load_yaml('$(find franka_description)/robots/panda/joint_limits.yaml')}">
-  </xacro:franka_robot>
+  <xacro:panda_arm/>
   
-  <!-- RIGHT SOFTHAND -->
+  <!-- RIGHT SOFTHAND2 -->
   <xacro:arg name="namespace" default="qbhand2m1"/>
   <xacro:build_hand_2m_from_yaml_with_90_deg_flange configuration="qbhand_right" namespace="$(arg namespace)" parent="panda_link8" parent_link_suffix="">
 		  <origin xyz="0.045 0 0.035" rpy="1.57 0 1.57"/>

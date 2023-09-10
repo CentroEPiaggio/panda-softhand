@@ -8,4 +8,4 @@ moveit_setup_assistant_config:
   CONFIG:
     author_name: Stefano Angeli
     author_email: stefano.angeli@ing.unipi.it
-    generated_timestamp: 1694266221
+    generated_timestamp: 1694328480
