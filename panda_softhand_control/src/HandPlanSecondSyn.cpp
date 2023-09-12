@@ -1,11 +1,11 @@
-/* HAND PLAN FIRST SYN - For closing SoftHand in to a desired position or at a desired velocity enhancing the first synergy of the 
+/* HAND PLAN SECOND SYN - For closing SoftHand in to a desired position or at a desired velocity enhancing the second synergy of the 
                          the softhand2
 Authors: George Jose Pollayil - Mathew Jose Pollayil - Stefano Angeli 
 Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com, stefano.angeli@ing.unipi.it  */
 
-#include "panda_softhand_control/HandPlanFirstSyn.h"
+#include "panda_softhand_control/HandPlanSecondSyn.h"
 
-HandPlanFirstSyn::HandPlanFirstSyn(ros::NodeHandle& nh_, int n_wp_, std::string synergy_joint_name_){
+HandPlanSecondSyn::HandPlanSecondSyn(ros::NodeHandle& nh_, int n_wp_, std::string synergy_joint_name_){
         
         // Initializing the class node
         this->nh = nh_;
@@ -14,23 +14,23 @@ HandPlanFirstSyn::HandPlanFirstSyn(ros::NodeHandle& nh_, int n_wp_, std::string 
         this->synergy_joint_name = synergy_joint_name_;
 
         // Initializing the subscriber and waiting for a message
-        this->joints_sub = this->nh.subscribe("/joint_states", 1, &HandPlanFirstSyn::joints_callback, this);
+        this->joints_sub = this->nh.subscribe("/joint_states", 1, &HandPlanSecondSyn::joints_callback, this);
         this->saved_jnt_msg = ros::topic::waitForMessage<sensor_msgs::JointState>("/joint_states", this->nh);
 
         // Setting the number of waypoints, closing time and the action client
         this->n_wp = n_wp_;
 }
 
-HandPlanFirstSyn::~HandPlanFirstSyn(){
+HandPlanSecondSyn::~HandPlanSecondSyn(){
     // Nothing to do here yet
 }
 
 // This is the callback function of the hand plan service
-bool HandPlanFirstSyn::call_hand_plan(panda_softhand_msgs::hand_plan::Request &req, panda_softhand_msgs::hand_plan::Response &res){
+bool HandPlanSecondSyn::call_hand_plan(panda_softhand_msgs::hand_plan::Request &req, panda_softhand_msgs::hand_plan::Response &res){
 
     // Saving the callback msgs and checking limits (saturating)
     this->goal_value = req.goal_syn;
-    if(this->goal_value < 0.0) this->goal_value = 0.0;
+    if(this->goal_value < -1.0) this->goal_value = -1.0;
     if(this->goal_value > 1.0) this->goal_value = 1.0;
 
     this->goal_duration = req.goal_duration;
@@ -57,7 +57,7 @@ bool HandPlanFirstSyn::call_hand_plan(panda_softhand_msgs::hand_plan::Request &r
 }
 
 // The callback function for the joint states subscriber
-void HandPlanFirstSyn::joints_callback(const sensor_msgs::JointState::ConstPtr &jnt_msg){
+void HandPlanSecondSyn::joints_callback(const sensor_msgs::JointState::ConstPtr &jnt_msg){
 
     // Saving the message
     this->saved_jnt_msg = jnt_msg;
@@ -65,7 +65,7 @@ void HandPlanFirstSyn::joints_callback(const sensor_msgs::JointState::ConstPtr &
 }
 
 // Initialize the things for setting up things. It is called by the callback
-bool HandPlanFirstSyn::initialize(){
+bool HandPlanSecondSyn::initialize(){
 
     // Spinning once for message
     ros::spinOnce();
@@ -89,14 +89,14 @@ bool HandPlanFirstSyn::initialize(){
 }
 
 // Performs computation of points towards goal
-void HandPlanFirstSyn::computeTrajectory(double present_syn, double goal_syn, double time){
+void HandPlanSecondSyn::computeTrajectory(double present_syn, double goal_syn, double time){
 
     // Computing the real number of waypoints with proportion
     int real_n_wp = std::floor(std::abs(goal_syn - present_syn) * this->n_wp);
 
     // Objects needed for generating trajectory
     trajectory_msgs::JointTrajectory traj;
-    traj.joint_names = {"qbhand2m1_manipulation_joint", this->synergy_joint_name};
+    traj.joint_names.push_back(this->synergy_joint_name);
     traj.header.stamp = ros::Time::now();
     trajectory_msgs::JointTrajectoryPoint point;
 
@@ -115,14 +115,9 @@ void HandPlanFirstSyn::computeTrajectory(double present_syn, double goal_syn, do
 
         // Pushing back position and time in point
         point.positions.clear();
-        point.positions = {0.0, position};
-        point.velocities = {0.0, 0.0};
-        point.accelerations = {0.0, 0.0};
-        point.effort = {0.0, 0.0};
-
-        // point.positions.push_back(position);
+        point.positions.push_back(position);
         point.time_from_start = ros::Duration(this->millisecond * 1000 * time_wp);
-        
+
         // Pushing back point into traj
         traj.points.push_back(point);
     }

@@ -1,4 +1,4 @@
-/* HAND PLAN FIRST SYN - For closing SoftHand in to a desired position or at a desired velocity enhancing the first synergy of the 
+/* HAND PLAN SECOND SYN - For closing SoftHand in to a desired position or at a desired velocity enhancing the second synergy of the 
                          the softhand2
 Authors: George Jose Pollayil - Mathew Jose Pollayil -  Stefano Angeli
 Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com, stefano.angeli@ing.unipi.it  */
@@ -17,13 +17,13 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com, stefano.angeli@ing.uni
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
 
-class HandPlanFirstSyn {
+class HandPlanSecondSyn {
 
     /// public variables and functions ------------------------------------------------------------
 	public:
-		HandPlanFirstSyn(ros::NodeHandle& nh_, int n_wp_, std::string synergy_joint_name_);
+		HandPlanSecondSyn(ros::NodeHandle& nh_, int n_wp_, std::string synergy_joint_name_);
 
-        ~HandPlanFirstSyn();
+        ~HandPlanSecondSyn();
 
         // This is the callback function of the hand plan service
 	  	bool call_hand_plan(panda_softhand_msgs::hand_plan::Request &req, panda_softhand_msgs::hand_plan::Response &res);

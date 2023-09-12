@@ -1,10 +1,10 @@
-/* HAND CONTROL - For closing SoftHand in to a desired position or at a desired velocity
-Authors: George Jose Pollayil - Mathew Jose Pollayil
-Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
+/* HAND CONTROL SECOND SYN- For closing SoftHand in to a desired position or at a desired velocity enhancing the first synergy
+Authors: George Jose Pollayil - Mathew Jose Pollayil -  Stefano Angeli
+Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com, stefano.angeli@ing.unipi.it  */
 
-#include "panda_softhand_control/HandControl.h"
+#include "panda_softhand_control/HandControlSecondSyn.h"
 
-HandControl::HandControl(ros::NodeHandle& nh_,
+HandControlSecondSyn::HandControlSecondSyn(ros::NodeHandle& nh_,
     boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> hand_client_ptr_){
         
         // Initializing the class node
@@ -14,19 +14,19 @@ HandControl::HandControl(ros::NodeHandle& nh_,
         this->hand_client_ptr = hand_client_ptr_;
 }
 
-HandControl::~HandControl(){
+HandControlSecondSyn::~HandControlSecondSyn(){
     // Nothing to do here yet
 }
 
 // This is the callback function of the hand control service
-bool HandControl::call_hand_control(panda_softhand_msgs::hand_control::Request &req, panda_softhand_msgs::hand_control::Response &res){
+bool HandControlSecondSyn::call_hand_control(panda_softhand_msgs::hand_control::Request &req, panda_softhand_msgs::hand_control::Response &res){
 
     // Saving the callback msg (Here we hope that the traj has been created correctly)
     this->computed_trajectory = req.computed_trajectory;
 
     // Sending the trajectory to hand
     if(!this->sendHandTrajectory(this->computed_trajectory)){
-        ROS_ERROR("Could not send computed trajectory from HandControl object. Returning...");
+        ROS_ERROR("Could not send computed trajectory from HandControlSecondSyn object. Returning...");
         res.answer = false;
         return false;
     }
@@ -37,7 +37,7 @@ bool HandControl::call_hand_control(panda_softhand_msgs::hand_control::Request &
 }
 
 // Sends trajectory to the hand joint trajectory controller
-bool HandControl::sendHandTrajectory(trajectory_msgs::JointTrajectory trajectory){
+bool HandControlSecondSyn::sendHandTrajectory(trajectory_msgs::JointTrajectory trajectory){
 
     // Waiting for the hand server to be ready
     if(!this->hand_client_ptr->waitForServer(ros::Duration(1,0))){
@@ -49,7 +49,7 @@ bool HandControl::sendHandTrajectory(trajectory_msgs::JointTrajectory trajectory
     std_msgs::Header empty_header;
     trajectory.header.stamp = ros::Time::now();
     // trajectory.header = empty_header;  + ros::Duration(2.0);
-    // ROS_INFO_STREAM("In HandControl::sendJointTrajectory, the traj header stamp is " << trajectory.header.stamp
+    // ROS_INFO_STREAM("In HandControlSecondSyn::sendJointTrajectory, the traj header stamp is " << trajectory.header.stamp
     //     << " and the time_from_start of first point is " << trajectory.points[0].time_from_start << ".");
 
 	// Send the message and wait for the result
@@ -64,7 +64,7 @@ bool HandControl::sendHandTrajectory(trajectory_msgs::JointTrajectory trajectory
 }
 
 // Waits for the completion of the execution by hand joint trajectory controller
-bool HandControl::call_hand_wait(panda_softhand_msgs::hand_wait::Request &req, panda_softhand_msgs::hand_wait::Response &res){
+bool HandControlSecondSyn::call_hand_wait(panda_softhand_msgs::hand_wait::Request &req, panda_softhand_msgs::hand_wait::Response &res){
     if(!this->hand_client_ptr->waitForResult(req.wait_duration.data)){
         ROS_ERROR("The hand client is taking too to complete goal execution. Returning...");
         res.answer = false;

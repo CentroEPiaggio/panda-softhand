@@ -546,7 +546,7 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
 
     // 4) Performing simple grasp with planning, executing and waiting
 
-    if(!this->panda_softhand_client.call_hand_plan_service(1.0, 2.0, this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_plan_first_syn_service(1.0, 2.0, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan the simple grasp.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand plan.";
@@ -560,7 +560,7 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
-    if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_control_first_syn_service(this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not perform the grasping.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand control.";
@@ -586,7 +586,7 @@ bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
-    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_wait_first_syn_service(ros::Duration(3.0)) || !this->franka_ok){
         ROS_ERROR("Could not perform the simple grasp.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand wait.";
@@ -680,7 +680,7 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_msgs::complex_grasp::
     }
 
     // 4) Performing complex grasp with planning, executing and waiting
-    if(!this->panda_softhand_client.call_hand_plan_service(1.0, 2.0, this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_plan_first_syn_service(1.0, 2.0, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan the grasping.");
         res.success = false;
         res.message = "The service call_complex_grasp_task was NOT performed correctly! Error plan in hand plan.";
@@ -694,7 +694,7 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_msgs::complex_grasp::
         return false;
     }
 
-    if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_control_first_syn_service(this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not perform the grasping.");
         res.success = false;
         res.message = "The service call_complex_grasp_task was NOT performed correctly! Error plan in hand control.";
@@ -720,7 +720,7 @@ bool TaskSequencer::call_complex_grasp_task(panda_softhand_msgs::complex_grasp::
         return false;
     }
 
-    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_wait_first_syn_service(ros::Duration(3.0)) || !this->franka_ok){
         ROS_ERROR("Could not wait for the grasping.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error plan in hand wait.";
@@ -775,7 +775,7 @@ bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_
     }
 
     // // 2) Opening hand
-    // if(!this->panda_softhand_client.call_hand_plan_service(0.0, 2.0, this->tmp_traj) || !this->franka_ok){
+    // if(!this->panda_softhand_client.call_hand_plan_first_syn_service(0.0, 2.0, this->tmp_traj) || !this->franka_ok){
     //     ROS_ERROR("Could not plan the simple open.");
     //     res.success = false;
     //     res.message = "The service call_simple_place_task was NOT performed correctly! Error plan in hand plan.";
@@ -789,14 +789,14 @@ bool TaskSequencer::call_simple_place_task(std_srvs::SetBool::Request &req, std_
         return false;
     }
 
-    // if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj) || !this->franka_ok){
+    // if(!this->panda_softhand_client.call_hand_control_first_syn_service(this->tmp_traj) || !this->franka_ok){
     //     ROS_ERROR("Could not perform the simple open.");
     //     res.success = false;
     //     res.message = "The service call_simple_place_task was NOT performed correctly! Error plan in hand control.";
     //     return false;
     // }
 
-    // if(!this->panda_softhand_client.call_hand_wait_service(this->waiting_time) || !this->franka_ok){
+    // if(!this->panda_softhand_client.call_hand_wait_first_syn_service(this->waiting_time) || !this->franka_ok){
     //     ROS_ERROR("Could not wait for the simple open.");
     //     res.success = false;
     //     res.message = "The service call_simple_place_task was NOT performed correctly! Error plan in hand wait.";
@@ -837,7 +837,7 @@ bool TaskSequencer::call_simple_home_task(std_srvs::SetBool::Request &req, std_s
     }
 
     // 2) Opening hand
-    if(!this->panda_softhand_client.call_hand_plan_service(0.0, 2.0, this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_plan_first_syn_service(0.0, 2.0, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could plan the simple open.");
         res.success = false;
         res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand plan.";
@@ -851,14 +851,14 @@ bool TaskSequencer::call_simple_home_task(std_srvs::SetBool::Request &req, std_s
         return false;
     }
 
-    if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_control_first_syn_service(this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not perform the simple open.");
         res.success = false;
         res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand control.";
         return false;
     }
 
-    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_wait_first_syn_service(ros::Duration(3.0)) || !this->franka_ok){
         ROS_ERROR("Could not wait the simple open.");
         res.success = false;
         res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand wait.";
@@ -926,21 +926,21 @@ bool TaskSequencer::call_simple_handover_task(std_srvs::SetBool::Request &req, s
     }
 
     // 3) Opening hand
-    if(!this->panda_softhand_client.call_hand_plan_service(0.0, 2.0, this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_plan_first_syn_service(0.0, 2.0, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not plan the simple open.");
         res.success = false;
         res.message = "The service call_simple_handover_task was NOT performed correctly! Error plan in hand plan.";
         return false;
     }
 
-    if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_control_first_syn_service(this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not perform the simple open.");
         res.success = false;
         res.message = "The service call_simple_handover_task was NOT performed correctly! Error plan in hand control.";
         return false;
     }
 
-    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_wait_first_syn_service(ros::Duration(3.0)) || !this->franka_ok){
         ROS_ERROR("Could not wait the simple open.");
         res.success = false;
         res.message = "The service call_simple_handover_task was NOT performed correctly! Error plan in hand wait.";
@@ -1037,7 +1037,7 @@ bool TaskSequencer::call_grasp_handtool_task(std_srvs::SetBool::Request &req, st
 
     /* PLAN 3*/
 
-    if(!this->panda_softhand_client.call_hand_plan_service(1.0, 2.0, this->tmp_traj_hand) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_plan_first_syn_service(1.0, 2.0, this->tmp_traj_hand) || !this->franka_ok){
         ROS_ERROR("Could not plan the simple grasp.");
         res.success = false;
         res.message = "The service call_grasp_handtool was NOT performed correctly! Error plan in hand plan.";
@@ -1055,7 +1055,7 @@ bool TaskSequencer::call_grasp_handtool_task(std_srvs::SetBool::Request &req, st
 
     /* EXEC 3*/
 
-    if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj_hand) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_control_first_syn_service(this->tmp_traj_hand) || !this->franka_ok){
         ROS_ERROR("Could not perform the grasping.");
         res.success = false;
         res.message = "The service call_grasp_handtool was NOT performed correctly! Error plan in hand control.";
@@ -1073,7 +1073,7 @@ bool TaskSequencer::call_grasp_handtool_task(std_srvs::SetBool::Request &req, st
     
     /* WAIT 3 */
 
-    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_wait_first_syn_service(ros::Duration(3.0)) || !this->franka_ok){
         ROS_ERROR("Could not perform the simple grasp.");
         res.success = false;
         res.message = "The service call_grasp_handtool was NOT performed correctly! Error plan in hand wait.";
@@ -1555,7 +1555,7 @@ bool TaskSequencer::call_replace_task(std_srvs::SetBool::Request &req, std_srvs:
     
     /*PLAN 3 */
 
-    if(!this->panda_softhand_client.call_hand_plan_service(0.0, 2.0, this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_plan_first_syn_service(0.0, 2.0, this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could plan the simple open.");
         res.success = false;
         res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand plan.";
@@ -1573,7 +1573,7 @@ bool TaskSequencer::call_replace_task(std_srvs::SetBool::Request &req, std_srvs:
 
     /* EXEC 3 */
 
-    if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_control_first_syn_service(this->tmp_traj) || !this->franka_ok){
         ROS_ERROR("Could not perform the simple open.");
         res.success = false;
         res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand control.";
@@ -1591,7 +1591,7 @@ bool TaskSequencer::call_replace_task(std_srvs::SetBool::Request &req, std_srvs:
     
     /* WAIT 3 */
 
-    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_wait_first_syn_service(ros::Duration(3.0)) || !this->franka_ok){
         ROS_ERROR("Could not perform the simple grasp.");
         res.success = false;
         res.message = "The service call_grasp_handtool was NOT performed correctly! Error plan in hand wait.";

@@ -101,6 +101,10 @@
 
     </group>
 
+    <!-- Loading Collision scene -->
+    <include file="$(find panda_softhand_description)/launch/launchCollisionScene.launch">
+    </include>  
+
     <!-- Panda SoftHand Safety -->
     <group if="$(arg use_safety)">
             <include file="$(find panda_softhand_safety)/launch/panda_softhand_safety.launch"></include>

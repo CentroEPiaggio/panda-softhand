@@ -40,13 +40,13 @@ class PandaSoftHandClient {
         bool initialize(ros::NodeHandle& nh_);
 
         // Service call function for hand plan
-        bool call_hand_plan_service(double goal_syn, double goal_duration, trajectory_msgs::JointTrajectory& computed_trajectory);
+        bool call_hand_plan_first_syn_service(double goal_syn, double goal_duration, trajectory_msgs::JointTrajectory& computed_trajectory);
 
         // Service call function for hand control
-        bool call_hand_control_service(trajectory_msgs::JointTrajectory& computed_trajectory);
+        bool call_hand_control_first_syn_service(trajectory_msgs::JointTrajectory& computed_trajectory);
 
         // Service call function for hand wait
-        bool call_hand_wait_service(ros::Duration wait_time);
+        bool call_hand_wait_first_syn_service(ros::Duration wait_time);
 
         // Service call function for arm control
         bool call_arm_control_service(trajectory_msgs::JointTrajectory& computed_trajectory);
@@ -70,9 +70,9 @@ class PandaSoftHandClient {
 		ros::NodeHandle nh;
 
         // Service names
-        std::string hand_plan_service_name;
-        std::string hand_control_service_name;
-        std::string hand_wait_service_name;
+        std::string hand_plan_service_first_syn_name;
+        std::string hand_control_first_syn_service_name;
+        std::string hand_wait_first_syn_service_name;
 
         std::string arm_control_service_name;
         std::string arm_wait_service_name;
@@ -82,9 +82,9 @@ class PandaSoftHandClient {
         std::string slerp_service_name;
 
         // Service clients
-        ros::ServiceClient hand_plan_client;                // Client for hand plan service
-        ros::ServiceClient hand_control_client;             // Client for hand control service
-        ros::ServiceClient hand_wait_client;                // Client for hand wait service
+        ros::ServiceClient hand_plan_first_syn_client;      // Client for hand plan first syn service
+        ros::ServiceClient hand_control_first_syn_client;             // Client for hand control service
+        ros::ServiceClient hand_wait_first_syn_client;                // Client for hand wait service
 
         ros::ServiceClient arm_control_client;             // Client for arm control service
         ros::ServiceClient arm_wait_client;                // Client for arm wait service

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+	<arg name="environment_name" default="panda_darko"/>
+
+    <!-- Load collision objects into the planning scene -->
+  	<node name="world_to_planning_scene" pkg="panda_softhand_control" type="world_to_planning_scene_node" args="$(find panda_softhand_description)/worlds/$(arg environment_name).world --skipIfco" output="screen"/>
+</launch>

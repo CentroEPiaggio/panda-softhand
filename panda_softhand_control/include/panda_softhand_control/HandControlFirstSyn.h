@@ -1,6 +1,7 @@
-/* HAND CONTROL - For closing SoftHand in to a desired position or at a desired velocity
-Authors: George Jose Pollayil - Mathew Jose Pollayil
-Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
+/* HAND CONTROL FIRST SYN - For closing SoftHand in to a desired position or at a desired velocity by enhancing the second synergy of 
+                            the softhand2
+Authors: George Jose Pollayil - Mathew Jose Pollayil - Stefano Angeli
+Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com , stefano.angeli@ing.unipi.it */
 
 // Basic includes
 #include <ros/service.h>
@@ -22,14 +23,14 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
 
-class HandControl {
+class HandControlFirstSyn {
 
     /// public variables and functions ------------------------------------------------------------
 	public:
-		HandControl(ros::NodeHandle& nh_,
+		HandControlFirstSyn(ros::NodeHandle& nh_,
             boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> hand_client_ptr_);
 
-        ~HandControl();
+        ~HandControlFirstSyn();
 
         // This is the callback function of the hand control service
 	  	bool call_hand_control(panda_softhand_msgs::hand_control::Request &req, panda_softhand_msgs::hand_control::Response &res);
@@ -48,6 +49,5 @@ class HandControl {
         boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> hand_client_ptr;
 
         // Joint trajectory computed to be sent to robot
-        trajectory_msgs::JointTrajectory computed_trajectory;  
-	
+        trajectory_msgs::JointTrajectory computed_trajectory;  	
 };

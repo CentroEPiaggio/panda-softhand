@@ -50,7 +50,9 @@ set(OBJECTS_SOURCE_FILES
   src/ArmControl_trial.cpp
   src/utils/parsing_utilities.cpp
   src/HandPlanFirstSyn.cpp
-  src/HandControl.cpp
+  src/HandPlanSecondSyn.cpp
+  src/HandControlFirstSyn.cpp
+  src/HandControlSecondSyn.cpp
   src/ArmControl.cpp
   src/SlerpPlan.cpp 
   src/PosePlan.cpp
