@@ -7,6 +7,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 // Object Includes
 #include "panda_softhand_control/TaskSequencer.h"
+#include "panda_softhand_control/ArmControl_trial.h"
 
 /**********************************************
 ROS NODE MAIN TASK SEQUENCE SERVER 
@@ -21,7 +22,8 @@ int main(int argc, char **argv)
     ROS_INFO("Creating the TaskSequencer object");
 
     TaskSequencer task_sequencer_obj(nh_);
-
+    ArmControlTrial ArmControl;
+    
     ROS_INFO("The main task sequence client is running. Running as fast as possible!");
 
     // ROS Async spinner (necessary for processing callbacks inside the service callbacks)

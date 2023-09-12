@@ -47,8 +47,9 @@ catkin_package(
 )
 
 set(OBJECTS_SOURCE_FILES
+  src/ArmControl_trial.cpp
   src/utils/parsing_utilities.cpp
-  src/HandPlan.cpp
+  src/HandPlanFirstSyn.cpp
   src/HandControl.cpp
   src/ArmControl.cpp
   src/SlerpPlan.cpp 
@@ -73,6 +74,7 @@ set(LIB_SOURCE_FILES
 )
 add_library(${PROJECT_NAME}_lib
   ${LIB_SOURCE_FILES}
+  src/ArmControl_trial.cpp
 )
 
 target_include_directories(${PROJECT_NAME}_lib PRIVATE

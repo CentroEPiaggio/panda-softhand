@@ -250,13 +250,6 @@ bool TaskSequencer::parse_task_params(){
     // Converting the pre_vacuum_transform vector to geometry_msgs Pose
     this->pre_replace_hand_tool_T = this->convert_vector_to_pose(this->pre_replace_hand_tool);
 
-
-
-
-
-
-
-
     if(!ros::param::get("/task_sequencer/replace_hand_tool", this->replace_hand_tool)){
 		ROS_WARN("The param 'replace_hand_tool' not found in param server! Using default.");
 		this->replace_hand_tool.resize(6);
@@ -266,17 +259,6 @@ bool TaskSequencer::parse_task_params(){
 
     // Converting the vacuum_transform vector to geometry_msgs Pose
     this->replace_hand_tool_T = this->convert_vector_to_pose(this->replace_hand_tool);
-
-
-
-
-
-
-
-
-
-
-
 
     if(!ros::param::get("/task_sequencer/handover_joints", this->handover_joints)){
 		ROS_WARN("The param 'handover_joints' not found in param server! Using default.");
@@ -337,8 +319,6 @@ bool TaskSequencer::parse_task_params(){
         }
     }
 
-
-
     if(!parseParameter(this->task_seq_params, this->place_joints_map, "place_joints_map")){
         ROS_ERROR("Could not parse the poses map.");
         success = false;
@@ -375,7 +355,7 @@ bool TaskSequencer::parse_task_params(){
 
     /* Parsing the throwing_joints_map*/
     
-    if(!parseParameter(this->task_seq_params, this->throwing_joints_map, "throwing_joints_map")){
+    if(!parseParameter(this->task_seq_params, duty_cycle_map, "throwing_joints_map")){
         ROS_ERROR("Could not parse the poses map.");
         success = false;
     }
@@ -396,7 +376,6 @@ bool TaskSequencer::parse_task_params(){
     if(!parseParameter(this->task_seq_params, this->duty_cycle_map, "duty_cycle_map")){
         ROS_ERROR("Could not parse the duty_cycle map.");
         success = false;
-        
     }
     
     std::cout << "Inizio" << std::endl;
@@ -411,7 +390,6 @@ bool TaskSequencer::parse_task_params(){
     }
 
     std::cout << "Fine" << std::endl;
-
 
     return success;
 }

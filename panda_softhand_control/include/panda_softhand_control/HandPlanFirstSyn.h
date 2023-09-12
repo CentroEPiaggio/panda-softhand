@@ -16,13 +16,13 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
 
-class HandPlan {
+class HandPlanFirstSyn {
 
     /// public variables and functions ------------------------------------------------------------
 	public:
-		HandPlan(ros::NodeHandle& nh_, int n_wp_, std::string synergy_joint_name_);
+		HandPlanFirstSyn(ros::NodeHandle& nh_, int n_wp_, std::string synergy_joint_name_);
 
-        ~HandPlan();
+        ~HandPlanFirstSyn();
 
         // This is the callback function of the hand plan service
 	  	bool call_hand_plan(panda_softhand_msgs::hand_plan::Request &req, panda_softhand_msgs::hand_plan::Response &res);
