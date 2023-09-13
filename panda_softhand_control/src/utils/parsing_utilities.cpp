@@ -178,10 +178,7 @@ bool parseParameter(XmlRpc::XmlRpcValue& params, std::map<std::string, int>& par
     // Creating temporary map and filling it up
     std::map<std::string, int> tmp_param;
     for(auto it = params[param_name].begin(); it != params[param_name].end(); ++it){
-        // std::cout << "Data 1" << (std::string) it->first << std::endl;
-        // std::cout << "Data 2" << (int) it->second << std::endl;
-        tmp_param[(std::string) it->first] = (int) it->second;
-    
+        tmp_param[(std::string) it->first] = (int) it->second;  
     }
 
     // Check is the temporary map is empty
@@ -190,7 +187,36 @@ bool parseParameter(XmlRpc::XmlRpcValue& params, std::map<std::string, int>& par
         return false;
     }
 
-    std::cout << "Pippo 4" << std::endl;
+    // Copy the temporary map into the input map and return
+    param.swap(tmp_param);
+    ROS_DEBUG_STREAM("Parsed the map " << param_name << ".");
+
+    return true;
+};
+
+/* PARSESTRINGFLOATMAPPARAMETER */
+bool parseParameter(XmlRpc::XmlRpcValue& params, std::map<std::string, float>& param, std::string param_name){
+    
+    // Checking if there is a parameter with the requested name in the bunch of parsed parameters
+    if(!params.hasMember(param_name)){
+        ROS_ERROR_STREAM("No value found for " << param_name <<" parameter.");
+        return false;
+    }
+
+    // Make sure that the parameter is of the correct type
+    ROS_ASSERT(params[param_name].getType() == XmlRpc::XmlRpcValue::TypeStruct);
+
+    // Creating temporary map and filling it upd
+    std::map<std::string, float> tmp_param;
+    for(auto it = params[param_name].begin(); it != params[param_name].end(); ++it){
+        tmp_param[(std::string) it->first] = std::stof(it->second);  
+    }
+
+    // Check is the temporary map is empty
+    if(tmp_param.empty()){
+        ROS_ERROR_STREAM("The map " << param_name <<" in the parameter server is empty.");
+        return false;
+    }
 
     // Copy the temporary map into the input map and return
     param.swap(tmp_param);

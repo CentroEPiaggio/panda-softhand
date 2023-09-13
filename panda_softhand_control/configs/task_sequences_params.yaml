@@ -48,7 +48,6 @@ task_sequencer:
   pre_throwing_transform: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
   throwing_transform: [0.647, 0.131, 0.644, -1.700, 0.775, -0.110]
 
-
   duty_cycle: 255
 
   # The joint configuration for place
@@ -93,3 +92,17 @@ task_sequencer:
 
   replace_hand_tool : [0.658, -0.199, 0.560, 1.569, 0.037, 0.271]
   pre_replace_hand_tool: [0.0, 0.0, -0.05, 0.0, 0.0, 0.0]
+####################################################
+
+
+############# DEMO BRIGHT ################
+
+first_synergy_map:
+  "object1" : 0.6
+  "object2" : 0.5
+  "object3" : 0.8
+
+second_synergy_map:
+  "object1" : -0.5
+  "object2" :  0.5
+  "object3" :  -0.8

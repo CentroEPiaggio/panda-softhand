@@ -45,4 +45,6 @@ bool parseParameter(XmlRpc::XmlRpcValue& params, std::map<std::string, std::vect
 /* PARSEMATRIXPARAMETER */
 bool parseParameter(XmlRpc::XmlRpcValue& params, Eigen::MatrixXd& param, std::string param_name);
 
+/* PARSESTRINGFLOATMAPPARAMETER */
+bool parseParameter(XmlRpc::XmlRpcValue& params, std::map<std::string, float>& param, std::string param_name);
 #endif //PARSING_UTILS_H

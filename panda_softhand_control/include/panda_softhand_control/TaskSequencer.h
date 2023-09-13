@@ -108,6 +108,7 @@ class TaskSequencer {
         
         bool call_test_hand(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
         
+        bool call_set_first_synergy(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
     /// private variables -------------------------------------------------------------------------
 	private:
 		ros::NodeHandle nh;
@@ -238,7 +239,9 @@ class TaskSequencer {
         std::map<std::string, std::vector<double>> throwing_joints_map;
 
         std::map<std::string, int> duty_cycle_map;
-        
+        std::map<std::string, float> first_sinergy_map;
+        std::map<std::string, float> second_sinergy_map;
+
         // MoveIt stuff and functions for FK and IK
         std::string group_name;
         std::string end_effector_name;
@@ -262,4 +265,7 @@ class TaskSequencer {
 	    tf::TransformListener tf_listener_throwing;
         tf::StampedTransform stamp_ee_transform_throwing;
         Eigen::Affine3d end_effector_state_throwing;
+
+        //
+        std_msgs::Float64 first_syn_value;
 };
