@@ -73,11 +73,12 @@ bool PandaSoftHandClient::initialize(ros::NodeHandle& nh_){
 }
 
 // Service call function for hand plan
-bool PandaSoftHandClient::call_hand_plan_service(double goal_syn, double goal_duration, trajectory_msgs::JointTrajectory& computed_trajectory){
+bool PandaSoftHandClient::call_hand_plan_service(double goal_first_syn, double goal_second_syn, double goal_duration, trajectory_msgs::JointTrajectory& computed_trajectory){
 
     // Creating and filling up the request
     panda_softhand_msgs::hand_plan hand_plan_srv;
-    hand_plan_srv.request.goal_syn = goal_syn;
+    hand_plan_srv.request.goal_first_syn = goal_first_syn;
+    hand_plan_srv.request.goal_second_syn = goal_second_syn;
     hand_plan_srv.request.goal_duration = goal_duration;
 
     // Calling the service

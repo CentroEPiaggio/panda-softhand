@@ -40,7 +40,7 @@ class PandaSoftHandClient {
         bool initialize(ros::NodeHandle& nh_);
 
         // Service call function for hand plan
-        bool call_hand_plan_service(double goal_syn, double goal_duration, trajectory_msgs::JointTrajectory& computed_trajectory);
+        bool call_hand_plan_service(double goal_first_syn, double goal_second_syn, double goal_duration, trajectory_msgs::JointTrajectory& computed_trajectory);
 
         // Service call function for hand control
         bool call_hand_control_service(trajectory_msgs::JointTrajectory& computed_trajectory);

@@ -20,7 +20,7 @@ class HandPlan {
 
     /// public variables and functions ------------------------------------------------------------
 	public:
-		HandPlan(ros::NodeHandle& nh_, int n_wp_, std::string synergy_joint_name_);
+		HandPlan(ros::NodeHandle& nh_, int n_wp_, std::string first_synergy_joint_name_, std::string second_synergy_joint_name_);
 
         ~HandPlan();
 
@@ -34,7 +34,7 @@ class HandPlan {
 	  	bool initialize();
 
 		// Performs computation of points towards goal
-		void computeTrajectory(double present_syn, double goal_syn, double time);
+		void computeTrajectory(double present_first_syn, double goal_first_syn, double present_second_syn, double goal_second_syn, double time);
 
 	/// private variables -------------------------------------------------------------------------
 	private:
@@ -44,8 +44,10 @@ class HandPlan {
         ros::Subscriber joints_sub;
 
         // The name and the present value of synergy joint
-        std::string synergy_joint_name;
-        double present_syn;
+        std::string first_synergy_joint_name;
+        std::string second_synergy_joint_name;
+        double present_first_syn;
+        double present_second_syn;
 
         // Latest saved joint states message
         sensor_msgs::JointState::ConstPtr saved_jnt_msg;
@@ -54,7 +56,8 @@ class HandPlan {
         int n_wp;
 
         // The goal stuff and closing time (in seconds)
-        double goal_value;
+        double goal_value_first_syn;
+        double goal_value_second_syn;
         double goal_duration;
 
         // Basic times
