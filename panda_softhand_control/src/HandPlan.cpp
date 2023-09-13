@@ -111,7 +111,7 @@ bool HandPlan::initialize(){
 void HandPlan::computeTrajectory(double present_first_syn, double goal_first_syn, double present_second_syn, double goal_second_syn, double time){
 
     // Computing the real number of waypoints with proportion
-    int real_n_wp = std::max(std::floor(std::abs(goal_value_first_syn - present_first_syn) * this->n_wp),std::floor(std::abs(goal_value_second_syn - present_second_syn) * this->n_wp));
+    int real_n_wp = std::max(std::ceil(std::abs(goal_value_first_syn - present_first_syn) * this->n_wp),std::ceil(std::abs(goal_value_second_syn - present_second_syn) * this->n_wp));
 
     // Objects needed for generating trajectory
     trajectory_msgs::JointTrajectory traj;
@@ -131,8 +131,8 @@ void HandPlan::computeTrajectory(double present_first_syn, double goal_first_syn
         double time_wp = (double (i) / double (real_n_wp)) * time;
 
         // Debug cout
-        if(DEBUG) ROS_INFO_STREAM("The " << i << "th computed position is " << position_first_syn << " at time " << time_wp << ".");
-        if(DEBUG) ROS_INFO_STREAM("The " << i << "th computed position is " << position_second_syn << " at time " << time_wp << ".");
+        if(DEBUG) ROS_INFO_STREAM("The " << i << "th computed position of the first syn is " << position_first_syn << " at time " << time_wp << ".");
+        if(DEBUG) ROS_INFO_STREAM("The " << i << "th computed position of the second syn is " << position_second_syn << " at time " << time_wp << ".");
         
         // Pushing back position and time in point
         point.positions.clear();
@@ -145,6 +145,9 @@ void HandPlan::computeTrajectory(double present_first_syn, double goal_first_syn
         // Pushing back point into traj
         traj.points.push_back(point);
     }
+    std::cout << "Pippo" << std::endl;
 
     this->computed_trajectory = traj;
+
+    std::cout << "Pippo2" << std::endl;
 }

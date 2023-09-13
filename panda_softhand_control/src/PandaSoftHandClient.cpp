@@ -86,6 +86,10 @@ bool PandaSoftHandClient::call_hand_plan_service(double goal_first_syn, double g
         ROS_ERROR("Failed to contact the hand plan server. Returning...");
         return false;
     }
+    
+    for(int i = 0; i < hand_plan_srv.response.computed_trajectory.points.size(); i++){
+        std::cout << hand_plan_srv.response.computed_trajectory.points[i].time_from_start << std::endl;
+    }
 
     computed_trajectory = hand_plan_srv.response.computed_trajectory;
     return hand_plan_srv.response.answer;

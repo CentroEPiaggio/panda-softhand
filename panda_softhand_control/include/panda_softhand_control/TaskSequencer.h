@@ -105,7 +105,9 @@ class TaskSequencer {
         bool call_set_duty_cycle(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
         
         bool call_replace_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
-
+        
+        bool call_test_hand(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+        
     /// private variables -------------------------------------------------------------------------
 	private:
 		ros::NodeHandle nh;

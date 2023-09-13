@@ -13,13 +13,14 @@
 
     <!-- Hand/Glove params -->
     <arg name="right_hand_enabled" default="true"/>
-    <arg name="launch_qb_interface" default="true"/>
-    <arg name="use_imu" default="false"/>
 
     <!-- Utilities -->
     <arg name="environment_name" default="panda_darko"/>
     <arg name="use_moveit" default="true"/>
     <arg name="use_safety" default="true"/>
+
+    <!-- MoveIt! params -->
+    <arg name="pipeline" default="ompl"/>
 
     <!-- START LAUNCH -->
 
@@ -53,11 +54,9 @@
 
         <!-- Panda controllers -->
         <rosparam command="load" file="$(find franka_control)/config/default_controllers.yaml" />
-        <rosparam command="load" file="$(find panda_controllers)/config/panda_controllers.yaml" />
+        <!-- <rosparam command="load" file="$(find panda_controllers)/config/panda_controllers.yaml" /> -->
         <node name="state_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="franka_state_controller"/>
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="position_joint_trajectory_controller"/>
-        
-        
         
         <!-- Panda joint state publisher -->
         <node name="joint_state_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
@@ -68,7 +67,7 @@
         <!-- Panda desired state publisher -->
         <node name="joint_state_desired_publisher" type="joint_state_publisher" pkg="joint_state_publisher" output="screen">
             <rosparam if="$(arg load_gripper)" param="source_list">[franka_state_controller/joint_states_desired, franka_gripper/joint_states] </rosparam>
-            <rosparam unless="$(arg load_gripper)" param="source_list">[franka_state_controller/joint_states_desired, /right_hand/joint_states] </rosparam>
+            <rosparam unless="$(arg load_gripper)" param="source_list">[franka_state_controller/joint_states_desired, /right_hand/qbhand2m1/joint_states] </rosparam>
             <param name="rate" value="30"/>
             <remap from="/panda_arm/joint_states" to="/joint_states_desired" />
         </node>
@@ -76,54 +75,38 @@
     </group>
 
     <!-- Loading MoveIt interface -->
+
 	<group if="$(arg use_moveit)">
 		<include file="$(find panda_softhand_moveit_config)/launch/move_group.launch">
             <arg name="allow_trajectory_execution" value="true"/>
-            <arg name="fake_execution" value="true"/>
             <arg name="info" value="true"/>
             <arg name="debug" value="false"/>
-            <arg name="load_gripper" value="$(arg load_gripper)"/>
+            <arg name="pipeline" value="$(arg pipeline)"/>
         </include>
 	</group>
 
-    <!-- Load collision objects into the planning scene -->
-  	<node name="world_to_planning_scene" pkg="panda_softhand_control" type="world_to_planning_scene_node" args="$(find panda_softhand_description)/worlds/$(arg environment_name).world --skipIfco" output="screen"/>
-
-    <rosparam command="load" file="$(find soft_hand_controllers)/config/controllers.yaml" />
-    
     <!-- Hand namespace -->
     <group ns="right_hand">
         
-        <group if="$(arg right_hand_enabled)">
-            
-            <!-- A copy of robot description -->
-            <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find panda_softhand_description)/robot/panda_softhand.urdf.xacro'" unless="$(arg load_gripper)" />
-
-            <rosparam command="load" file="$(find soft_hand_controllers)/config/hand_names.yaml" />
-
-            <!-- load the hardware interface for hand in current namespace -->
-            <include file="$(find soft_hand_qb_ros_control)/launch/soft_hand_qb_hw.launch"></include>
-
+        <group if="$(arg right_hand_enabled)">    
+        <!-- A copy of robot description -->
+        <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find panda_softhand_description)/robot/panda_softhand.urdf.xacro'" unless="$(arg load_gripper)" />
+        <include file="$(find qb_hand_control)/launch/control_qbhand2m.launch">
+           <arg name="activate_on_initialization" value="true"/>
+           <arg name="standalone" value="true"/>
+           <arg name="use_controller_gui" value="false"/>
+        </include>     
         </group>
 
-        <!-- load the hand controllers in current namespace -->
-        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen"  args="joint_state_controller joint_trajectory_controller"/>
-
     </group>
+
+    <!-- Loading Collision scene -->
+    <include file="$(find panda_softhand_description)/launch/launchCollisionScene.launch">
+    </include>  
 
     <!-- Panda SoftHand Safety -->
     <group if="$(arg use_safety)">
             <include file="$(find panda_softhand_safety)/launch/panda_softhand_safety.launch"></include>
-    </group>
-
-    <!-- QB Interface -->
-    <group if="$(arg launch_qb_interface)">
-        <group if="$(arg use_imu)">
-            <include file="$(find qb_interface)/launch/qb_interface_imu.launch"></include>
-        </group>
-        <group unless="$(arg use_imu)">
-            <include file="$(find qb_interface)/launch/qb_interface.launch"></include>
-        </group>
     </group>
 
     <!-- RViz for visualization -->

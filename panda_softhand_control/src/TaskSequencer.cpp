@@ -498,6 +498,7 @@ void TaskSequencer::get_franka_state(const franka_msgs::FrankaState::ConstPtr &m
     
 }
 
+
 // Callback for simple grasp task service
 bool TaskSequencer::call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
     
@@ -1629,11 +1630,48 @@ bool TaskSequencer::call_replace_task(std_srvs::SetBool::Request &req, std_srvs:
         return false;
     };
 
-    return true;
-       
-         
+    return true;        
 }
 
+bool TaskSequencer::call_test_hand(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
+
+    // Checking the request for correctness
+    if(!req.data){
+        ROS_WARN("Did you really want to call the simple test hand  task service with data = false?");
+        res.success = true;
+        res.message = "The service call test hand done correctly with false request!";
+        return true;
+    }
+
+    /*PLAN 1*/
+
+    if(!this->panda_softhand_client.call_hand_plan_service(1.0, 0.0, 1.0, this->tmp_traj_hand) || !this->franka_ok){
+        ROS_ERROR("Could not plan the simple open.");
+        res.success = false;
+        res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand plan.";
+        return false;
+    }
+
+    /*EXEC 1*/
+
+    if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj_hand) || !this->franka_ok){
+        ROS_ERROR("Could not perform the call hand control service.");
+        res.success = false;
+        res.message = "The service call hand control service was NOT performed correctly! Error plan in hand control.";
+        return false;
+    }
+    
+    /*WAIT 1*/
+    if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){
+        ROS_ERROR("Could not perform the hand wait service.");
+        res.success = false;
+        res.message = "The service call_hand_wait_service was NOT performed correctly! Error plan in hand wait.";
+        return false;
+    };
+    
+    return true;
+
+}
 // FK and IK Functions which makes use of MoveIt
 geometry_msgs::Pose TaskSequencer::performFK(std::vector<double> joints_in){
     const robot_state::JointModelGroup* joint_model_group = this->kinematic_model->getJointModelGroup(this->group_name);
