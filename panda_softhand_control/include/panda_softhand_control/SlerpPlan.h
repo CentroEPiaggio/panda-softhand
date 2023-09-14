@@ -19,11 +19,13 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 // MoveIt! includes
 #include <moveit/move_group_interface/move_group_interface.h>
+#include <moveit/robot_trajectory/robot_trajectory.h>
+#include <moveit/trajectory_processing/time_optimal_trajectory_generation.h>
 
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
 #define     VISUAL          // Publishes visual info on RViz
-// #define     PROMPT          // Waits for confermation in RViz before execution
+#define     PROMPT  1        // Waits for confermation in RViz before execution
 
 class SlerpPlan {
 

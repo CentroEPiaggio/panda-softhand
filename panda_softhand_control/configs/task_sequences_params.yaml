@@ -20,10 +20,10 @@ task_sequencer:
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
   # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default)
 
-  grasp_transform: [0.648, -0.182, 0.560, 1.528, 0.013, 0.062]
+  grasp_transform: [0.745, -0.031, 0.149, 3.139, 0.005, 0.004]
 
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
-  pre_grasp_transform: [0.0, 0.0, -0.1, 0.0, 0.0, 0.0]
+  pre_grasp_transform: [0.0, 0.0, -0.3, 0.0, 0.0, 0.0]
 
   ################# PREVACUUM JOINTS CONFIGURATION AND VACUUM TRANSFORM ########
   # # Transform from object frame to vacuum pose frame (xyzrpy) (DEFAULT)
@@ -93,8 +93,8 @@ task_sequencer:
   pre_replace_hand_tool: [0.0, 0.0, -0.05, 0.0, 0.0, 0.0]
 
   ###################### DEMO BRIGHT ###############################
-  first_syn_value: 0.75
-  second_syn_value: -0.2
+  first_syn_value: 0.6
+  second_syn_value: 0.2
   
   #Range for the first synergy: [0.0, 1.0]
   first_synergy_map:

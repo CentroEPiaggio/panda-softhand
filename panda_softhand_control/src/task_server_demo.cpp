@@ -25,39 +25,39 @@ int main(int argc, char **argv)
    ros::AsyncSpinner spinner(2);
    spinner.start();
     
-   /* Update the value for the first synergy*/
+   // /* Update the value for the first synergy*/
    
-   panda_softhand_msgs::set_object::Request req_first_syn;
-   req_first_syn.object_name = "object1";
-   panda_softhand_msgs::set_object::Response resp_first_syn;
+   // panda_softhand_msgs::set_object::Request req_first_syn;
+   // req_first_syn.object_name = "object1";
+   // panda_softhand_msgs::set_object::Response resp_first_syn;
 
-   ROS_INFO("Call the call_set_first_synergy");
+   // ROS_INFO("Call the call_set_first_synergy");
 
-   bool success_call_first_syn = task_sequencer_obj.call_set_first_synergy(req_first_syn,resp_first_syn);
+   // bool success_call_first_syn = task_sequencer_obj.call_set_first_synergy(req_first_syn,resp_first_syn);
    
-   if(success_call_first_syn){
-      ROS_INFO_STREAM("Call_set_first synergy service completed correctly: " << resp_first_syn.result);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
-   }
+   // if(success_call_first_syn){
+   //    ROS_INFO_STREAM("Call_set_first synergy service completed correctly: " << resp_first_syn.result);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
+   // }
 
-   /* Update the value for the second synergy*/
+   // /* Update the value for the second synergy*/
    
-   panda_softhand_msgs::set_object::Request req_second_syn;
-   req_second_syn.object_name = "object1";
-   panda_softhand_msgs::set_object::Response resp_second_syn;
+   // panda_softhand_msgs::set_object::Request req_second_syn;
+   // req_second_syn.object_name = "object1";
+   // panda_softhand_msgs::set_object::Response resp_second_syn;
 
-   ROS_INFO("Call the call_set_first_synergy");
+   // ROS_INFO("Call the call_set_first_synergy");
 
-   bool success_call_second_syn = task_sequencer_obj.call_set_second_synergy(req_second_syn,resp_second_syn);
+   // bool success_call_second_syn = task_sequencer_obj.call_set_second_synergy(req_second_syn,resp_second_syn);
    
-   if(success_call_second_syn){
-      ROS_INFO_STREAM("Call_set second synergy service completed correctly: " << resp_second_syn.result);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the call set second synergy service");
-   }
+   // if(success_call_second_syn){
+   //    ROS_INFO_STREAM("Call_set second synergy service completed correctly: " << resp_second_syn.result);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the call set second synergy service");
+   // }
 
-   /* 1) Test Hand */
+   /* 1) Test Grasp*/
    //Create the request and response object
     
    std_srvs::SetBool::Request req;
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 
    ROS_INFO("Test softhand2");
    
-   bool success = task_sequencer_obj.call_test_hand(req,resp);
+   bool success = task_sequencer_obj.call_simple_grasp_task(req,resp);
     
    //Check the success and use of the response
 
