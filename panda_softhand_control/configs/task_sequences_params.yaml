@@ -66,7 +66,6 @@ task_sequencer:
     "white" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
     "other" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
 
-
   # DARKO: Update map for throwing different objects
 
   duty_cycle_map:
@@ -92,17 +91,19 @@ task_sequencer:
 
   replace_hand_tool : [0.658, -0.199, 0.560, 1.569, 0.037, 0.271]
   pre_replace_hand_tool: [0.0, 0.0, -0.05, 0.0, 0.0, 0.0]
-####################################################
 
+  ###################### DEMO BRIGHT ###############################
+  first_syn_value: 0.75
+  second_syn_value: -0.2
+  
+  #Range for the first synergy: [0.0, 1.0]
+  first_synergy_map:
+    "object1" : 0.0
+    "object2" : 0.5
+    "object3" : 0.8
 
-############# DEMO BRIGHT ################
-
-first_synergy_map:
-  "object1" : 0.6
-  "object2" : 0.5
-  "object3" : 0.8
-
-second_synergy_map:
-  "object1" : -0.5
-  "object2" :  0.5
-  "object3" :  -0.8
+  #Range for the second synergy: [-1.0, 1.0]
+  second_synergy_map:
+    "object1" :  0.0
+    "object2" :  0.5
+    "object3" : -0.8

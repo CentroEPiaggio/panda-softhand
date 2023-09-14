@@ -205,23 +205,22 @@ bool parseParameter(XmlRpc::XmlRpcValue& params, std::map<std::string, float>& p
 
     // Make sure that the parameter is of the correct type
     ROS_ASSERT(params[param_name].getType() == XmlRpc::XmlRpcValue::TypeStruct);
-
+    
     // Creating temporary map and filling it upd
     std::map<std::string, float> tmp_param;
     for(auto it = params[param_name].begin(); it != params[param_name].end(); ++it){
-        tmp_param[(std::string) it->first] = std::stof(it->second);  
+        tmp_param[(std::string) it->first] = (float) static_cast<double>(it->second);
     }
-
+    
     // Check is the temporary map is empty
     if(tmp_param.empty()){
         ROS_ERROR_STREAM("The map " << param_name <<" in the parameter server is empty.");
         return false;
     }
-
+     
     // Copy the temporary map into the input map and return
     param.swap(tmp_param);
     ROS_DEBUG_STREAM("Parsed the map " << param_name << ".");
-
     return true;
 };
 

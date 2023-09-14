@@ -1,4 +1,4 @@
-/* TASK SERVER THROWING to call throwing task service (DARKO-Stefano)*/
+/* TASK SERVER THROWING to call demo task service (DARKO-Stefano)*/
 #include "ros/ros.h"
 #include <iostream>
 #include "ros/service_client.h"
@@ -15,7 +15,6 @@ int main(int argc, char **argv)
 
    ros::NodeHandle nh_;
     
-
    ROS_INFO("Creating the TaskSequencer object");
 
    TaskSequencer task_sequencer_obj(nh_);
@@ -26,7 +25,39 @@ int main(int argc, char **argv)
    ros::AsyncSpinner spinner(2);
    spinner.start();
     
-   /* 1) Going to home position */
+   /* Update the value for the first synergy*/
+   
+   panda_softhand_msgs::set_object::Request req_first_syn;
+   req_first_syn.object_name = "object1";
+   panda_softhand_msgs::set_object::Response resp_first_syn;
+
+   ROS_INFO("Call the call_set_first_synergy");
+
+   bool success_call_first_syn = task_sequencer_obj.call_set_first_synergy(req_first_syn,resp_first_syn);
+   
+   if(success_call_first_syn){
+      ROS_INFO_STREAM("Call_set_first synergy service completed correctly: " << resp_first_syn.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
+   }
+
+   /* Update the value for the second synergy*/
+   
+   panda_softhand_msgs::set_object::Request req_second_syn;
+   req_second_syn.object_name = "object1";
+   panda_softhand_msgs::set_object::Response resp_second_syn;
+
+   ROS_INFO("Call the call_set_first_synergy");
+
+   bool success_call_second_syn = task_sequencer_obj.call_set_second_synergy(req_second_syn,resp_second_syn);
+   
+   if(success_call_second_syn){
+      ROS_INFO_STREAM("Call_set second synergy service completed correctly: " << resp_second_syn.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call set second synergy service");
+   }
+
+   /* 1) Test Hand */
    //Create the request and response object
     
    std_srvs::SetBool::Request req;
@@ -44,10 +75,10 @@ int main(int argc, char **argv)
    } else {
       ROS_INFO_STREAM("Failed to completed the service");
    }
-    
-   while(ros::ok()){
-         // Nothing to do here
-   }
+
+
+
+
 
    spinner.stop();
    return 0;

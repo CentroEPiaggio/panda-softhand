@@ -1,4 +1,4 @@
-/* HAND PLAN - For closing SoftHand in to a desired position or at a desired velocity
+/* HAND PLAN - For closing SoftHand2 in to a desired position or at a desired velocity, enhancing the 2 synergies
 Authors: George Jose Pollayil - Mathew Jose Pollayil
 Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
@@ -112,7 +112,9 @@ void HandPlan::computeTrajectory(double present_first_syn, double goal_first_syn
 
     // Computing the real number of waypoints with proportion
     int real_n_wp = std::max(std::ceil(std::abs(goal_value_first_syn - present_first_syn) * this->n_wp),std::ceil(std::abs(goal_value_second_syn - present_second_syn) * this->n_wp));
-
+    
+    std::cout << "real_n_wp is: " << real_n_wp << std::endl;
+    
     // Objects needed for generating trajectory
     trajectory_msgs::JointTrajectory traj;
     traj.joint_names = {this->second_synergy_joint_name, this->first_synergy_joint_name};
@@ -145,9 +147,6 @@ void HandPlan::computeTrajectory(double present_first_syn, double goal_first_syn
         // Pushing back point into traj
         traj.points.push_back(point);
     }
-    std::cout << "Pippo" << std::endl;
 
     this->computed_trajectory = traj;
-
-    std::cout << "Pippo2" << std::endl;
 }

@@ -160,8 +160,17 @@ bool TaskSequencer::parse_task_params(){
     /*duty cycle*/
     
     if(!ros::param::get("/task_sequencer/duty_cycle", this->duty_cycle)){
-		ROS_WARN("The param 'duty cycle' not found in param server!");
-		
+		ROS_WARN("The param 'duty cycle' not found in param server!");	
+	}
+
+    /*Parsing the first nd second syn value*/
+
+    if(!ros::param::get("/task_sequencer/first_syn_value", this->first_syn_value.data)){
+		ROS_WARN("The param 'first_syn_value' not found in param server!");	
+	}
+
+    if(!ros::param::get("/task_sequencer/second_syn_value", this->second_syn_value.data)){
+		ROS_WARN("The param 'second_syn_value' not found in param server!");	
 	}
 
     if(!ros::param::get("/task_sequencer/grasp_transform", this->grasp_transform)){
@@ -295,7 +304,6 @@ bool TaskSequencer::parse_task_params(){
         }
     }
 
-
     /* Parsing the vacuum_poses_map */
 
     if(!parseParameter(this->task_seq_params, this->vacuum_pose_map, "vacuum_pose_map")){
@@ -366,7 +374,7 @@ bool TaskSequencer::parse_task_params(){
         }
     }
 
-    /*Parsing duty_cycle_map*/
+    /* Parsing duty_cycle_map */
     
     if(!parseParameter(this->task_seq_params, this->duty_cycle_map, "duty_cycle_map")){
         ROS_ERROR("Could not parse the duty_cycle map.");
@@ -382,34 +390,33 @@ bool TaskSequencer::parse_task_params(){
             std::cout << "]" << std::endl;     
         }
     }
-    
+
     /*Parsing the first synergy map */
 
-    if(!parseParameter(this->task_seq_params, this->first_sinergy_map, "first_sinergy_map")){
-        ROS_ERROR("Could not parse the first_sinergy_map.");
-        success = false;
-        
+    if(!parseParameter(this->task_seq_params, this->first_synergy_map, "first_synergy_map")){
+        ROS_ERROR("Could not parse the first_synergy_map.");
+        success = false;    
     }
 
     if(DEBUG){
-        ROS_INFO_STREAM("The first_sinergy_map is");
-        for(auto it : this->first_sinergy_map){
+        ROS_INFO_STREAM("The first_synergy_map is");
+        for(auto it : this->first_synergy_map){
             std::cout << it.first << " : [ ";
             std::cout << it.second << " ";
             std::cout << "]" << std::endl;     
         }
     }
 
-    /*Parsing the second synergy map*/
+    /* Parsing the second synergy map */
 
-    if(!parseParameter(this->task_seq_params, this->second_sinergy_map, "second_sinergy_map")){
+    if(!parseParameter(this->task_seq_params, this->second_synergy_map, "second_synergy_map")){
         ROS_ERROR("Could not parse the second_sinergy_map.");
         success = false;
     }
 
     if(DEBUG){
-        ROS_INFO_STREAM("The second_sinergy_map is");
-        for(auto it : this->second_sinergy_map){
+        ROS_INFO_STREAM("The second_synergy_map is");
+        for(auto it : this->second_synergy_map){
             std::cout << it.first << " : [ ";
             std::cout << it.second << " ";
             std::cout << "]" << std::endl;     
@@ -498,7 +505,6 @@ void TaskSequencer::get_franka_state(const franka_msgs::FrankaState::ConstPtr &m
     // Publishing norm
     std_msgs::Float64 norm_msg; norm_msg.data = this->tau_ext_norm;
     this->pub_tau_ext_norm.publish(norm_msg);
-    
 }
 
 
@@ -1638,20 +1644,41 @@ bool TaskSequencer::call_set_first_synergy(panda_softhand_msgs::set_object::Requ
 
     // Checking if the parsed map contains the requested object
 
-    auto search = this->first_sinergy_map.find(req.object_name);
-    if(search == this->first_sinergy_map.end()){
+    auto search = this->first_synergy_map.find(req.object_name);
+    if(search == this->first_synergy_map.end()){
         ROS_WARN_STREAM("The object " << req.object_name << " is not present in my first synergy map memory; using the previously used one or default... Did you spell it correctly? Is it in the yaml?");
         res.result = false;
         return res.result;
     }
-
-    // Setting the place joints as requested
-    this->first_syn_value.data = this->first_sinergy_map.at(req.object_name);
+    
+    // Setting the first syn value as requested
+    this->first_syn_value.data = this->first_synergy_map.at(req.object_name);
 
     // Now, everything is ok
     ROS_INFO_STREAM("First synergy value changed. Object set to " << req.object_name << ".");
     res.result = true;
     return res.result;
+};
+
+bool TaskSequencer::call_set_second_synergy(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res){
+
+    // Checking if the parsed map contains the requested object
+
+    auto search = this->second_synergy_map.find(req.object_name);
+    if(search == this->second_synergy_map.end()){
+        ROS_WARN_STREAM("The object " << req.object_name << " is not present in my second synergy map memory; using the previously used one or default... Did you spell it correctly? Is it in the yaml?");
+        res.result = false;
+        return res.result;
+    }
+    
+    // Setting the first syn value as requested
+    this->second_syn_value.data = this->second_synergy_map.at(req.object_name);
+
+    // Now, everything is ok
+    ROS_INFO_STREAM("Second synergy value changed. Object set to " << req.object_name << ".");
+    res.result = true;
+    return res.result;
+
 };
 
 bool TaskSequencer::call_test_hand(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
@@ -1666,7 +1693,7 @@ bool TaskSequencer::call_test_hand(std_srvs::SetBool::Request &req, std_srvs::Se
 
     /*PLAN 1*/
 
-    if(!this->panda_softhand_client.call_hand_plan_service(0.6, 0.5, 1.0, this->tmp_traj_hand) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_hand_plan_service(this->first_syn_value.data, this->second_syn_value.data, 1.0, this->tmp_traj_hand) || !this->franka_ok){
         ROS_ERROR("Could not plan the simple open.");
         res.success = false;
         res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand plan.";

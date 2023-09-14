@@ -3,6 +3,7 @@ Authors: George Jose Pollayil - Mathew Jose Pollayil
 Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 // Basic Includes
+#include <string>
 #include "ros/ros.h"
 #include "Eigen/Dense"
 #include <eigen_conversions/eigen_msg.h>
@@ -109,6 +110,9 @@ class TaskSequencer {
         bool call_test_hand(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
         
         bool call_set_first_synergy(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
+    
+        bool call_set_second_synergy(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
+    
     /// private variables -------------------------------------------------------------------------
 	private:
 		ros::NodeHandle nh;
@@ -239,8 +243,8 @@ class TaskSequencer {
         std::map<std::string, std::vector<double>> throwing_joints_map;
 
         std::map<std::string, int> duty_cycle_map;
-        std::map<std::string, float> first_sinergy_map;
-        std::map<std::string, float> second_sinergy_map;
+        std::map<std::string, float> first_synergy_map;
+        std::map<std::string, float> second_synergy_map;
 
         // MoveIt stuff and functions for FK and IK
         std::string group_name;
@@ -268,4 +272,5 @@ class TaskSequencer {
 
         //
         std_msgs::Float64 first_syn_value;
+        std_msgs::Float64 second_syn_value;
 };
