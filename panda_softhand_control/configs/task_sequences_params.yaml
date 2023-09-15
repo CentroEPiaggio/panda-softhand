@@ -38,7 +38,6 @@ task_sequencer:
   pre_throwing_joints_map:
     "object2" : [0.3036950333152679, 0.2684377161580104, -0.2577416164285826, -1.5027883396669206, -1.5538190626435808, 1.7688275682866192, 0.18637837640335386]
     
-  
   vacuum_transform: [0.765, 0.106, 0.281, 1.532, 0.042, 0.438]
   
   ############### JOINT THROWING CONFIGURATION ################################
@@ -93,12 +92,12 @@ task_sequencer:
   pre_replace_hand_tool: [0.0, 0.0, -0.05, 0.0, 0.0, 0.0]
 
   ###################### DEMO BRIGHT ###############################
-  first_syn_value: 0.6
-  second_syn_value: 0.2
+  first_syn_value: 0.8
+  second_syn_value: 0.0
   
   #Range for the first synergy: [0.0, 1.0]
   first_synergy_map:
-    "object1" : 0.0
+    "object1" : 0.9
     "object2" : 0.5
     "object3" : 0.8
 
