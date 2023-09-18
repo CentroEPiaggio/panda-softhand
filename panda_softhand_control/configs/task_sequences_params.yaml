@@ -14,13 +14,13 @@ task_sequencer:
   object_topic_name: /grasping/chosen_object
 
   # The joint configuration for home
-  home_joints: [0.5137752019271516, -0.38468460730598264, -0.03885972276643703, -2.069471816113253, -0.09441758998331462, 0.9251099502155963, -0.0902326250154939] 
+  home_joints: [0.09148920194203392, -0.37963085661538204, -0.13921620148315764, -2.6323911068571393, -0.07437658224962043, 1.7697341499328612, -0.06125120294582824] 
 
   ################## PREGRASP AND GRASP TRANSFORM ##############################
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
   # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default)
 
-  grasp_transform: [0.745, -0.031, 0.149, 3.139, 0.005, 0.004]
+  grasp_transform: [0.745, -0.031, 0.179, 3.139, 0.005, 0.004]
 
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform: [0.0, 0.0, -0.3, 0.0, 0.0, 0.0]
@@ -93,7 +93,7 @@ task_sequencer:
 
   ###################### DEMO BRIGHT ###############################
   first_syn_value: 0.8
-  second_syn_value: 0.0
+  second_syn_value: 0.1
   
   #Range for the first synergy: [0.0, 1.0]
   first_synergy_map:

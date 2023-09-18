@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 
    /* 1) Test Grasp*/
    //Create the request and response object
-    
+   while(ros::ok()){
    std_srvs::SetBool::Request req;
    req.data = true;
    std_srvs::SetBool::Response resp;
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
    } else {
       ROS_INFO_STREAM("Failed to completed the service");
    }
-
+   }
 
 
 

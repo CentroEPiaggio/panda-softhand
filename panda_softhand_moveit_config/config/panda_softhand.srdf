@@ -346,6 +346,7 @@
     <disable_collisions link1="qbhand2m1_middle_distal_link" link2="qbhand2m1_ring_proximal_link" reason="Never"/>
     <disable_collisions link1="qbhand2m1_middle_distal_link" link2="qbhand2m1_thumb_knuckle_link" reason="Never"/>
     <disable_collisions link1="qbhand2m1_middle_distal_link" link2="qbhand2m1_thumb_proximal_link" reason="Never"/>
+    <disable_collisions link1="qbhand2m1_middle_distal_link" link2="qbhand2m1_thumb_distal_link" reason="Never"/>
     <disable_collisions link1="qbhand2m1_middle_knuckle_link" link2="qbhand2m1_middle_middle_link" reason="Never"/>
     <disable_collisions link1="qbhand2m1_middle_knuckle_link" link2="qbhand2m1_middle_proximal_link" reason="Adjacent"/>
     <disable_collisions link1="qbhand2m1_middle_knuckle_link" link2="qbhand2m1_palm_link" reason="Adjacent"/>

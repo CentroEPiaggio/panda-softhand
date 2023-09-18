@@ -121,6 +121,7 @@ bool SlerpPlan::performMotionPlan(){
     const robot_state::JointModelGroup* joint_model_group = group.getCurrentState()->getJointModelGroup(this->group_name);
 
     // Visual tools
+    namespace rvt = rviz_visual_tools;
     moveit_visual_tools::MoveItVisualTools visual_tools("world");
     visual_tools.deleteAllMarkers();
 
@@ -180,7 +181,8 @@ bool SlerpPlan::performMotionPlan(){
 
     ROS_INFO("Visualizing the computed plan as trajectory line.");
     visual_tools.publishAxisLabeled(cart_waypoints.back(), "goal pose");
-    visual_tools.publishTrajectoryLine(trajectory, joint_model_group);
+    // visual_tools.publishTrajectoryLine(trajectory, joint_model_group);
+    visual_tools.publishTrajectoryLine(trajectory, joint_model_group->getLinkModel(this->end_effector_name), joint_model_group, rvt::LIME_GREEN);
     visual_tools.trigger();
     
     #ifdef PROMPT
@@ -209,6 +211,7 @@ void SlerpPlan::computeWaypointsFromPoses(const Eigen::Affine3d& start_pose, con
 
     // Setting the number of wp according to diff_vec
     this->real_n_wp = std::floor(diff_vec.norm() * this->n_wp);
+    ROS_INFO_STREAM("Num Waypoints: " << this->real_n_wp);
     if(DEBUG) ROS_INFO_STREAM("The norm of the diff_vec is " << diff_vec.norm() << 
         ", so the new number of waypoints is " << this->real_n_wp << ".");
 

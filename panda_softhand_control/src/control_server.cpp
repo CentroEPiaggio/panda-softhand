@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     boost::shared_ptr<actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>> hand_client_ptr_(new actionlib::SimpleActionClient<control_msgs::FollowJointTrajectoryAction>(hand_jt_topic, true));
 
     ROS_INFO("Creating the hand plan and control objects");
-    HandPlan hand_plan_obj(nh_, 60, "qbhand2m1_synergy_joint","qbhand2m1_manipulation_joint");
+    HandPlan hand_plan_obj(nh_, 80, "qbhand2m1_synergy_joint","qbhand2m1_manipulation_joint");
     HandControl hand_control_obj(nh_, hand_client_ptr_);
 
     ROS_INFO("Creating the arm control object");

@@ -105,6 +105,7 @@ bool JointPlan::performMotionPlan(){
     #ifdef VISUAL
 
     // Visual tools
+    namespace rvt = rviz_visual_tools;
     moveit_visual_tools::MoveItVisualTools visual_tools("world");
     visual_tools.deleteAllMarkers();
 
@@ -134,6 +135,7 @@ bool JointPlan::performMotionPlan(){
 
     ROS_INFO("Visualizing the computed plan as trajectory line.");
     visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+    visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group->getLinkModel("right_hand_ee_link"), joint_model_group, rvt::LIME_GREEN);
     visual_tools.trigger();
     
     #ifdef PROMPT

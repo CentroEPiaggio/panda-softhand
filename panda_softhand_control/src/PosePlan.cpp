@@ -121,6 +121,7 @@ bool PosePlan::performMotionPlan(){
     #ifdef VISUAL
 
     // Visual tools
+    namespace rvt = rviz_visual_tools;
     moveit_visual_tools::MoveItVisualTools visual_tools("world");
     visual_tools.deleteAllMarkers();
 
@@ -162,10 +163,12 @@ bool PosePlan::performMotionPlan(){
     #ifdef VISUAL
 
     ROS_INFO("Visualizing the computed plan as trajectory line.");
+    visual_tools.deleteAllMarkers();
     visual_tools.publishAxisLabeled(this->goalPose, "goal pose");
-    visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+    // visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+    visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group->getLinkModel(this->end_effector_name), joint_model_group, rvt::LIME_GREEN);
     visual_tools.trigger();
-    
+
     #ifdef PROMPT
     visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to execute the motion on the robot.");
     #endif
