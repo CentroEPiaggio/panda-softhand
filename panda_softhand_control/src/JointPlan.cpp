@@ -11,7 +11,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 #include <moveit_visual_tools/moveit_visual_tools.h>
 
-JointPlan::JointPlan(ros::NodeHandle& nh_, std::string group_name_){
+JointPlan::JointPlan(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_){
         
         ROS_INFO("Starting to create JointPlan object");
 
@@ -19,6 +19,7 @@ JointPlan::JointPlan(ros::NodeHandle& nh_, std::string group_name_){
         this->nh = nh_;
 
         // Initializing names
+        this->end_effector_name = end_effector_name_;
         this->group_name = group_name_;
 
         ROS_INFO("Finished creating JointPlan object");
@@ -139,7 +140,7 @@ bool JointPlan::performMotionPlan(){
 
     ROS_INFO("Visualizing the computed plan as trajectory line.");
     // visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
-    visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group->getLinkModel("right_hand_ee_link"), joint_model_group, rvt::LIME_GREEN);
+    visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group->getLinkModel(this->end_effector_name), joint_model_group, rvt::LIME_GREEN);
     visual_tools.trigger();
     
     #ifdef PROMPT

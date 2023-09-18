@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     PosePlan pose_plan_obj(nh_, "panda_arm", "right_hand_ee_link");
 
     ROS_INFO("Creating the joint plan object");
-    JointPlan joint_plan_obj(nh_, "panda_arm");
+    JointPlan joint_plan_obj(nh_, "panda_arm", "right_hand_ee_link");
     
     ROS_INFO("Advertising the services");
 

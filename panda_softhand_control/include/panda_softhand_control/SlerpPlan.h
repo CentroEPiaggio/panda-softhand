@@ -47,7 +47,6 @@ class SlerpPlan {
 		// Computes waypoints using SLERP from two poses
 		void computeWaypointsFromPoses(const Eigen::Affine3d& start_pose, const Eigen::Affine3d& goal_pose, std::vector<geometry_msgs::Pose>& waypoints);
 
-
 	/// private variables -------------------------------------------------------------------------
 	private:
 		ros::NodeHandle nh;

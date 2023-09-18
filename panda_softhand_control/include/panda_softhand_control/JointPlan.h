@@ -1,6 +1,6 @@
 /* JOINT CONTROL - Uses moveit movegroupinterface to plan towards a joint configuration
-Authors: George Jose Pollayil - Mathew Jose Pollayil
-Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
+Authors: George Jose Pollayil - Mathew Jose Pollayil - Stefano Angeli
+Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com, stefano.angeli@ing.unipi.it */
 
 // Basic includes
 #include <ros/service.h>
@@ -27,7 +27,7 @@ class JointPlan {
 
     /// public variables and functions ------------------------------------------------------------
 	public:
-		JointPlan(ros::NodeHandle& nh_, std::string group_name_);
+		JointPlan(ros::NodeHandle& nh_, std::string group_name_, std::string end_effector_name_);
 
         ~JointPlan();
 
@@ -46,6 +46,7 @@ class JointPlan {
 		ros::NodeHandle nh;
 
         // Important names and values
+		std::string end_effector_name;
         std::string group_name;                                 // Name of the MoveIt group
 
         // The present joint config and the goal joint config
