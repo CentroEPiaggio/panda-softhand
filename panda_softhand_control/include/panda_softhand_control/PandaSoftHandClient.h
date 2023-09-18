@@ -55,7 +55,7 @@ class PandaSoftHandClient {
         bool call_arm_wait_service(ros::Duration wait_time);
 
         // Service call function for joint plan
-        bool call_joint_service(std::vector<double> joint_goal, std::vector<double> joint_start, trajectory_msgs::JointTrajectory& computed_trajectory);
+        bool call_joint_service(std::vector<double> joint_goal, bool planning_from_current_state, trajectory_msgs::JointTrajectory& past_trajectory, trajectory_msgs::JointTrajectory& computed_trajectory);
 
         // Service call function for pose plan
         bool call_pose_service(geometry_msgs::Pose goal_pose, geometry_msgs::Pose start_pose, bool is_goal_relative, 

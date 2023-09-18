@@ -21,7 +21,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
 #define     VISUAL          // Publishes visual info on RViz
-// #define     PROMPT   1       // Waits for confermation in RViz before execution
+#define     PROMPT   1       // Waits for confermation in RViz before execution
 
 class JointPlan {
 
@@ -51,9 +51,12 @@ class JointPlan {
         // The present joint config and the goal joint config
 		std::vector<double> joint_now;							// The current joint config
 	  	std::vector<double> joint_goal;							// The goal joint config given by service call
-
+        bool planning_from_current_state;                       // True: planning from the current state
+		                                                        // False: NOT planning from the current state
+	
         // Joint trajectory computed to be sent to robot
-        trajectory_msgs::JointTrajectory computed_trajectory;  
+        trajectory_msgs::JointTrajectory computed_trajectory; 
+		trajectory_msgs::JointTrajectory past_trajectory; 
 
 		// INLINE PRIVATE FUCTIONS
         // Needed to check if the start joint config has been arbitrarily chosen as null (this means to plan from present joint position)

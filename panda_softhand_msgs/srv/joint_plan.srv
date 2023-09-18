@@ -1,5 +1,6 @@
 float64[] joint_goal
-float64[] joint_start
+trajectory_msgs/JointTrajectory past_trajectory
+bool planning_from_current_state
 ---
 bool answer
 trajectory_msgs/JointTrajectory computed_trajectory

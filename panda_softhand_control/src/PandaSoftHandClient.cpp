@@ -164,12 +164,13 @@ bool PandaSoftHandClient::call_arm_wait_service(ros::Duration wait_time){
 }
 
 // Service call function for joint plan
-bool PandaSoftHandClient::call_joint_service(std::vector<double> joint_goal, std::vector<double> joint_start, trajectory_msgs::JointTrajectory& computed_trajectory){
+bool PandaSoftHandClient::call_joint_service(std::vector<double> joint_goal, bool planning_from_current_state, trajectory_msgs::JointTrajectory& past_trajectory, trajectory_msgs::JointTrajectory& computed_trajectory){
 
     // Creating and filling up the request
     panda_softhand_msgs::joint_plan joint_plan_srv;
     joint_plan_srv.request.joint_goal = joint_goal;
-    joint_plan_srv.request.joint_start = joint_start;
+    joint_plan_srv.request.planning_from_current_state = planning_from_current_state;
+    joint_plan_srv.request.past_trajectory = past_trajectory;
 
     // Calling the service
     if(!this->joint_client.call(joint_plan_srv)){
