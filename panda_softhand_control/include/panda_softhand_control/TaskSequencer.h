@@ -75,7 +75,7 @@ class TaskSequencer {
         bool call_complex_grasp_task(panda_softhand_msgs::complex_grasp::Request &req, panda_softhand_msgs::complex_grasp::Response &res);
 
         // Callback for simple place task service
-        bool call_simple_place_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+        bool call_simple_pick_and_place_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
 
         // Callback for simple home task service
         bool call_simple_home_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
@@ -98,7 +98,7 @@ class TaskSequencer {
         // Callback for set place prethrowing joints service
         bool call_set_prethrowing_joints_place(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
 
-        bool call_set_vacuum_place(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
+        bool call_set_pose_place(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
 
         // Callback for set place throwing joints service
         
@@ -150,7 +150,7 @@ class TaskSequencer {
         std::string franka_state_topic_name = "/franka_state_controller/franka_states";
         std::string grasp_task_service_name;
         std::string complex_grasp_task_service_name;
-        std::string place_task_service_name;
+        std::string pick_and_place_task_service_name;
         std::string home_task_service_name;
         std::string handover_task_service_name;
         std::string grasp_task_handtool_service_name;
@@ -159,10 +159,12 @@ class TaskSequencer {
 
         std::string set_object_service_name;
         std::string set_place_service_name;
+        std::string set_pose_place_service_name;
 
         std::string set_pre_throwing_joint_name;
         std::string set_throwing_joint_name;
         std::string set_vacuum_name;
+        std::string set_place_name;
         std::string set_duty_cycle_name;
         
 
@@ -175,7 +177,7 @@ class TaskSequencer {
         // Service Servers
         ros::ServiceServer grasp_task_server;
         ros::ServiceServer complex_grasp_task_server;
-        ros::ServiceServer place_task_server;
+        ros::ServiceServer pick_and_place_task_server;
         ros::ServiceServer home_task_server;
         ros::ServiceServer handover_task_server;
         ros::ServiceServer grasp_handtool_task_server;//
@@ -184,6 +186,7 @@ class TaskSequencer {
 
         ros::ServiceServer set_object_server;
         ros::ServiceServer set_place_server;
+        ros::ServiceServer set_pose_place_server;
 
         ros::ServiceServer set_pre_throwing_server;
         ros::ServiceServer set_throwing_server;
@@ -209,12 +212,15 @@ class TaskSequencer {
         std::vector<double> handover_joints;
         double handover_thresh;
 
-
         std::vector<double> pre_vacuum_transform;
         geometry_msgs::Pose pre_vacuum_T;
 
-        std::vector<double> vacuum_transform;
-        geometry_msgs::Pose vacuum_T;
+
+        //
+        std::vector<double> pre_place_transform;
+        geometry_msgs::Pose pre_place_T;
+        std::vector<double> place_transform;
+        geometry_msgs::Pose place_T;
 
 
         std::vector<double> pre_throwing_transform;
@@ -222,6 +228,8 @@ class TaskSequencer {
         
         std::vector<double> throwing_transform;
         geometry_msgs::Pose throwing_T;
+
+        geometry_msgs::Pose vacuum_T;
 
         std::vector<double> pre_replace_hand_tool;
         geometry_msgs::Pose pre_replace_hand_tool_T;
@@ -235,7 +243,7 @@ class TaskSequencer {
         int duty_cycle;
         
         std::map<std::string, std::vector<double>> poses_map;               // The map containing the notable poses
-        std::map<std::string, std::vector<double>> vacuum_pose_map; 
+        std::map<std::string, std::vector<double>> place_pose_map; 
 
         std::map<std::string, std::vector<double>> place_joints_map;        // The map containing the notable place joints
         std::map<std::string, std::vector<double>> pre_throwing_joints_map;

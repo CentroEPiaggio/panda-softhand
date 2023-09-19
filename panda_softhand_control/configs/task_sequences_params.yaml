@@ -50,11 +50,6 @@ task_sequencer:
     "object1" : 200
     "object2" : 200
     "object3" : 200
-
-  vacuum_pose_map:
-    "object1" : [0.659, 0.047, 0.282, 1.612, -0.044, 0.169]
-    "object2" : [0.659, 0.047, 0.282, 1.612, -0.044, 0.169]
-    "object3" : [0.659, 0.047, 0.282, 1.612, -0.044, 0.169]
   
   pre_vacuum_transform: [0.0, 0.12, 0.0, 0.0, 0.0, 0.0]
 
@@ -88,12 +83,23 @@ task_sequencer:
 
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform: [0.0, 0.0, -0.09, 0.0, 0.0, 0.0]
-  
+
+  #
+  place_transform : [0.680, -0.217, 0.169, 2.442, 0.397, -0.253]
+  #
+  pre_place_transform: [0.0, 0.0, -0.13, 0.0, 0.0, 0.0]
+
   # The personalized grasp pose maps for different objects
   poses_map:
     "object1" : [0.638, 0.229, 0.190, 3.008, 0.367, 0.253]
     "object2" : [0.684, -0.081, 0.150, 3.118, 0.034, -0.035]
     "object3" : [0.680, -0.217, 0.169, 2.442, 0.397, -0.253]
+  
+  # The personalized place pose maps for different objects
+  place_pose_map:
+    "object1" : [0.659, 0.047, 0.282, 1.612, -0.044, 0.169]
+    "object2" : [0.659, 0.047, 0.282, 1.612, -0.044, 0.169]
+    "object3" : [0.638, 0.229, 0.190, 3.008, 0.367, 0.253]
 
   first_syn_value: 0.8
   second_syn_value: 0.1
