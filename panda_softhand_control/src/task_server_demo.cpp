@@ -25,8 +25,9 @@ int main(int argc, char **argv)
    ros::AsyncSpinner spinner(2);
    spinner.start();
    
+   while(ros::ok()){
 
-   // ##################### OBEJCT1 ###################################
+   // ##################### OBJECT1 ###################################
 
    /* Update the value for the first synergy*/
    
@@ -59,15 +60,29 @@ int main(int argc, char **argv)
    } else {
       ROS_INFO_STREAM("Failed to completed the call set second synergy service");
    }
-
-   /* 1) Test Grasp*/
+   
+   /* Update the pose map for the OBJECT1*/
+   
+   panda_softhand_msgs::set_object::Request req_object1;
+   req_object1.object_name = "object1";
+   panda_softhand_msgs::set_object::Response resp_object1;
+   
+   bool success_call_set_object = task_sequencer_obj.call_set_object(req_object1,resp_object1);
+   
+   if(success_call_set_object){
+      ROS_INFO_STREAM("Call_set_object service completed correctly: " << resp_object1.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call set object service");
+   }
+   
+   /* 1) Call simple grasp task for OBJECT1*/
    //Create the request and response object
-   while(ros::ok()){
+   
    std_srvs::SetBool::Request req;
    req.data = true;
    std_srvs::SetBool::Response resp;
 
-   ROS_INFO("Test softhand2");
+   ROS_INFO("Call the simple grasp task for OBJECT1!");
    
    bool success = task_sequencer_obj.call_simple_grasp_task(req,resp);
     
@@ -78,11 +93,82 @@ int main(int argc, char **argv)
    } else {
       ROS_INFO_STREAM("Failed to completed the service");
    }
+
+   // ##############################################################################
+
+
+
+
+   // ##################### OBJECT2 ###################################
+
+   /* Update the value for the first synergy*/
+   
+   panda_softhand_msgs::set_object::Request req_first_syn2;
+   req_first_syn2.object_name = "object2";
+   panda_softhand_msgs::set_object::Response resp_first_syn2;
+
+   ROS_INFO("Call the call_set_first_synergy");
+
+   bool success_call_first_syn2 = task_sequencer_obj.call_set_first_synergy(req_first_syn2,resp_first_syn2);
+   
+   if(success_call_first_syn2){
+      ROS_INFO_STREAM("Call_set_first synergy service completed correctly: " << resp_first_syn.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
    }
 
+   /* Update the value for the second synergy*/
+   
+   panda_softhand_msgs::set_object::Request req_second_syn2;
+   req_second_syn2.object_name = "object2";
+   panda_softhand_msgs::set_object::Response resp_second_syn2;
 
+   ROS_INFO("Call the call_set_first_synergy");
 
+   bool success_call_second_syn2 = task_sequencer_obj.call_set_second_synergy(req_second_syn2,resp_second_syn2);
+   
+   if(success_call_second_syn2){
+      ROS_INFO_STREAM("Call_set second synergy service completed correctly: " << resp_second_syn2.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call set second synergy service");
+   }
+   
+   /* Update the pose map for the OBJECT2*/
+   
+   panda_softhand_msgs::set_object::Request req_object2;
+   req_object2.object_name = "object2";
+   panda_softhand_msgs::set_object::Response resp_object2;
+   
+   bool success_call_set_object2 = task_sequencer_obj.call_set_object(req_object2,resp_object2);
+   
+   if(success_call_set_object2){
+      ROS_INFO_STREAM("Call_set_object service completed correctly: " << resp_object2.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call set object service");
+   }
+   
+   /* 2) Call simple grasp task for OBJECT2*/
+   //Create the request and response object
 
+   std_srvs::SetBool::Request req2;
+   req2.data = true;
+   std_srvs::SetBool::Response resp2;
+
+   ROS_INFO("Call the simple grasp task for OBJECT2");
+   
+   bool success2 = task_sequencer_obj.call_simple_grasp_task(req2,resp2);
+    
+   //Check the success and use of the response
+
+   if(success2){
+      ROS_INFO_STREAM("Test service completed correctly: " << resp2.success);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the service");
+   }
+
+   // ##############################################################################
+   }
+   
    spinner.stop();
    return 0;
 }

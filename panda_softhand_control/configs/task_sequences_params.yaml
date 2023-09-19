@@ -74,11 +74,15 @@ task_sequencer:
 
   # The joint configuration for home
   home_joints: [0.09945263436433549, -0.6283411450218737, -0.025625671577896386, -2.5165662718416164, -0.8806336501130351, 1.5183556343581943, -0.05930131581131025] 
+  
+  # The joint configuration before throwing
   joint_pos_before_throwing: [-0.669860579385788, -0.4359766196660827, -0.6097316639883477, -2.5202082298339255, 1.6766842644082176, 2.2529873280315953, 0.13663060341916458]
   
   ################## PREGRASP AND GRASP TRANSFORM ##############################
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
-  # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default)
+  # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default) 
+
+  # rosrun tf tf_echo world right_hand_ee_link
 
   grasp_transform: [0.745, -0.031, 0.179, 3.139, 0.005, 0.004]
 
@@ -87,24 +91,24 @@ task_sequencer:
   
   # The personalized grasp pose maps for different objects
   poses_map:
-    "red" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
-    "green" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
-    "blue" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
-    "black" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
-    "white" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
-    "other" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
+    "object1" : [0.638, 0.229, 0.190, 3.008, 0.367, 0.253]
+    "object2" : [0.684, -0.081, 0.150, 3.118, 0.034, -0.035]
+    "object3" : [0.745, -0.031, 0.179, 3.139, 0.005, 0.004]
+    "black" : [0.745, -0.031, 0.179, 3.139, 0.005, 0.004]
+    "white" : [0.745, -0.031, 0.179, 3.139, 0.005, 0.004]
+    "other" : [0.745, -0.031, 0.179, 3.139, 0.005, 0.004]
   
   first_syn_value: 0.8
   second_syn_value: 0.1
   
   #Range for the first synergy: [0.0, 1.0]
   first_synergy_map:
-    "object1" : 0.9
-    "object2" : 0.5
-    "object3" : 0.8
+    "object1" : 0.4
+    "object2" : 0.6
+    "object3" : 0.2
 
   #Range for the second synergy: [-1.0, 1.0]
   second_synergy_map:
-    "object1" :  0.0
-    "object2" :  0.5
-    "object3" : -0.8
+    "object1" :  0.2
+    "object2" : -0.5
+    "object3" : -0.9
