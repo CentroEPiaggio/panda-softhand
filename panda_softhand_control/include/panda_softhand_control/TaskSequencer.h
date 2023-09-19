@@ -21,6 +21,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "panda_softhand_msgs/complex_grasp.h"
 #include "geometry_msgs/Pose.h"
 #include <controller_manager_msgs/SwitchController.h>
+#include <controller_manager_msgs/ListControllers.h>
 #include <franka_msgs/FrankaState.h>
 #include <franka_msgs/ErrorRecoveryActionGoal.h>
 
@@ -57,7 +58,7 @@ class TaskSequencer {
         geometry_msgs::Pose convert_vector_to_pose(std::vector<double> input_vec);
 
         // To switch the controllers
-        bool switch_controllers(std::string robot_name, std::string from_controller, std::string to_controller);
+        bool switch_controllers(std::string robot_name, std::string to_controller);
 
         // Callback for object pose subscriber
         void get_object_pose(const geometry_msgs::Pose::ConstPtr &msg);

@@ -27,6 +27,8 @@ int main(int argc, char **argv)
    
    while(ros::ok()){
 
+   // bool switch_done = task_sequencer_obj.switch_controllers("panda_arm","computed_torque_controller");
+
    // ##################### OBJECT1 ###################################
 
    /* Update the value for the first synergy*/
@@ -74,7 +76,9 @@ int main(int argc, char **argv)
    } else {
       ROS_INFO_STREAM("Failed to completed the call set object service");
    }
-   
+   // Switch controller 
+   // switch_done = task_sequencer_obj.switch_controllers("panda_arm","position_joint_trajectory_controller");
+
    /* 1) Call simple grasp task for OBJECT1*/
    //Create the request and response object
    

@@ -453,7 +453,7 @@ geometry_msgs::Pose TaskSequencer::convert_vector_to_pose(std::vector<double> in
 }
 
 // To switch the controllers
-bool TaskSequencer::switch_controllers(std::string robot_name, std::string from_controller, std::string to_controller){
+bool TaskSequencer::switch_controllers(std::string robot_name, std::string to_controller){
 
     // Temporary bool to be returned
     bool success = false;
@@ -464,11 +464,26 @@ bool TaskSequencer::switch_controllers(std::string robot_name, std::string from_
 
     // Filling up the switch message
     this->switch_controller.request.start_controllers.push_back(to_controller);
-    this->switch_controller.request.stop_controllers.push_back(from_controller);
+    // this->switch_controller.request.stop_controllers.push_back(from_controller);
     this->switch_controller.request.strictness = controller_manager_msgs::SwitchController::Request::STRICT;
-
-    // Swithching controller by calling the service
-    return ros::service::call<controller_manager_msgs::SwitchController>(robot_name + this->switch_service_name, this->switch_controller);
+    
+    // Call the ListControllers service and save the response in a variable
+    controller_manager_msgs::ListControllers srv;
+    bool success_list = ros::service::call<controller_manager_msgs::ListControllers>(robot_name + "/controller_manager/list_controllers", srv);
+    
+    if(success_list){
+        ROS_INFO("List loaded correctly!");
+        // Loop through the response vector and find the running controller
+        for (const auto& controller : srv.response.controller){
+            if (controller.state == "running" && controller.name != "franka_state_controller" && controller.name != to_controller){
+                this->switch_controller.request.stop_controllers.push_back(controller.name);
+            }
+        }
+        return ros::service::call<controller_manager_msgs::SwitchController>(robot_name + this->switch_service_name, this->switch_controller);  
+    } else {
+        ROS_WARN("Unale to switch controller!");
+        return success;
+    }
 }
 
 // Callback for object pose subscriber
