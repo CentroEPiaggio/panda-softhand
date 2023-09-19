@@ -116,7 +116,7 @@ int main(int argc, char **argv)
    bool success_call_first_syn2 = task_sequencer_obj.call_set_first_synergy(req_first_syn2,resp_first_syn2);
    
    if(success_call_first_syn2){
-      ROS_INFO_STREAM("Call_set_first synergy service completed correctly: " << resp_first_syn.result);
+      ROS_INFO_STREAM("Call_set_first synergy service completed correctly: " << resp_first_syn2.result);
    } else {
       ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
    }
@@ -170,9 +170,82 @@ int main(int argc, char **argv)
       ROS_INFO_STREAM("Failed to completed the service");
    }
 
+
+
+
+   // ##################### OBJECT3 ###################################
+
+   /* Update the value for the first synergy*/
+   
+   panda_softhand_msgs::set_object::Request req_first_syn3;
+   req_first_syn3.object_name = "object3";
+   panda_softhand_msgs::set_object::Response resp_first_syn3;
+
+   ROS_INFO("Call the call_set_first_synergy");
+
+   bool success_call_first_syn3 = task_sequencer_obj.call_set_first_synergy(req_first_syn3,resp_first_syn3);
+   
+   if(success_call_first_syn3){
+      ROS_INFO_STREAM("Call_set_first synergy service completed correctly: " << resp_first_syn3.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
+   }
+
+   /* Update the value for the second synergy*/
+   
+   panda_softhand_msgs::set_object::Request req_second_syn3;
+   req_second_syn3.object_name = "object3";
+   panda_softhand_msgs::set_object::Response resp_second_syn3;
+
+   ROS_INFO("Call the call_set_first_synergy");
+
+   bool success_call_second_syn3 = task_sequencer_obj.call_set_second_synergy(req_second_syn3,resp_second_syn3);
+   
+   if(success_call_second_syn3){
+      ROS_INFO_STREAM("Call_set second synergy service completed correctly: " << resp_second_syn3.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call set second synergy service");
+   }
+   
+   /* Update the pose map for the OBJECT3*/
+   
+   panda_softhand_msgs::set_object::Request req_object3;
+   req_object3.object_name = "object3";
+   panda_softhand_msgs::set_object::Response resp_object3;
+   
+   bool success_call_set_object3 = task_sequencer_obj.call_set_object(req_object3,resp_object3);
+   
+   if(success_call_set_object3){
+      ROS_INFO_STREAM("Call_set_object service completed correctly: " << resp_object3.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call set object service");
+   }
+   
+   /* 2) Call simple grasp task for OBJECT3*/
+   //Create the request and response object
+
+   std_srvs::SetBool::Request req3;
+   req3.data = true;
+   std_srvs::SetBool::Response resp3;
+
+   ROS_INFO("Call the simple grasp task for OBJECT3");
+   
+   bool success3 = task_sequencer_obj.call_simple_grasp_task(req3,resp3);
+    
+   //Check the success and use of the response
+
+   if(success3){
+      ROS_INFO_STREAM("Test service completed correctly: " << resp3.success);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the service");
+   }
+
+
    // ##############################################################################
    }
    
+
+
    spinner.stop();
    return 0;
 }

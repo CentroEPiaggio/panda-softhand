@@ -62,7 +62,7 @@ bool JointPlan::initialize(panda_softhand_msgs::joint_plan::Request &req){
     this->past_trajectory = req.past_trajectory;  
     this->planning_from_current_state = req.planning_from_current_state;
 
-    if(this->planning_from_current_state && this->past_trajectory.points.empty()){
+    if(!this->planning_from_current_state && this->past_trajectory.points.empty()){
         ROS_ERROR("The past trajectory is empty! You CAN'T plan from the last point of the previous computed trajectory!");
         return false;
     }
