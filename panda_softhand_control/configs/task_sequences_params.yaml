@@ -13,18 +13,6 @@ task_sequencer:
   # Name of the topic where the object pose is published (grasping)
   object_topic_name: /grasping/chosen_object
 
-  # The joint configuration for home
-  home_joints: [0.09148920194203392, -0.37963085661538204, -0.13921620148315764, -2.6323911068571393, -0.07437658224962043, 1.7697341499328612, -0.06125120294582824] 
-
-  ################## PREGRASP AND GRASP TRANSFORM ##############################
-  # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
-  # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default)
-
-  grasp_transform: [0.745, -0.031, 0.179, 3.139, 0.005, 0.004]
-
-  # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
-  pre_grasp_transform: [0.0, 0.0, -0.3, 0.0, 0.0, 0.0]
-
   ################# PREVACUUM JOINTS CONFIGURATION AND VACUUM TRANSFORM ########
   # # Transform from object frame to vacuum pose frame (xyzrpy) (DEFAULT)
   # vacuum_transform: [0.605, -0.202, 0.380, 1.600, -0.042, -0.207]
@@ -56,15 +44,6 @@ task_sequencer:
   # The threshold on tau_ext for handover hand opening
   handover_thresh: 1.0
 
-  # The personalized grasp pose maps for different objects
-  poses_map:
-    "red" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
-    "green" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
-    "blue" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
-    "black" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
-    "white" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
-    "other" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
-
   # DARKO: Update map for throwing different objects
 
   duty_cycle_map:
@@ -92,6 +71,29 @@ task_sequencer:
   pre_replace_hand_tool: [0.0, 0.0, -0.05, 0.0, 0.0, 0.0]
 
   ###################### DEMO BRIGHT ###############################
+
+  # The joint configuration for home
+  home_joints: [0.09945263436433549, -0.6283411450218737, -0.025625671577896386, -2.5165662718416164, -0.8806336501130351, 1.5183556343581943, -0.05930131581131025] 
+  joint_pos_before_throwing: [-0.669860579385788, -0.4359766196660827, -0.6097316639883477, -2.5202082298339255, 1.6766842644082176, 2.2529873280315953, 0.13663060341916458]
+  
+  ################## PREGRASP AND GRASP TRANSFORM ##############################
+  # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
+  # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default)
+
+  grasp_transform: [0.745, -0.031, 0.179, 3.139, 0.005, 0.004]
+
+  # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
+  pre_grasp_transform: [0.0, 0.0, -0.09, 0.0, 0.0, 0.0]
+  
+  # The personalized grasp pose maps for different objects
+  poses_map:
+    "red" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
+    "green" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
+    "blue" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
+    "black" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
+    "white" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
+    "other" : [-0.085, 0.005, 0.008, -3.039, -0.185, -0.166]
+  
   first_syn_value: 0.8
   second_syn_value: 0.1
   

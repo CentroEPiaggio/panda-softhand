@@ -199,6 +199,7 @@ class TaskSequencer {
         std::string imp_controller;                 // Name of impedance controller
         std::string object_topic_name;              // Name of the topic where the object pose is published
         std::vector<double> home_joints;
+        std::vector<double> joint_pos_before_throwing;
         std::vector<double> grasp_transform;
         geometry_msgs::Pose grasp_T;
         std::vector<double> pre_grasp_transform;
@@ -236,10 +237,7 @@ class TaskSequencer {
         std::map<std::string, std::vector<double>> vacuum_pose_map; 
 
         std::map<std::string, std::vector<double>> place_joints_map;        // The map containing the notable place joints
-        
-
         std::map<std::string, std::vector<double>> pre_throwing_joints_map;
-
         std::map<std::string, std::vector<double>> throwing_joints_map;
 
         std::map<std::string, int> duty_cycle_map;
