@@ -73,6 +73,10 @@ task_sequencer:
   # The joint configuration before throwing
   joint_pos_before_throwing: [-0.669860579385788, -0.4359766196660827, -0.6097316639883477, -2.5202082298339255, 1.6766842644082176, 2.2529873280315953, 0.13663060341916458]
   
+  # The middle joint positions for the pick and place task
+
+  middle_joint_position: [-0.030296435709092098, -0.472124630434831, -0.08193179214209839, -2.4019921196364495, -0.07069314742660213, 1.7794705146153766, -0.03459854740403268]
+  
   ################## PREGRASP AND GRASP TRANSFORM ##############################
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
   # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default) 
@@ -93,13 +97,13 @@ task_sequencer:
   poses_map:
     "object1" : [0.638, 0.229, 0.190, 3.008, 0.367, 0.253]
     "object2" : [0.684, -0.081, 0.150, 3.118, 0.034, -0.035]
-    "object3" : [0.680, -0.217, 0.169, 2.442, 0.397, -0.253]
+    "cup" : [0.612, -0.064, 0.288, -2.744, -0.082, -0.302]
   
   # The personalized place pose maps for different objects
   place_pose_map:
-    "object1" : [0.659, 0.047, 0.282, 1.612, -0.044, 0.169]
+    "object1" : [0.369, 0.183, 0.187, 2.942, 0.409, 0.476]
     "object2" : [0.659, 0.047, 0.282, 1.612, -0.044, 0.169]
-    "object3" : [0.638, 0.229, 0.190, 3.008, 0.367, 0.253]
+    "cup" : [0.638, 0.229, 0.190, 3.008, 0.367, 0.253]
 
   first_syn_value: 0.8
   second_syn_value: 0.1
@@ -108,10 +112,10 @@ task_sequencer:
   first_synergy_map:
     "object1" : 0.6
     "object2" : 0.5
-    "object3" : 0.8
+    "cup" : 0.60
 
   #Range for the second synergy: [-1.0, 1.0]
   second_synergy_map:
     "object1" :  0.2
     "object2" :  0.2
-    "object3" :  0.0
+    "cup" :  1.0

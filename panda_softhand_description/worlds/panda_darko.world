@@ -144,6 +144,34 @@
 			</link>
     </model>
 
+	<model name="Box">  
+			<pose>0.690 0.007 0.12 0 0 0 </pose>
+			<static>true</static>
+			<link name='linkBox'>
+				<pose>0 0 0 0 0 0</pose>
+
+				<collision name="my_collisionBox">
+		 			<pose>0 0 0 0 0 0</pose>
+					<geometry>
+		        <box>
+		          <size>0.11 0.11 0.21</size>
+		        </box>
+		            </geometry>
+	            </collision>
+
+				<visual name="my_visualBox">
+					<geometry>
+		        <box>
+					<size>0.11 0.11 0.21</size>
+		        </box>
+		           </geometry>
+	      </visual>
+
+				<self_collide>0</self_collide>
+				<gravity>1</gravity>
+			</link>
+    </model>
+
 	
 </world>
 </sdf>

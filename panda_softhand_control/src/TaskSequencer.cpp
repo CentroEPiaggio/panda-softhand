@@ -148,7 +148,13 @@ bool TaskSequencer::parse_task_params(){
 
     if(!ros::param::get("/task_sequencer/joint_pos_before_throwing", this->joint_pos_before_throwing)){
 		ROS_WARN("The param 'joint_pos_before_throwing' not found in param server! Using default.");
-		this->home_joints = {-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110};
+		this->joint_pos_before_throwing = {-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110};
+		success = false;
+	}
+    
+    if(!ros::param::get("/task_sequencer/middle_joint_position", this->middle_joint_position)){
+		ROS_WARN("The param 'middle_joint_position' not found in param server! Using default.");
+		this->middle_joint_position = {-0.035, -0.109, -0.048, -1.888, 0.075, 1.797, -0.110};
 		success = false;
 	}
 
@@ -879,9 +885,11 @@ bool TaskSequencer::call_simple_pick_and_place_task(std_srvs::SetBool::Request &
     Eigen::Affine3d pre_grasp_transform_aff; tf::poseMsgToEigen(this->pre_grasp_T, pre_grasp_transform_aff);
 
     geometry_msgs::Pose pre_grasp_pose; geometry_msgs::Pose grasp_pose;
-    tf::poseEigenToMsg(grasp_transform_aff * pre_grasp_transform_aff, pre_grasp_pose);
+    // tf::poseEigenToMsg(grasp_transform_aff * pre_grasp_transform_aff, pre_grasp_pose);
     tf::poseEigenToMsg(grasp_transform_aff, grasp_pose);
-    
+    pre_grasp_pose = grasp_pose;
+    pre_grasp_pose.position.z += 0.12;
+
     // Couting object pose for debugging
     // std::cout << "Object position is \n" << object_pose_aff.translation() << std::endl;
     // std::cout << "Object orientation is \n" << object_pose_aff.rotation() << std::endl;
@@ -988,7 +996,36 @@ bool TaskSequencer::call_simple_pick_and_place_task(std_srvs::SetBool::Request &
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
         return false;
     }
+    
+    std::cout << "Sono prima del Middle Joint position " << std::endl;
+    getchar();
+    /*PLAN Middle Joint Position: Plan to Middle Joint Position */
 
+    if(!this->panda_softhand_client.call_joint_service(this->middle_joint_position, false, this->tmp_traj_arm, this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not plan to the specified home joint config.");
+        res.success = false;
+        res.message = "The service call_simple_home_task was NOT performed correctly!";
+        return false;
+    }
+
+    /*WAIT Pre Grasp Pose*/
+
+    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre grasp from home joints");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    }
+
+    /*EXEC Middle Joint Position: Going to Middle Joint Position*/
+
+    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not go to Middle Joint Position config.");
+        res.success = false;
+        res.message = "The service call_simple_home_task was NOT performed correctly! Error in arm control.";
+        return false;
+    }
+    
     /*PLAN 5: Planning to PrePlacePose*/
 
     Eigen::Affine3d place_transform_aff; tf::poseMsgToEigen(this->place_T, place_transform_aff);
@@ -997,9 +1034,10 @@ bool TaskSequencer::call_simple_pick_and_place_task(std_srvs::SetBool::Request &
     geometry_msgs::Pose pre_place_pose; geometry_msgs::Pose place_pose;
     tf::poseEigenToMsg(place_transform_aff * pre_place_transform_aff, pre_place_pose);
     tf::poseEigenToMsg(place_transform_aff, place_pose);
+    
+    geometry_msgs::Pose middle_pose = this->performFK(this->middle_joint_position);
 
-
-    if(!this->panda_softhand_client.call_pose_service(pre_place_pose, pre_grasp_pose, false, this->tmp_traj_arm, this->tmp_traj_arm) || !this->franka_ok){
+    if(!this->panda_softhand_client.call_pose_service(pre_place_pose, middle_pose, false, this->tmp_traj_arm, this->tmp_traj_arm) || !this->franka_ok){
         ROS_ERROR("Could not plan to the specified pre grasp pose.");
         res.success = false;
         res.message = "The service call_simple_grasp_task was NOT performed correctly!";
@@ -1120,6 +1158,125 @@ bool TaskSequencer::call_simple_pick_and_place_task(std_srvs::SetBool::Request &
 
 }
 
+bool TaskSequencer::call_simple_grasp_move_cup(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
+
+    // Checking the request for correctness
+    if(!req.data){
+        ROS_WARN("Did you really want to call the simple home task service with data = false?");
+        res.success = true;
+        res.message = "The service call_simple_home_task done correctly with false request!";
+        return true;
+    }
+    
+    // Eigen::Affine3d object_pose_aff; tf::poseMsgToEigen(this->object_pose_T, object_pose_aff);
+    Eigen::Affine3d grasp_transform_aff; tf::poseMsgToEigen(this->grasp_T, grasp_transform_aff);
+    Eigen::Affine3d pre_grasp_transform_aff; tf::poseMsgToEigen(this->pre_grasp_T, pre_grasp_transform_aff);
+
+    geometry_msgs::Pose pre_grasp_pose; geometry_msgs::Pose grasp_pose;
+    tf::poseEigenToMsg(grasp_transform_aff * pre_grasp_transform_aff, pre_grasp_pose);
+    tf::poseEigenToMsg(grasp_transform_aff, grasp_pose);
+    
+    geometry_msgs::Pose present_pose = geometry_msgs::Pose();
+    present_pose.position.x = 0.0; present_pose.position.y = 0.0; present_pose.position.z = 0.0;
+    present_pose.orientation.x = 0.0; present_pose.orientation.y = 0.0; present_pose.orientation.z = 0.0; present_pose.orientation.w = 1.0;
+    //
+
+    /*PLAN 1: Planning to PreGraspPose*/
+
+    if(!this->panda_softhand_client.call_pose_service(pre_grasp_pose, present_pose, false, this->tmp_traj_arm, this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not plan to the specified pre grasp pose.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        return false;
+    }
+    
+    /*EXEC 1*/
+
+    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not go to pre grasp pose.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
+        return false;
+    }
+
+    /*PLAN 2: Plan the closing of the hand*/
+
+    if(!this->panda_softhand_client.call_hand_plan_service(0.32, 1.0, 1.2, this->tmp_traj_hand) || !this->franka_ok){
+        ROS_ERROR("Could not plan the simple open.");
+        res.success = false;
+        res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand plan.";
+        return false;
+    }
+    
+    /*WAIT 1 waiting for the arm*/
+
+    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre grasp from home joints");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    }
+
+    /*EXEC 2: Close the hand*/
+
+    if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj_hand) || !this->franka_ok){
+        ROS_ERROR("Could not perform the call hand control service.");
+        res.success = false;
+        res.message = "The service call hand control service was NOT performed correctly! Error plan in hand control.";
+        return false;
+    }
+
+    /*PLAN 3: Planning to GraspPose*/
+
+    if(!this->panda_softhand_client.call_pose_service(grasp_pose, pre_grasp_pose, false, this->tmp_traj_arm, this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not plan to the specified pre grasp pose.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly!";
+        return false;
+    }
+
+    /*WAIT 2*/
+
+    if(!this->panda_softhand_client.call_hand_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre place pose from pre grasp pose");
+        res.success = false;
+        res.message = "The service call_simple_olace_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    }
+
+    /*EXEC 3*/
+
+    if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){
+        ROS_ERROR("Could not go to pre grasp pose.");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error in arm control.";
+        return false;
+    }
+
+    if(!this->panda_softhand_client.call_arm_wait_service(this->waiting_time) || !this->franka_ok){ // WAITING FOR END EXEC
+        ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre grasp from home joints");
+        res.success = false;
+        res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
+        return false;
+    }
+
+    return true;
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+}
+
 // Callback for simple home task service
 bool TaskSequencer::call_simple_home_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res){
 
@@ -1131,24 +1288,6 @@ bool TaskSequencer::call_simple_home_task(std_srvs::SetBool::Request &req, std_s
         return true;
     }
 
-    // /* PLAN Hand : Plan the closing of the hand */
-
-    // if(!this->panda_softhand_client.call_hand_plan_service(0.8, 0.1, 1.5, this->tmp_traj_hand) || !this->franka_ok){
-    //     ROS_ERROR("Could not plan the simple open of the hand.");
-    //     res.success = false;
-    //     res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand plan.";
-    //     return false;
-    // }
-
-    // /*EXEC Hand: Close the hand*/
-
-    // if(!this->panda_softhand_client.call_hand_control_service(this->tmp_traj_hand) || !this->franka_ok){
-    //     ROS_ERROR("Could not perform the simple open.");
-    //     res.success = false;
-    //     res.message = "The service call_simple_home_task was NOT performed correctly! Error plan in hand control.";
-    //     return false;
-    // }
-
     /*PLAN 1: Plan to Home Joints */
 
     if(!this->panda_softhand_client.call_joint_service(this->home_joints, true, this->tmp_traj_arm, this->tmp_traj_arm) || !this->franka_ok){
@@ -1158,14 +1297,6 @@ bool TaskSequencer::call_simple_home_task(std_srvs::SetBool::Request &req, std_s
         return false;
     }
 
-    // /*WAIT Hand*/
-    // if(!this->panda_softhand_client.call_hand_wait_service(ros::Duration(3.0)) || !this->franka_ok){ // WAITING FOR END EXEC
-    //     ROS_ERROR("TIMEOUT!!! EXEC TOOK TOO MUCH TIME for going to pre grasp from home joints");
-    //     res.success = false;
-    //     res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
-    //     return false;
-    // }
-   
     /*EXEC 1: Going to Home Joints*/
 
     if(!this->panda_softhand_client.call_arm_control_service(this->tmp_traj_arm) || !this->franka_ok){

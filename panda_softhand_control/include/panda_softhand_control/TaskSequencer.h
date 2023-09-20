@@ -113,7 +113,8 @@ class TaskSequencer {
         bool call_set_first_synergy(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
     
         bool call_set_second_synergy(panda_softhand_msgs::set_object::Request &req, panda_softhand_msgs::set_object::Response &res);
-    
+        
+        bool call_simple_grasp_move_cup(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
     /// private variables -------------------------------------------------------------------------
 	private:
 		ros::NodeHandle nh;
@@ -239,6 +240,7 @@ class TaskSequencer {
 
         std::vector<double> pre_throwing_joints;
         std::vector<double> throwing_joints;
+        std::vector<double> middle_joint_position;
 
         int duty_cycle;
         

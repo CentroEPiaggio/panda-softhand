@@ -8,6 +8,6 @@
 	<rosparam command="load" file="$(arg task_sequences_params)"/>
 
 	<!-- Load main node -->
-  	<node name="task_server_demo" pkg="panda_softhand_control" type="task_server_demo" output="screen"/>	
+  	<node name="task_server_demo_only_pickandplace" pkg="panda_softhand_control" type="task_server_demo_only_pickandplace" output="screen"/>	
 
 </launch>
