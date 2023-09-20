@@ -106,12 +106,12 @@ task_sequencer:
   
   #Range for the first synergy: [0.0, 1.0]
   first_synergy_map:
-    "object1" : 0.4
-    "object2" : 0.6
-    "object3" : 0.5
+    "object1" : 0.6
+    "object2" : 0.5
+    "object3" : 0.8
 
   #Range for the second synergy: [-1.0, 1.0]
   second_synergy_map:
     "object1" :  0.2
     "object2" :  0.2
-    "object3" : -0.9
+    "object3" :  0.0

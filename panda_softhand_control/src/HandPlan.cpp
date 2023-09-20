@@ -111,7 +111,7 @@ bool HandPlan::initialize(){
 void HandPlan::computeTrajectory(double present_first_syn, double goal_first_syn, double present_second_syn, double goal_second_syn, double time){
 
     // Computing the real number of waypoints with proportion
-    int real_n_wp = std::max(std::floor(std::abs(goal_value_first_syn - present_first_syn) * this->n_wp),std::floor(std::abs(goal_value_second_syn - present_second_syn) * this->n_wp));
+    int real_n_wp = std::max(std::ceil(std::abs(goal_value_first_syn - present_first_syn) * this->n_wp),std::ceil(std::abs(goal_value_second_syn - present_second_syn) * this->n_wp));
     
     std::cout << "real_n_wp is: " << real_n_wp << std::endl;
     
@@ -147,6 +147,6 @@ void HandPlan::computeTrajectory(double present_first_syn, double goal_first_syn
         // Pushing back point into traj
         traj.points.push_back(point);
     }
-
+    
     this->computed_trajectory = traj;
 }
