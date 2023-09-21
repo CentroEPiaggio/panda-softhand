@@ -38,6 +38,10 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include "PandaSoftHandClient.h"
 
 // Other Includes
+#include <moveit/move_group_interface/move_group_interface.h>
+#include <moveit/robot_trajectory/robot_trajectory.h>
+#include <moveit/trajectory_processing/time_optimal_trajectory_generation.h>
+#include <moveit_visual_tools/moveit_visual_tools.h>
 
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
