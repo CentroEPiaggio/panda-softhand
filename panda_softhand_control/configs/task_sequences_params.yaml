@@ -75,7 +75,7 @@ task_sequencer:
   
   # The middle joint positions for the pick and place task
 
-  middle_joint_position: [-0.030296435709092098, -0.472124630434831, -0.08193179214209839, -2.4019921196364495, -0.07069314742660213, 1.7794705146153766, -0.03459854740403268]
+  middle_joint_position: [0.15077187645181492, -0.6447519560472946, 0.08189289877812067, -2.474434583186326, -0.05566603332524015, 1.847153031767352, -0.08873483253172347]
   
   ################## PREGRASP AND GRASP TRANSFORM ##############################
   # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
@@ -86,7 +86,7 @@ task_sequencer:
   grasp_transform: [0.745, -0.031, 0.179, 3.139, 0.005, 0.004]
 
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
-  pre_grasp_transform: [0.0, 0.0, -0.09, 0.0, 0.0, 0.0]
+  pre_grasp_transform: [0.0, 0.0, -0.1, 0.0, 0.0, 0.0]
 
   #
   place_transform : [0.680, -0.217, 0.169, 2.442, 0.397, -0.253]
@@ -95,13 +95,13 @@ task_sequencer:
 
   # The personalized grasp pose maps for different objects
   poses_map:
-    "object1" : [0.638, 0.229, 0.190, 3.008, 0.367, 0.253]
+    "white_box" : [0.652, 0.225, 0.170, 3.098, 0.364, -0.399]
     "object2" : [0.684, -0.081, 0.150, 3.118, 0.034, -0.035]
-    "cup" : [0.612, -0.064, 0.288, -2.744, -0.082, -0.302]
+    "cup" : [0.692, -0.119, 0.245, -2.563, -0.489, 0.425]
   
   # The personalized place pose maps for different objects
   place_pose_map:
-    "object1" : [0.369, 0.183, 0.187, 2.942, 0.409, 0.476]
+    "white_box" : [0.267, 0.092, 0.443, 2.704, 0.740, 0.076]
     "object2" : [0.659, 0.047, 0.282, 1.612, -0.044, 0.169]
     "cup" : [0.638, 0.229, 0.190, 3.008, 0.367, 0.253]
 
@@ -110,12 +110,14 @@ task_sequencer:
   
   #Range for the first synergy: [0.0, 1.0]
   first_synergy_map:
-    "object1" : 0.6
+    "white_box" : 0.45
     "object2" : 0.5
-    "cup" : 0.60
+    "cup" : 0.63
 
   #Range for the second synergy: [-1.0, 1.0]
   second_synergy_map:
-    "object1" :  0.2
+    "white_box" :  1.0
     "object2" :  0.2
     "cup" :  1.0
+
+  cup_replace_pose: [0.710, -0.148, 0.240, -3.036, -0.607, 0.746]

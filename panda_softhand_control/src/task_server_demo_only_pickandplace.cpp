@@ -32,7 +32,7 @@ int main(int argc, char **argv)
    /* Update the value for the first synergy*/
    
    panda_softhand_msgs::set_object::Request req_first_syn;
-   req_first_syn.object_name = "object1";
+   req_first_syn.object_name = "white_box";
    panda_softhand_msgs::set_object::Response resp_first_syn;
 
    ROS_INFO("Call the call_set_first_synergy");
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
    /* Update the value for the second synergy*/
    
    panda_softhand_msgs::set_object::Request req_second_syn;
-   req_second_syn.object_name = "object1";
+   req_second_syn.object_name = "white_box";
    panda_softhand_msgs::set_object::Response resp_second_syn;
 
    ROS_INFO("Call the call_set_first_synergy");
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
    /* Update the pose map for the OBJECT1*/
    
    panda_softhand_msgs::set_object::Request req_object1;
-   req_object1.object_name = "object1";
+   req_object1.object_name = "white_box";
    panda_softhand_msgs::set_object::Response resp_object1;
    
    bool success_call_set_object = task_sequencer_obj.call_set_object(req_object1,resp_object1);
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
    /* Update the place pose map for the OBJECT1*/
 
    panda_softhand_msgs::set_object::Request req_pose_place;
-   req_pose_place.object_name = "object1";
+   req_pose_place.object_name = "white_box";
    panda_softhand_msgs::set_object::Response resp_pose_place;
 
    ROS_INFO("Call the simple place task for OBJECT3");
@@ -114,29 +114,29 @@ int main(int argc, char **argv)
    req.data = true;
    std_srvs::SetBool::Response resp;
 
-   ROS_INFO("Call the simple grasp task for OBJECT1!");
+   // ROS_INFO("Call the simple grasp task for OBJECT1!");
    
-   bool success = task_sequencer_obj.call_simple_pick_and_place_task(req,resp);
+   // bool success = task_sequencer_obj.call_simple_pick_and_place_task(req,resp);
     
-   //Check the success and use of the response
+   // //Check the success and use of the response
 
-   if(success){
-      ROS_INFO_STREAM("Test service completed correctly: " << resp.success);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the service");
-   }
+   // if(success){
+   //    ROS_INFO_STREAM("Test service completed correctly: " << resp.success);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the service");
+   // }
 
    // #################### GO HOME #####################################
 
-   ROS_INFO("Call the simple home task!");
+   // ROS_INFO("Call the simple home task!");
    
-   success_home = task_sequencer_obj.call_simple_home_task(req_home,resp_home);
+   // success_home = task_sequencer_obj.call_simple_home_task(req_home,resp_home);
 
-   if(success_home){
-      ROS_INFO_STREAM("Test service completed correctly: " << resp_home.success);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the service");
-   }
+   // if(success_home){
+   //    ROS_INFO_STREAM("Test service completed correctly: " << resp_home.success);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the service");
+   // }
 
 
    // ########################### CUP ##################################
@@ -182,7 +182,7 @@ int main(int argc, char **argv)
 
    ROS_INFO("Call the simple_grasp_move_cup!");
    
-   success = task_sequencer_obj.call_simple_grasp_move_cup(req,resp);
+   bool success = task_sequencer_obj.call_simple_grasp_move_cup(req,resp);
     
    //Check the success and use of the response
 

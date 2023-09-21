@@ -3,10 +3,12 @@ Authors: George Jose Pollayil - Mathew Jose Pollayil
 Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 
 // Basic Includes
+#include <math.h>
 #include <string>
 #include "ros/ros.h"
 #include "Eigen/Dense"
 #include <eigen_conversions/eigen_msg.h>
+#include <tf/transform_datatypes.h>
 
 #include <tf/transform_listener.h>
 #include <geometry_msgs/Pose.h>
@@ -210,6 +212,8 @@ class TaskSequencer {
         std::vector<double> home_joints;
         std::vector<double> joint_pos_before_throwing;
         std::vector<double> grasp_transform;
+        std::vector<double> cup_replace_transform;
+        geometry_msgs::Pose cup_replace_pose;
         geometry_msgs::Pose grasp_T;
         std::vector<double> pre_grasp_transform;
         geometry_msgs::Pose pre_grasp_T;
