@@ -32,7 +32,7 @@
     </model>
 
 
-	<model name="TableRoof">
+	<!-- <model name="TableRoof">
 			<pose> 0.2 0.0 0.95 0.0 0.0 0.0</pose>
 			<static>true</static>
 			<link name='linkTableRoof'>
@@ -58,7 +58,7 @@
 				<self_collide>0</self_collide>		
 				<gravity>1</gravity>
 		   </link>
-    </model>
+    </model> -->
 
 	<model name="Table">
 			<pose> 0.42 0.0 0.01 0.0 0.0 0.0</pose>

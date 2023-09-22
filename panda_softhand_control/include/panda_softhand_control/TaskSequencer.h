@@ -216,7 +216,9 @@ class TaskSequencer {
         geometry_msgs::Pose cup_replace_pose;
         geometry_msgs::Pose grasp_T;
         std::vector<double> pre_grasp_transform;
+        std::vector<double> pre_grasp_transform_cup;
         geometry_msgs::Pose pre_grasp_T;
+        geometry_msgs::Pose pre_grasp_cup_T;
         std::vector<double> place_joints;
         std::vector<double> handover_joints;
         double handover_thresh;

@@ -87,7 +87,7 @@ task_sequencer:
 
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
   pre_grasp_transform: [0.0, 0.0, -0.1, 0.0, 0.0, 0.0]
-
+  pre_grasp_transform_cup: [0.0, 0.0, -0.06, 0.0, 0.0, 0.0]
   #
   place_transform : [0.680, -0.217, 0.169, 2.442, 0.397, -0.253]
   #
@@ -112,7 +112,7 @@ task_sequencer:
   first_synergy_map:
     "white_box" : 0.45
     "object2" : 0.5
-    "cup" : 0.63
+    "cup" : 0.73
 
   #Range for the second synergy: [-1.0, 1.0]
   second_synergy_map:

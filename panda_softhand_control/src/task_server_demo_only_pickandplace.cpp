@@ -191,6 +191,18 @@ int main(int argc, char **argv)
    } else {
       ROS_INFO_STREAM("Failed to completed the service");
    }
+
+   // #################### GO HOME #####################################
+
+   ROS_INFO("Call the simple home task!");
+   
+   success_home = task_sequencer_obj.call_simple_home_task(req_home,resp_home);
+
+   if(success_home){
+      ROS_INFO_STREAM("Test service completed correctly: " << resp_home.success);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the service");
+   }
    
 
 
