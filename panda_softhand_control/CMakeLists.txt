@@ -95,10 +95,9 @@ target_link_libraries(task_server ${catkin_LIBRARIES} ${ROS_LIBRARIES})
 
 # NODE: cpp file related to Throwing Task Service
 
-add_executable(task_server_demo src/task_server_demo.cpp ${OBJECTS_SOURCE_FILES})
-add_dependencies(task_server_demo ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} panda_softhand_msgs_generate_messages_cpp)
-target_link_libraries(task_server_demo ${catkin_LIBRARIES} ${ROS_LIBRARIES})
-
+add_executable(task_server_demo_only_pickandthrow src/task_server_demo_only_pickandthrow.cpp ${OBJECTS_SOURCE_FILES})
+add_dependencies(task_server_demo_only_pickandthrow ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} panda_softhand_msgs_generate_messages_cpp)
+target_link_libraries(task_server_demo_only_pickandthrow ${catkin_LIBRARIES} ${ROS_LIBRARIES})
 
 add_executable(task_server_demo_only_pickandplace src/task_server_demo_only_pickandplace.cpp ${OBJECTS_SOURCE_FILES})
 add_dependencies(task_server_demo_only_pickandplace ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} panda_softhand_msgs_generate_messages_cpp)

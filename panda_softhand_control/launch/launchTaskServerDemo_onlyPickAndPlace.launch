@@ -2,10 +2,10 @@
 <launch>
 
 	<!-- Launch arguments -->
-	<arg name="task_sequences_params" default="$(find panda_softhand_control)/configs/task_sequences_params.yaml"/>
+	<arg name="task_sequences_params" default="$(find panda_softhand_control)/configs/task_sequences_params_pick_and_place.yaml"/>
 	
 	<!-- Loading config file to param server -->
-	<rosparam command="load" file="$(arg task_sequences_params)"/>
+	<rosparam command="load" file="$(arg task_sequences_params_pick_and_place)"/>
 
 	<!-- Load main node -->
   	<node name="task_server_demo_only_pickandplace" pkg="panda_softhand_control" type="task_server_demo_only_pickandplace" output="screen"/>	

@@ -1,0 +1,129 @@
+#  Parameters for task sequencer
+# Remember that there might be other important constants that can only be changed from the src code.
+
+task_sequencer:
+  # Name of the robot
+  robot_name: panda_arm
+  # Name of the robot joints (without the number of the joints)
+  robot_joints_name: panda_joint
+  # Position controller
+  pos_controller: position_joint_trajectory_controller
+  # Impedance controller
+  imp_controller: cartesian_impedance_controller_softbots_stiff_matrix
+  # Name of the topic where the object pose is published (grasping)
+  object_topic_name: /grasping/chosen_object
+
+  ################# PREVACUUM JOINTS CONFIGURATION AND VACUUM TRANSFORM ########
+  # # Transform from object frame to vacuum pose frame (xyzrpy) (DEFAULT)
+  # vacuum_transform: [0.605, -0.202, 0.380, 1.600, -0.042, -0.207]
+  # # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
+  # pre_vacuum_transform: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  
+  pre_throwing_joints: [0.5541404542551751, 0.19007389494425606, -0.3473133880984834, -1.623168554762002, -0.007964679874295793, 1.806158020655314, 0.20244464170578372]
+  
+  # The personalized place joints maps for different prethrowing joint configurations
+
+  pre_throwing_joints_map:
+    "object2" : [0.3036950333152679, 0.2684377161580104, -0.2577416164285826, -1.5027883396669206, -1.5538190626435808, 1.7688275682866192, 0.18637837640335386]
+    
+  vacuum_transform: [0.765, 0.106, 0.281, 1.532, 0.042, 0.438]
+  
+  ############### JOINT THROWING CONFIGURATION ################################
+  
+  throwing_joints: [0.22192922823429168, 0.31658566300354113, -0.3053100136079347, -1.5176302940279485, 1.6006669440477033, 1.5463016421905607, 0.4057245869903457]
+
+  pre_throwing_transform: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+  throwing_transform: [0.647, 0.131, 0.644, -1.700, 0.775, -0.110]
+
+  duty_cycle: 255
+
+  # The joint configuration for place
+  place_joints: [-0.068, 0.152, 0.193, -2.352, 0.0405, 2.519, 0.117]
+  # The joint configuration for handover
+  handover_joints: [-0.101, 0.161, 0.159, -1.651, 2.023, 2.419, -0.006]
+  # The threshold on tau_ext for handover hand opening
+  handover_thresh: 1.0
+
+  # DARKO: Update map for throwing different objects
+
+  duty_cycle_map:
+    "object1" : 200
+    "object2" : 200
+    "object3" : 200
+  
+  pre_vacuum_transform: [0.0, 0.12, 0.0, 0.0, 0.0, 0.0]
+
+  throwing_joints_map: 
+    "object1" : [0.02540348443652077, -0.18720486238631742, -0.05494041982513448, -1.9509170009211487, 1.4688969827360576, 1.742439166060752, 0.6695532953675154]
+    "object2" : [0.03751108860477447, -0.24810663210509112, -0.05270184238593884, -1.9638007991192772, 1.5095280083641442, 1.5830251730138303, 1.051777264139391]
+    "object3" : [0.05331022987106843, -0.24793158693471035, -0.0339393377675464, -2.131727426662779, 1.589026137259271, 1.622215093478781, 0.19338969808034875]
+  
+  # The personalized place joints maps 
+  place_joints_map:
+    "middle12" : [0.07661606385153637, 0.33422404886526574, 0.150294620860357, -1.1043230171470189, -0.05647621116425888, 1.5700528297424314, 0.061656965438109404]
+
+  replace_hand_tool : [0.658, -0.199, 0.560, 1.569, 0.037, 0.271]
+  pre_replace_hand_tool: [0.0, 0.0, -0.05, 0.0, 0.0, 0.0]
+
+  ###################### DEMO BRIGHT ###############################
+
+  # The joint configuration for home
+  home_joints: [0.09945263436433549, -0.6283411450218737, -0.025625671577896386, -2.5165662718416164, -0.8806336501130351, 1.5183556343581943, -0.05930131581131025] 
+  
+  # The joint configuration before throwing
+  joint_pos_before_throwing: [-0.669860579385788, -0.4359766196660827, -0.6097316639883477, -2.5202082298339255, 1.6766842644082176, 2.2529873280315953, 0.13663060341916458]
+  
+  # The middle joint positions for the pick and place task
+
+  middle_joint_position: [0.05138207997213119, -0.8875569072027895, -0.1428291328851152, -2.3122273574628327, -0.17524381317090362, 1.217324275334684, -0.1413175670384533]
+  
+  ################## PREGRASP AND GRASP TRANSFORM ##############################
+  # Transform from object frame to grasp pose frame (xyzrpy) (DEFAULT)
+  # grasp_transform: [-0.04, -0.04, 0.145, -3.1415, 0.0, 0.0] (default) 
+
+  # rosrun tf tf_echo world right_hand_ee_link
+
+  grasp_transform: [0.745, -0.031, 0.179, 3.139, 0.005, 0.004]
+
+  # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
+  pre_grasp_transform: [0.0, 0.0, -0.23, 0.0, 0.0, 0.0]
+  pre_grasp_transform_cup: [0.0, 0.0, -0.06, 0.0, 0.0, 0.0]
+  #
+  place_transform : [0.680, -0.217, 0.169, 2.442, 0.397, -0.253]
+  #
+  pre_place_transform: [0.0, 0.0, -0.17, 0.0, 0.0, 0.0]
+
+  # The personalized grasp pose maps for different objects
+  poses_map:
+    "white_box" : [0.679, 0.239, 0.163, 2.990, 0.213, -0.485]
+    "oven_gel" : [0.645, -0.260, 0.131, 3.111, 0.013, -0.354]
+    "cup" : [0.692, -0.119, 0.245, -2.563, -0.489, 0.425]
+
+  #  "posaAleP" : [0.692, -0.119, 0.245, -2.563, -0.489, 0.425]
+  
+  # The personalized place pose maps for different objects
+  place_pose_map:
+    "white_box" : [0.267, 0.092, 0.443, 2.704, 0.740, 0.076]
+    "oven_gel" : [0.300, -0.169, 0.435, -2.018, 0.665, 0.068]
+    "cup" : [0.699, -0.168, 0.287, -2.614, 0.088, 0.432]
+
+  first_syn_value: 0.8
+  second_syn_value: 0.1
+  
+  #0.73 Range for the first synergy: [0.0, 1.0]
+  first_synergy_map:
+    "white_box" : 0.6
+    "oven_gel" : 0.35
+    "cup" : 0.65
+  
+  #Range for the second synergy: [-1.0, 1.0]
+  second_synergy_map:
+    "white_box" :  0.1
+    "oven_gel" :  0.1
+    "cup" :  1.0
+
+  cup_replace_pose: [0.710, -0.148, 0.240, -3.036, -0.607, 0.746]
+  
+  ## Object pose for throwing
+  first_object_pose:  [1.3, -0.2, 0.0, 0.0, 0.0, 0.0]
+  second_object_pose: [1.3, -0.1, 0.0, 0.0, 0.0, 0.0]

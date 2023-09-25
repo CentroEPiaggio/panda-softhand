@@ -205,10 +205,6 @@ int main(int argc, char **argv)
    }
 
 
-
-
-
-
    // ######################### OVEN GEL #########################################
    
      /* Update the value for the first synergy*/
