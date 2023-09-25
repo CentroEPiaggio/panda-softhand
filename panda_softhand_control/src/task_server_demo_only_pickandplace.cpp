@@ -114,29 +114,29 @@ int main(int argc, char **argv)
    req.data = true;
    std_srvs::SetBool::Response resp;
 
-   // ROS_INFO("Call the simple grasp task for OBJECT1!");
+   ROS_INFO("Call the simple grasp task for OBJECT1!");
    
-   // bool success = task_sequencer_obj.call_simple_pick_and_place_task(req,resp);
+   bool success = task_sequencer_obj.call_simple_pick_and_place_task(req,resp);
     
-   // //Check the success and use of the response
+   //Check the success and use of the response
 
-   // if(success){
-   //    ROS_INFO_STREAM("Test service completed correctly: " << resp.success);
-   // } else {
-   //    ROS_INFO_STREAM("Failed to completed the service");
-   // }
+   if(success){
+      ROS_INFO_STREAM("Test service completed correctly: " << resp.success);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the service");
+   }
 
    // #################### GO HOME #####################################
 
-   // ROS_INFO("Call the simple home task!");
+   ROS_INFO("Call the simple home task!");
    
-   // success_home = task_sequencer_obj.call_simple_home_task(req_home,resp_home);
+   success_home = task_sequencer_obj.call_simple_home_task(req_home,resp_home);
 
-   // if(success_home){
-   //    ROS_INFO_STREAM("Test service completed correctly: " << resp_home.success);
-   // } else {
-   //    ROS_INFO_STREAM("Failed to completed the service");
-   // }
+   if(success_home){
+      ROS_INFO_STREAM("Test service completed correctly: " << resp_home.success);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the service");
+   }
 
 
    // ########################### CUP ##################################
@@ -182,7 +182,7 @@ int main(int argc, char **argv)
 
    ROS_INFO("Call the simple_grasp_move_cup!");
    
-   bool success = task_sequencer_obj.call_simple_grasp_move_cup(req,resp);
+   success = task_sequencer_obj.call_simple_grasp_move_cup(req,resp);
     
    //Check the success and use of the response
 
