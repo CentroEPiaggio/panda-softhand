@@ -1238,8 +1238,8 @@ bool TaskSequencer::call_simple_grasp_move_cup(std_srvs::SetBool::Request &req, 
         res.message = "The service call_simple_grasp_task was NOT performed correctly! Error wait in arm control.";
         return false;
     }
-         std::cout << "Sono prima di chiudere la mano" << std::endl;
-     getchar();
+    //  std::cout << "Sono prima di chiudere la mano" << std::endl;
+    //  getchar();
 
     /*EXEC 4: Close the hand*/
 

@@ -136,74 +136,8 @@ int main(int argc, char **argv)
       ROS_INFO_STREAM("Test service completed correctly: " << resp_home.success);
    } else {
       ROS_INFO_STREAM("Failed to completed the service");
+      
    }
-
-
-   // ########################### CUP ##################################
-
-  
-   req_first_syn.object_name = "cup";
-
-   ROS_INFO("Call the call_set_first_synergy");
-
-   success_call_first_syn = task_sequencer_obj.call_set_first_synergy(req_first_syn,resp_first_syn);
-   
-   if(success_call_first_syn){
-      ROS_INFO_STREAM("Call_set_first synergy service completed correctly: " << resp_first_syn.result);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
-   }
-
-   /* Update the value for the second synergy*/
-   
-   req_second_syn.object_name = "cup";
-
-   ROS_INFO("Call the call_set_second_synergy");
-
-   success_call_second_syn = task_sequencer_obj.call_set_second_synergy(req_second_syn,resp_second_syn);
-   
-   if(success_call_second_syn){
-      ROS_INFO_STREAM("Call_set second synergy service completed correctly: " << resp_second_syn.result);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the call set second synergy service");
-   }
-   
-   /* Update the pose map for the "CUP"*/
-   
-   req_object1.object_name = "cup";
-   
-   success_call_set_object = task_sequencer_obj.call_set_object(req_object1,resp_object1);
-   
-   if(success_call_set_object){
-      ROS_INFO_STREAM("Call_set_object service completed correctly: " << resp_object1.result);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the call set object service");
-   }
-
-   ROS_INFO("Call the simple_grasp_move_cup!");
-   
-   success = task_sequencer_obj.call_simple_grasp_move_cup(req,resp);
-    
-   //Check the success and use of the response
-
-   if(success){
-      ROS_INFO_STREAM("Test service completed correctly: " << resp.success);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the service");
-   }
-
-   // #################### GO HOME #####################################
-
-   ROS_INFO("Call the simple home task!");
-   
-   success_home = task_sequencer_obj.call_simple_home_task(req_home,resp_home);
-
-   if(success_home){
-      ROS_INFO_STREAM("Test service completed correctly: " << resp_home.success);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the service");
-   }
-
 
    // ######################### OVEN GEL #########################################
    
@@ -290,6 +224,72 @@ int main(int argc, char **argv)
    }
 
    //
+
+   ROS_INFO("Call the simple home task!");
+   
+   success_home = task_sequencer_obj.call_simple_home_task(req_home,resp_home);
+
+   if(success_home){
+      ROS_INFO_STREAM("Test service completed correctly: " << resp_home.success);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the service");
+   }
+
+
+   // ########################### CUP ##################################
+
+  
+   req_first_syn.object_name = "cup";
+
+   ROS_INFO("Call the call_set_first_synergy");
+
+   success_call_first_syn = task_sequencer_obj.call_set_first_synergy(req_first_syn,resp_first_syn);
+   
+   if(success_call_first_syn){
+      ROS_INFO_STREAM("Call_set_first synergy service completed correctly: " << resp_first_syn.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call_set_duty_cycle service");
+   }
+
+   /* Update the value for the second synergy*/
+   
+   req_second_syn.object_name = "cup";
+
+   ROS_INFO("Call the call_set_second_synergy");
+
+   success_call_second_syn = task_sequencer_obj.call_set_second_synergy(req_second_syn,resp_second_syn);
+   
+   if(success_call_second_syn){
+      ROS_INFO_STREAM("Call_set second synergy service completed correctly: " << resp_second_syn.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call set second synergy service");
+   }
+   
+   /* Update the pose map for the "CUP"*/
+   
+   req_object1.object_name = "cup";
+   
+   success_call_set_object = task_sequencer_obj.call_set_object(req_object1,resp_object1);
+   
+   if(success_call_set_object){
+      ROS_INFO_STREAM("Call_set_object service completed correctly: " << resp_object1.result);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the call set object service");
+   }
+
+   ROS_INFO("Call the simple_grasp_move_cup!");
+   
+   success = task_sequencer_obj.call_simple_grasp_move_cup(req,resp);
+    
+   //Check the success and use of the response
+
+   if(success){
+      ROS_INFO_STREAM("Test service completed correctly: " << resp.success);
+   } else {
+      ROS_INFO_STREAM("Failed to completed the service");
+   }
+
+   // #################### GO HOME #####################################
 
    ROS_INFO("Call the simple home task!");
    
