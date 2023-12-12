@@ -24,7 +24,7 @@ int main(int argc, char **argv)
    // ROS Async spinner (necessary for processing callbacks inside the service callbacks)
    ros::AsyncSpinner spinner(2);
    spinner.start();
-   
+   while(ros::ok()){
    // bool switch_done = task_sequencer_obj.switch_controllers("panda_arm","computed_torque_controller");
 
    // ##################### OBJECT1 ###################################
@@ -107,6 +107,10 @@ int main(int argc, char **argv)
       ROS_INFO_STREAM("Failed to completed the service");
    }
 
+   std::cout << "Sei pronto a fare ripartire la demo? Se si, premi un qualsiasi tasto! " << std::endl;
+   getchar();
+
+
    /* 1) Call simple grasp task for OBJECT1*/
    //Create the request and response object
    
@@ -138,7 +142,9 @@ int main(int argc, char **argv)
       ROS_INFO_STREAM("Failed to completed the service");
       
    }
+   
 
+   
    // ######################### OVEN GEL #########################################
    
      /* Update the value for the first synergy*/
@@ -234,7 +240,8 @@ int main(int argc, char **argv)
    } else {
       ROS_INFO_STREAM("Failed to completed the service");
    }
-
+   
+  
 
    // ########################### CUP ##################################
 
@@ -291,18 +298,18 @@ int main(int argc, char **argv)
 
    // #################### GO HOME #####################################
 
-   ROS_INFO("Call the simple home task!");
+   // ROS_INFO("Call the simple home task!");
    
-   success_home = task_sequencer_obj.call_simple_home_task(req_home,resp_home);
+   // success_home = task_sequencer_obj.call_simple_home_task(req_home,resp_home);
 
-   if(success_home){
-      ROS_INFO_STREAM("Test service completed correctly: " << resp_home.success);
-   } else {
-      ROS_INFO_STREAM("Failed to completed the service");
-   }
+   // if(success_home){
+   //    ROS_INFO_STREAM("Test service completed correctly: " << resp_home.success);
+   // } else {
+   //    ROS_INFO_STREAM("Failed to completed the service");
+   // }
 
    // ##############################################################################
-
+   }
    spinner.stop();
    return 0;
 }

@@ -36,7 +36,7 @@ int main(int argc, char **argv)
    //
    ros::Publisher pub_pose_Giorgio = nh_.advertise<geometry_msgs::PoseStamped>("/throw_node/throw_pos_des", 1);
    ros::Publisher pub_int_Giorgio = nh_.advertise<std_msgs::Int64>("/throw_node/throw_state", 1);
-   
+   ros::Publisher pub_franka_recovery = nh_.advertise<franka_msgs::ErrorRecoveryActionGoal>("/panda_arm/franka_control/error_recovery/goal", 1);
    // Listening to the completion of the task
    ros::Subscriber action_task_completion = nh_.subscribe("/throw_node/throw_ack", 1, &ackCallback);
 
@@ -115,8 +115,6 @@ int main(int argc, char **argv)
    } else {
       ROS_INFO_STREAM("Failed to completed the call set object service");
    }
-   // Switch controller 
-   // switch_done = task_sequencer_obj.switch_controllers("panda_arm","position_joint_trajectory_controller");
    
    // ############################# GO HOME ############################################
 
@@ -155,11 +153,7 @@ int main(int argc, char **argv)
 
    bool switch_done = task_sequencer_obj.switch_controllers("panda_arm","computed_torque_controller");
    
-   // std::cout << "Controlla se hai fatto lo switch del controllore" << std::endl;
-   // getchar();
-   sleep(1.0);
-
-   //
+   // //
    /*THROW 2*/
    geometry_msgs::PoseStamped first_object_pose_stamped;
    first_object_pose_stamped.pose.position.x = first_object_pose.position.x;
@@ -186,15 +180,18 @@ int main(int argc, char **argv)
       ROS_INFO("I haven't finished to perform the throw phase yet!");
       rate.sleep();
    }
-   sleep(1.0);
+   sleep(0.1);
   
    switch_done = task_sequencer_obj.switch_controllers("panda_arm","position_joint_trajectory_controller");
+   sleep(0.1);
+   franka_msgs::ErrorRecoveryActionGoal recovery;
+   pub_franka_recovery.publish(recovery);
    sleep(1.0);
 
-   // // // // ##############################################################################
+   // // // // // ##############################################################################
 
 
-   // // // // ##################### OBJECT2 ###################################
+   // // // // // ##################### OBJECT2 ###################################
 
    /* Update the value for the first synergy*/
    
@@ -242,7 +239,7 @@ int main(int argc, char **argv)
       ROS_INFO_STREAM("Failed to completed the call set object service");
    }
    
-   // ##################### GO HOME ####################################
+   // // ##################### GO HOME ####################################
 
    ROS_INFO("Call the simple home task!");
    
@@ -273,9 +270,8 @@ int main(int argc, char **argv)
       ROS_INFO_STREAM("Failed to completed the service");
    }
 
-
    switch_done = task_sequencer_obj.switch_controllers("panda_arm","computed_torque_controller");
-   sleep(1.0);
+   sleep(0.1);
    
    finished_task.data = 0;
 
@@ -302,11 +298,14 @@ int main(int argc, char **argv)
       ROS_INFO("I haven't finished to perform the throw phase yet!");
       rate.sleep();
    }
-   sleep(1.0);
+   sleep(0.5);
 
    switch_done = task_sequencer_obj.switch_controllers("panda_arm","position_joint_trajectory_controller");
-   sleep(1.0);
+   sleep(0.5);
    // #############################GO HOME ################################################
+   
+   pub_franka_recovery.publish(recovery);
+   sleep(1.0);
 
    ROS_INFO("Call the simple home task!");
    

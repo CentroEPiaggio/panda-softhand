@@ -71,7 +71,7 @@ task_sequencer:
   home_joints: [0.09945263436433549, -0.6283411450218737, -0.025625671577896386, -2.5165662718416164, -0.8806336501130351, 1.5183556343581943, -0.05930131581131025] 
   
   # The joint configuration before throwing
-  joint_pos_before_throwing: [-0.669860579385788, -0.4359766196660827, -0.6097316639883477, -2.5202082298339255, 1.6766842644082176, 2.2529873280315953, 0.13663060341916458]
+  joint_pos_before_throwing: [-0.39766307033153925, 0.005394921426591043, -1.2125469126245407, -2.2737026124312494, 2.052360616591242, 1.8055766798655193, -0.3568494304153654]
   
   # The middle joint positions for the pick and place task
 
@@ -113,7 +113,7 @@ task_sequencer:
   #0.73 Range for the first synergy: [0.0, 1.0]
   first_synergy_map:
     "white_box" : 0.6
-    "oven_gel" : 0.45
+    "oven_gel" : 0.5
     "cup" : 0.65
   
   #Range for the second synergy: [-1.0, 1.0]
@@ -125,5 +125,5 @@ task_sequencer:
   cup_replace_pose: [0.710, -0.148, 0.240, -3.036, -0.607, 0.746]
   
   ## Object pose for throwing
-  first_object_pose:  [1.3, -0.2, 0.0, 0.0, 0.0, 0.0]
-  second_object_pose: [1.3, -0.1, 0.0, 0.0, 0.0, 0.0]
+  first_object_pose:  [1.25, 0.0, 0.0, 0.0, 0.0, 0.0]
+  second_object_pose: [1.25, 0.0, 0.0, 0.0, 0.0, 0.0]

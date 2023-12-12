@@ -114,7 +114,7 @@ task_sequencer:
   first_synergy_map:
     "white_box" : 0.45
     "oven_gel" : 0.5
-    "cup" : 0.65
+    "cup" : 0.68
   
   #Range for the second synergy: [-1.0, 1.0]
   second_synergy_map:
