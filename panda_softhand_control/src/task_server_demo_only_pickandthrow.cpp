@@ -180,13 +180,13 @@ int main(int argc, char **argv)
       ROS_INFO("I haven't finished to perform the throw phase yet!");
       rate.sleep();
    }
-   sleep(0.1);
+   sleep(1.0);
   
    switch_done = task_sequencer_obj.switch_controllers("panda_arm","position_joint_trajectory_controller");
-   sleep(0.1);
+   sleep(1.0);
    franka_msgs::ErrorRecoveryActionGoal recovery;
    pub_franka_recovery.publish(recovery);
-   sleep(1.0);
+   sleep(3.0);
 
    // // // // // ##############################################################################
 
@@ -271,7 +271,7 @@ int main(int argc, char **argv)
    }
 
    switch_done = task_sequencer_obj.switch_controllers("panda_arm","computed_torque_controller");
-   sleep(0.1);
+   sleep(1.0);
    
    finished_task.data = 0;
 
@@ -298,14 +298,14 @@ int main(int argc, char **argv)
       ROS_INFO("I haven't finished to perform the throw phase yet!");
       rate.sleep();
    }
-   sleep(0.5);
+   sleep(1.0);
 
    switch_done = task_sequencer_obj.switch_controllers("panda_arm","position_joint_trajectory_controller");
-   sleep(0.5);
+   sleep(1.0);
    // #############################GO HOME ################################################
    
    pub_franka_recovery.publish(recovery);
-   sleep(1.0);
+   sleep(3.0);
 
    ROS_INFO("Call the simple home task!");
    

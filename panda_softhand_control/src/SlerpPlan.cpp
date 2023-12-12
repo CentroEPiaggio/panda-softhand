@@ -150,8 +150,8 @@ bool SlerpPlan::performMotionPlan(){
     }
 
 	// Scale the velocity and acceleration of the computed trajectory
-    const double velocity_scaling_factor = 0.3; // Set your desired velocity scaling factor
-    const double acceleration_scaling_factor = 0.1; // Set your desired acceleration scaling factor
+    const double velocity_scaling_factor = 0.7; // Set your desired velocity scaling factor
+    const double acceleration_scaling_factor = 0.25; // Set your desired acceleration scaling factor
 
 	// Planning for the waypoints path
 	moveit_msgs::RobotTrajectory trajectory;
