@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<!-- THIS FILE LAUNCHES THE FRANKA EMIKA PANDA + SOFTHAND: BOTH THE PACKAGES ARE NEEDED -->
+<launch>
+    <!-- Loading MoveIt interface -->
+
+    <include file="$(find panda_softhand_moveit_config)/launch/demo.launch">
+       <arg name="moveit_controller_manager" value="fake" />
+    </include>
+</launch>
