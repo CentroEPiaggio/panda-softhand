@@ -12,7 +12,7 @@
     <arg name="load_gripper" default="false"/>
 
     <!-- Hand/Glove params -->
-    <arg name="right_hand_enabled" default="false"/>
+    <arg name="right_hand_enabled" default="true"/>
 
     <!-- Utilities -->
     <arg name="environment_name" default="panda_darko"/>

@@ -71,7 +71,7 @@ task_sequencer:
   home_joints: [0.09945263436433549, -0.6283411450218737, -0.025625671577896386, -2.5165662718416164, -0.8806336501130351, 1.5183556343581943, -0.05930131581131025] 
   
   # The joint configuration before throwing
-  joint_pos_before_throwing: [-0.39766307033153925, 0.005394921426591043, -1.2125469126245407, -2.2737026124312494, 2.052360616591242, 1.8055766798655193, -0.3568494304153654]
+  joint_pos_before_throwing: [0.2856146451772111, -0.2995697439219321, -0.6450798610469751, -2.444997846207155, 1.1953587619463601, 1.432329625285115, -0.6197816941782119]
   
   # The middle joint positions for the pick and place task
 
@@ -86,7 +86,7 @@ task_sequencer:
   grasp_transform: [0.745, -0.031, 0.179, 3.139, 0.005, 0.004]
 
   # Transform from grasp pose frame to pre-grasp pose frame (xyzrpy)
-  pre_grasp_transform: [0.0, 0.0, -0.23, 0.0, 0.0, 0.0]
+  pre_grasp_transform: [0.0, 0.0, -0.18, 0.0, 0.0, 0.0]
   pre_grasp_transform_cup: [0.0, 0.0, -0.06, 0.0, 0.0, 0.0]
   #
   place_transform : [0.680, -0.217, 0.169, 2.442, 0.397, -0.253]
@@ -95,9 +95,9 @@ task_sequencer:
 
   # The personalized grasp pose maps for different objects
   poses_map:
-    "white_box" : [0.679, 0.239, 0.163, 2.990, 0.213, -0.485]
-    "oven_gel" : [0.645, -0.260, 0.131, 3.111, 0.013, -0.354]
-    "cup" : [0.692, -0.119, 0.245, -2.563, -0.489, 0.425]
+    "white_box" : [0.632, -0.155, 0.098, 3.016, 0.187, -0.67]
+    "oven_gel" : [0.596, 0.204, 0.103, 3.083, 0.117, 1.063]
+    "cup" : [0.596, 0.204, 0.103, 3.083, 0.117, 1.063]
 
   #  "posaAleP" : [0.692, -0.119, 0.245, -2.563, -0.489, 0.425]
   
@@ -106,6 +106,7 @@ task_sequencer:
     "white_box" : [0.267, 0.092, 0.443, 2.704, 0.740, 0.076]
     "oven_gel" : [0.300, -0.169, 0.435, -2.018, 0.665, 0.068]
     "cup" : [0.699, -0.168, 0.287, -2.614, 0.088, 0.432]
+    # "white_box" : [0.267, 0.092, 0.443, 2.704, 0.740, 0.076]
 
   first_syn_value: 0.8
   second_syn_value: 0.1
@@ -113,7 +114,7 @@ task_sequencer:
   #0.73 Range for the first synergy: [0.0, 1.0]
   first_synergy_map:
     "white_box" : 0.6
-    "oven_gel" : 0.5
+    "oven_gel" : 0.6
     "cup" : 0.65
   
   #Range for the second synergy: [-1.0, 1.0]
@@ -125,5 +126,5 @@ task_sequencer:
   cup_replace_pose: [0.710, -0.148, 0.240, -3.036, -0.607, 0.746]
   
   ## Object pose for throwing
-  first_object_pose:  [1.25, 0.0, 0.0, 0.0, 0.0, 0.0]
-  second_object_pose: [1.25, 0.0, 0.0, 0.0, 0.0, 0.0]
+  first_object_pose:  [0.50, 1.2, 0.0, 0.0, 0.0, 0.0]
+  second_object_pose: [0.50, 1.1, 0.0, 0.0, 0.0, 0.0]

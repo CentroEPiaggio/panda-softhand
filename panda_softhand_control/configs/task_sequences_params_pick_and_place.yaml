@@ -95,16 +95,16 @@ task_sequencer:
 
   # The personalized grasp pose maps for different objects
   poses_map:
-    "white_box" : [0.652, 0.225, 0.170, 3.098, 0.364, -0.399]
-    "oven_gel" : [0.645, -0.261, 0.138, 3.106, 0.164, -0.704]
+    "white_box" : [0.612, 0.273, 0.171, 2.900, 0.299, -0.742]
+    "oven_gel" : [0.600, -0.203, 0.161, 3.041, 0.332, -0.833]
     "cup" : [0.692, -0.119, 0.245, -2.563, -0.489, 0.425]
 
   #  "posaAleP" : [0.692, -0.119, 0.245, -2.563, -0.489, 0.425]
   
   # The personalized place pose maps for different objects
   place_pose_map:
-    "white_box" : [0.267, 0.092, 0.443, 2.704, 0.740, 0.076]
-    "oven_gel" : [0.300, -0.169, 0.435, -2.018, 0.665, 0.068]
+    "white_box" : [0.280, -0.139, 0.429, -2.935, 0.579, -0.360]
+    "oven_gel" : [0.280, -0.139, 0.429, -2.935, 0.579, -0.360]
     "cup" : [0.699, -0.168, 0.287, -2.614, 0.088, 0.432]
 
   first_syn_value: 0.8
@@ -112,7 +112,7 @@ task_sequencer:
   
   #0.73 Range for the first synergy: [0.0, 1.0]
   first_synergy_map:
-    "white_box" : 0.45
+    "white_box" : 0.55
     "oven_gel" : 0.5
     "cup" : 0.68
   

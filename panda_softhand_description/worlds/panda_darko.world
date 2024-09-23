@@ -61,7 +61,7 @@
     </model> -->
 
 	<model name="Table">
-			<pose> 0.42 0.0 0.03 0.0 0.0 0.0</pose>
+			<pose> 0.42 0.0 -0.1 0.0 0.0 0.0</pose>
 			<static>true</static>
 			<link name='linkTable'>
 				<pose>0 0 0 0 0 0</pose>
@@ -143,7 +143,7 @@
 				<gravity>1</gravity>
 			</link>
     </model>
-
+<!-- 
 	<model name="Box">  
 			<pose>0.690 0.007 0.12 0 0 0 </pose>
 			<static>true</static>
@@ -170,7 +170,7 @@
 				<self_collide>0</self_collide>
 				<gravity>1</gravity>
 			</link>
-    </model>
+    </model> -->
 
 	<!-- <model name="wall_dx">
 			<pose> 0.25 0.28 0.09 0 0 0</pose>
