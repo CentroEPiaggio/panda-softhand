@@ -1,11 +1,11 @@
 moveit_setup_assistant_config:
   URDF:
     package: panda_softhand_description
-    relative_path: robot/panda_softhand.urdf.xacro
+    relative_path: robot/urdf/panda_softhand.urdf.xacro
     xacro_args: ""
   SRDF:
     relative_path: config/panda_softhand.srdf
   CONFIG:
     author_name: Stefano Angeli
     author_email: stefano.angeli@ing.unipi.it
-    generated_timestamp: 1694328480
+    generated_timestamp: 1729262097

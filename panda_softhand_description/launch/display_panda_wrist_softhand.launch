@@ -1,0 +1,19 @@
+<launch>
+    <!-- LAUNCH ARGUMENTS -->
+    <arg name="model" default="$(find panda_softhand_description)/robot/urdf/panda_softhand.urdf.xacro"/>
+    
+    <!-- START LAUNCH -->
+  
+    <!-- Robot description -->
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(arg model)" />
+    
+    <!-- Launch joint state publisher GUI -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+    
+    <!-- Launch robot state publisher to compute the TF -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    
+    <!-- RViz for visualization -->
+    <node pkg="rviz" type="rviz" output="screen" name="rviz" args="-d $(find panda_softhand_description)/rviz/urdf_all.rviz"/>
+    
+  </launch>

@@ -37,8 +37,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 # find_package(SDFormat REQUIRED)
-find_package(sdformat10 REQUIRED)
 find_package(panda_softhand_msgs REQUIRED)
+find_package(sdformat11 REQUIRED)
+find_package(Eigen3 REQUIRED)
+
 
 catkin_package(
   INCLUDE_DIRS include

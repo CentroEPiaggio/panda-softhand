@@ -1,5 +1,5 @@
-stomp/panda_arm:
-  group_name: panda_arm
+stomp/panda_softhand_arm:
+  group_name: panda_softhand_arm
   optimization:
     num_timesteps: 60
     num_iterations: 40
