@@ -141,84 +141,84 @@ int main(int argc, char **argv)
    {
       ROS_INFO("Recovery not needed. Robot is in a valid mode.");
    }
-   // sleep(2.0);
-   // bool switch_done = task_sequencer_obj.switch_controllers("panda_arm","computed_torque_controller");
+   sleep(1.0);
+   bool switch_done = task_sequencer_obj.switch_controllers("panda_arm","computed_torque_controller");
 
    // ############################# GO HOME ############################################
 
-   std_srvs::SetBool::Request req_home;
-   req_home.data = true;
-   std_srvs::SetBool::Response resp_home;
+   // std_srvs::SetBool::Request req_home;
+   // req_home.data = true;
+   // std_srvs::SetBool::Response resp_home;
 
-   ROS_INFO("Call the simple home task!");
+   // ROS_INFO("Call the simple home task!");
 
-   // bool success_home = task_sequencer_obj.call_simple_home_task(req_home, resp_home);
+   // // bool success_home = task_sequencer_obj.call_simple_home_task(req_home, resp_home);
 
-   // if (success_home)
+   // // if (success_home)
+   // // {
+   // //    ROS_INFO_STREAM("Test service completed correctly: " << resp_home.success);
+   // // }
+   // // else
+   // // {
+   // //    ROS_INFO_STREAM("Failed to completed the service");
+   // // }
+
+   // /* 1) Call simple grasp task for OBJECT1*/
+   // // Create the request and response object
+
+   // darko_manipulation_msgs::grasp::Request req;
+   // darko_manipulation_msgs::grasp::Response res;
+
+   // req.grasp_pose.position.x = 0.438;
+   // req.grasp_pose.position.y = 0.700;
+   // req.grasp_pose.position.z = 0.317;
+   // req.grasp_pose.orientation.x = 0.581;
+   // req.grasp_pose.orientation.y = 0.739;
+   // req.grasp_pose.orientation.z = 0.236;
+   // req.grasp_pose.orientation.w = -0.247;
+   // req.data = true;
+
+   // ROS_INFO("Call the simple grasp task for OBJECT1!");
+
+   // bool success = task_sequencer_obj.call_simple_grasp_task(req, res);
+
+   // // Check the success and use of the response
+
+   // if (success)
    // {
-   //    ROS_INFO_STREAM("Test service completed correctly: " << resp_home.success);
+   //    ROS_INFO_STREAM("Test service completed correctly: " << res.success);
    // }
    // else
    // {
    //    ROS_INFO_STREAM("Failed to completed the service");
    // }
 
-   /* 1) Call simple grasp task for OBJECT1*/
-   // Create the request and response object
+   // success = task_sequencer_obj.call_simple_grasp_task(req, res);
 
-   darko_manipulation_msgs::grasp::Request req;
-   darko_manipulation_msgs::grasp::Response res;
+   // // Check the success and use of the response
 
-   req.grasp_pose.position.x = 0.438;
-   req.grasp_pose.position.y = 0.700;
-   req.grasp_pose.position.z = 0.317;
-   req.grasp_pose.orientation.x = 0.581;
-   req.grasp_pose.orientation.y = 0.739;
-   req.grasp_pose.orientation.z = 0.236;
-   req.grasp_pose.orientation.w = -0.247;
-   req.data = true;
-
-   ROS_INFO("Call the simple grasp task for OBJECT1!");
-
-   bool success = task_sequencer_obj.call_simple_grasp_task(req, res);
-
-   // Check the success and use of the response
-
-   if (success)
-   {
-      ROS_INFO_STREAM("Test service completed correctly: " << res.success);
-   }
-   else
-   {
-      ROS_INFO_STREAM("Failed to completed the service");
-   }
-
-   success = task_sequencer_obj.call_simple_grasp_task(req, res);
-
-   // Check the success and use of the response
-
-   if (success)
-   {
-      ROS_INFO_STREAM("Test service completed correctly: " << res.success);
-   }
-   else
-   {
-      ROS_INFO_STREAM("Failed to completed the service");
-   }
+   // if (success)
+   // {
+   //    ROS_INFO_STREAM("Test service completed correctly: " << res.success);
+   // }
+   // else
+   // {
+   //    ROS_INFO_STREAM("Failed to completed the service");
+   // }
 
    // bool switch_done = task_sequencer_obj.switch_controllers("panda_arm", "computed_torque_controller");
 
    // // //
    // /*THROW 2*/
-   // geometry_msgs::PoseStamped first_object_pose_stamped;
-   // first_object_pose_stamped.pose.position.x = first_object_pose.position.x;
-   // first_object_pose_stamped.pose.position.y = first_object_pose.position.y;
-   // first_object_pose_stamped.pose.position.z = first_object_pose.position.z;
+   geometry_msgs::PoseStamped first_object_pose_stamped;
+   first_object_pose_stamped.pose.position.x = first_object_pose.position.x;
+   first_object_pose_stamped.pose.position.y = first_object_pose.position.y;
+   first_object_pose_stamped.pose.position.z = first_object_pose.position.z;
 
-   // first_object_pose_stamped.pose.orientation.x = first_object_pose.orientation.x;
-   // first_object_pose_stamped.pose.orientation.y = first_object_pose.orientation.y;
-   // first_object_pose_stamped.pose.orientation.z = first_object_pose.orientation.z;
-   // first_object_pose_stamped.pose.orientation.w = first_object_pose.orientation.w;
+   first_object_pose_stamped.pose.orientation.x = first_object_pose.orientation.x;
+   first_object_pose_stamped.pose.orientation.y = first_object_pose.orientation.y;
+   first_object_pose_stamped.pose.orientation.z = first_object_pose.orientation.z;
+   first_object_pose_stamped.pose.orientation.w = first_object_pose.orientation.w;
 
    // pub_pose_Giorgio.publish(first_object_pose_stamped);
 

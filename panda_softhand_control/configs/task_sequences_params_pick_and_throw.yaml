@@ -216,5 +216,5 @@ task_sequencer:
   cup_replace_pose: [0.710, -0.148, 0.240, -3.036, -0.607, 0.746]
 
   ## Object pose for throwing
-  first_object_pose: [0.50, 1.2, 0.0, 0.0, 0.0, 0.0]
+  first_object_pose: [1.2, 0.0, 0.0, 0.0, 0.0, 0.0]
   second_object_pose: [0.50, 1.1, 0.0, 0.0, 0.0, 0.0]
