@@ -59,24 +59,39 @@
       rpy="${arm_orientation_r} ${arm_orientation_p} ${arm_orientation_y}" />
   </xacro:darko_franka_robot>
 
-  <!-- RIGHT SOFTHAND2 -->
-  <xacro:arg
-    name="namespace" default="qbhand1m" />
-  <xacro:build_hand_from_yaml_with_90_deg_flange
-    configuration="qbhand_right"
+  <!-- <joint
+    name="panda_link8_to_root_link_joint" type="fixed">
+    <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+    <parent link="panda_link8" />
+    <child link="root_link" />
+  </joint>
+
+  <link name="root_link" /> -->
+
+  <!-- RIGHT SOFTHAND1 -->
+  <xacro:arg name="namespace" default="qbhand1" />
+  <xacro:build_hand_from_yaml_with_90_deg_flange configuration="qbhand_right"
     namespace="$(arg namespace)" parent="panda_link8" parent_link_suffix="">
     <origin xyz="0.045 0 0.035" rpy="1.57 0 1.57" />
   </xacro:build_hand_from_yaml_with_90_deg_flange>
 
-  <!-- EXTRA ENDEFFECTOR -->
+  <!-- EXTRA ENDEFFECTOR Classical one -->
   <joint
     name="right_hand_ee_joint" type="fixed">
-    <origin xyz="0.102 -0.003 0.037" rpy="0 0 0" />
+    <origin xyz="0.13 -0.003 0.037" rpy="0 0 0" />
     <parent link="panda_link8" />
     <child link="right_hand_ee_link" />
   </joint>
 
   <link name="right_hand_ee_link">
   </link>
+
+  <!-- Thumb index ee link frame -->
+  <link name="thumb_index_ee_link" />
+  <joint name="thumb_index_ee_joint" type="fixed">
+    <origin xyz="0.07 -0.04 0.03" rpy="0 0.5 -1.0" />
+    <parent link="right_hand_ee_link" />
+    <child link="thumb_index_ee_link" />
+  </joint>
 
 </robot>

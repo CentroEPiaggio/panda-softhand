@@ -1,5 +1,4 @@
-float64 goal_first_syn
-float64 goal_second_syn
+float64 goal_syn
 float64 goal_duration
 ---
 bool answer

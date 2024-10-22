@@ -44,6 +44,8 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 #include <moveit/robot_trajectory/robot_trajectory.h>
 #include <moveit/trajectory_processing/time_optimal_trajectory_generation.h>
 #include <moveit_visual_tools/moveit_visual_tools.h>
+#include "darko_manipulation_msgs/grasp.h"
+#include <franka_msgs/ErrorRecoveryAction.h>
 
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
@@ -75,7 +77,7 @@ class TaskSequencer {
         void get_franka_state(const franka_msgs::FrankaState::ConstPtr &msg);
 
         // Callback for simple grasp task service
-        bool call_simple_grasp_task(std_srvs::SetBool::Request &req, std_srvs::SetBool::Response &res);
+        bool call_simple_grasp_task(darko_manipulation_msgs::grasp::Request &req, darko_manipulation_msgs::grasp::Response &res);
 
         // Callback for complex grasp task service (goes to specified pose)
         bool call_complex_grasp_task(panda_softhand_msgs::complex_grasp::Request &req, panda_softhand_msgs::complex_grasp::Response &res);
@@ -135,7 +137,6 @@ class TaskSequencer {
         ros::Publisher pub_suction;
         ros::Publisher pub_duty;
     
-
         // Subscriber to franka_states for getting tau_ext on joints and other info and Publisher of its norm
         ros::Subscriber franka_state_sub;
         franka_msgs::FrankaState latest_franka_state;
@@ -292,4 +293,10 @@ class TaskSequencer {
         //
         std_msgs::Float64 first_syn_value;
         std_msgs::Float64 second_syn_value;
+        
+
+        //
+        geometry_msgs::Pose grasp_pose;
+        geometry_msgs::Pose pre_grasp_pose;
+
 };

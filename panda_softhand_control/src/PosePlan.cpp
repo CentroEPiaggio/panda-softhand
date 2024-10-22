@@ -60,8 +60,8 @@ bool PosePlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose sta
    
     // Getting the current ee transform
     try {
-		this->tf_listener.waitForTransform("/world", this->end_effector_name, ros::Time(0), ros::Duration(10.0) );
-		this->tf_listener.lookupTransform("/world", this->end_effector_name, ros::Time(0), this->stamp_ee_transform);
+		this->tf_listener.waitForTransform("/panda_link0", this->end_effector_name, ros::Time(0), ros::Duration(10.0) );
+		this->tf_listener.lookupTransform("/panda_link0", this->end_effector_name, ros::Time(0), this->stamp_ee_transform);
     } catch (tf::TransformException ex){
       	ROS_ERROR("%s", ex.what());
       	ros::Duration(1.0).sleep();
@@ -91,7 +91,7 @@ bool PosePlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose sta
 	// If the goal is relative, get the global goal pose by multiplying it with ee pose (end_effector_state)
 	if(is_goal_relative){
 		this->goalPoseAff = this->end_effector_state * this->goalPoseAff;
-        this->startAff = this->end_effector_state * this->startAff;
+        this->startAff = this->end_effector_state;
 	}
 
     // Reconvert to geometry_msgs Pose
@@ -112,7 +112,8 @@ bool PosePlan::performMotionPlan(){
     
     // Move group interface
     moveit::planning_interface::MoveGroupInterface group(this->group_name);
-
+    
+    group.setPoseReferenceFrame("panda_link0");
     // Getting the robot joint model
     ros::spinOnce();                    // May not be necessary
     const robot_state::JointModelGroup* joint_model_group = group.getCurrentState()->getJointModelGroup(this->group_name);
@@ -150,7 +151,7 @@ bool PosePlan::performMotionPlan(){
         group.setStartState(start_state);
     }
     
-   
+    
     // Planning to Pose
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
     bool success = (group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);

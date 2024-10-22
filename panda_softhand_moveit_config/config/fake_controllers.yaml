@@ -10,5 +10,7 @@ controller_list:
       - panda_joint6
       - panda_joint7
 initial:  # Define initial robot poses per group
-  - group: panda_softhand_arm
-    pose: home
+#  - group: panda_softhand_arm
+#    pose: home
+
+  []

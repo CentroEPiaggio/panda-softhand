@@ -77,8 +77,7 @@ bool PandaSoftHandClient::call_hand_plan_service(double goal_first_syn, double g
 
     // Creating and filling up the request
     panda_softhand_msgs::hand_plan hand_plan_srv;
-    hand_plan_srv.request.goal_first_syn = goal_first_syn;
-    hand_plan_srv.request.goal_second_syn = goal_second_syn;
+    hand_plan_srv.request.goal_syn = goal_first_syn;
     hand_plan_srv.request.goal_duration = goal_duration;
 
     // Calling the service
@@ -87,9 +86,9 @@ bool PandaSoftHandClient::call_hand_plan_service(double goal_first_syn, double g
         return false;
     }
     
-    for(int i = 0; i < hand_plan_srv.response.computed_trajectory.points.size(); i++){
-        std::cout << hand_plan_srv.response.computed_trajectory.points[i].time_from_start << std::endl;
-    }
+    // for(int i = 0; i < hand_plan_srv.response.computed_trajectory.points.size(); i++){
+    //     std::cout << hand_plan_srv.response.computed_trajectory.points[i].time_from_start << std::endl;
+    // }
 
     computed_trajectory = hand_plan_srv.response.computed_trajectory;
     return hand_plan_srv.response.answer;

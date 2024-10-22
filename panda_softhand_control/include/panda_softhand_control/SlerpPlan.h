@@ -25,7 +25,7 @@ Email: gpollayil@gmail.com, mathewjosepollayil@gmail.com  */
 // Defines
 #define     DEBUG   1       // Prints out additional stuff
 #define     VISUAL          // Publishes visual info on RViz
-// #define     PROMPT  1        // Waits for confermation in RViz before execution
+#define     PROMPT  1        // Waits for confermation in RViz before execution
 
 class SlerpPlan {
 
@@ -67,7 +67,8 @@ class SlerpPlan {
         // The start and goal poses of the control
 	  	Eigen::Affine3d startAff; 								// The starting ee pose 
 	  	Eigen::Affine3d goalAff; 								// The goal pose given by service call
-
+        geometry_msgs::Pose goal_pose;
+        
         // Joint trajectory computed to be sent to robot and the past one
         trajectory_msgs::JointTrajectory past_trajectory;
         trajectory_msgs::JointTrajectory computed_trajectory;

@@ -3,7 +3,7 @@
     
 	<!-- Throw Node of Giorgio -->
     
-    <include file="$(find franka_throw_unipi)/launch/throw_node.launch" />
+    <!-- <include file="$(find franka_throw_unipi)/launch/throw_node.launch" /> -->
 	<!-- Launch arguments -->
 	<arg name="task_sequences_params_pick_and_throw" default="$(find panda_softhand_control)/configs/task_sequences_params_pick_and_throw.yaml"/>
 	

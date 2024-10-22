@@ -24,6 +24,7 @@
   <build_depend>sdformat11</build_depend>
   <build_depend>franka_msgs</build_depend>
   <build_depend>franka_control</build_depend>
+  <build_depend>darko_manipulation_msgs</build_depend>
   <run_depend>panda_softhand_msgs</run_depend>
   <run_depend>actionlib_msgs</run_depend>
   <run_depend>visualization_msgs</run_depend>
@@ -39,6 +40,7 @@
   <run_depend>sdformat11</run_depend>
   <run_depend>franka_msgs</run_depend>
   <run_depend>franka_control</run_depend>
+  <run_depend>darko_manipulation_msgs</run_depend>
 
   <export>
 

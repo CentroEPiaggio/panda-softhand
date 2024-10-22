@@ -62,8 +62,8 @@ bool SlerpPlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose st
 
     // Getting the current ee transform
     try {
-		this->tf_listener.waitForTransform("/world", this->end_effector_name, ros::Time(0), ros::Duration(10.0) );
-		this->tf_listener.lookupTransform("/world", this->end_effector_name, ros::Time(0), this->stamp_ee_transform);
+		this->tf_listener.waitForTransform("/panda_link0", this->end_effector_name, ros::Time(0), ros::Duration(10.0) );
+		this->tf_listener.lookupTransform("/panda_link0", this->end_effector_name, ros::Time(0), this->stamp_ee_transform);
     } catch (tf::TransformException ex){
       	ROS_ERROR("%s", ex.what());
       	ros::Duration(1.0).sleep();
@@ -93,7 +93,7 @@ bool SlerpPlan::initialize(geometry_msgs::Pose goal_pose, geometry_msgs::Pose st
 	// If the goal is relative, get the global goal and start poses by multiplying it with ee pose (end_effector_state)
 	if(is_goal_relative){
         this->goalAff = this->end_effector_state * this->goalAff;
-		this->startAff = this->end_effector_state * this->startAff;
+		this->startAff = this->end_effector_state;
 	}
 
     // Setting the past trajectory
@@ -111,7 +111,7 @@ bool SlerpPlan::performMotionPlan(){
 
     // Move group interface
     moveit::planning_interface::MoveGroupInterface group(this->group_name);
-
+    group.setPoseReferenceFrame("panda_link0");
     /* If VISUAL is enabled */
     #ifdef VISUAL
 
@@ -150,12 +150,19 @@ bool SlerpPlan::performMotionPlan(){
     }
 
 	// Scale the velocity and acceleration of the computed trajectory
-    const double velocity_scaling_factor = 0.7; // Set your desired velocity scaling factor
-    const double acceleration_scaling_factor = 0.25; // Set your desired acceleration scaling factor
+    const double velocity_scaling_factor = 0.3; // Set your desired velocity scaling factor
+    const double acceleration_scaling_factor = 0.1; // Set your desired acceleration scaling factor
+    
 
-	// Planning for the waypoints path
-	moveit_msgs::RobotTrajectory trajectory;
-	double fraction = group.computeCartesianPath(cart_waypoints, 0.01, 0.0, trajectory);
+    // Planning for the waypoints path
+    moveit_msgs::RobotTrajectory trajectory;
+    std::vector<geometry_msgs::Pose> waypoints;
+    tf::poseEigenToMsg(this->goalAff, this->goal_pose);
+    waypoints.push_back(this->goal_pose);
+    double fraction = group.computeCartesianPath(waypoints, 0.01, 0.0, trajectory);
+	// // Planning for the waypoints path
+	// moveit_msgs::RobotTrajectory trajectory;
+	// double fraction = group.computeCartesianPath(cart_waypoints, 0.01, 0.0, trajectory);
     
     //
     robot_trajectory::RobotTrajectory rt(start_state.getRobotModel(), this->group_name);

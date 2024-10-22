@@ -9,7 +9,7 @@
     <xacro:property name="base_height" value="0.94" />
 
     <!-- Define arm base position -->
-    <xacro:property name="arm_position_x" value="-0.18" />
+    <xacro:property name="arm_position_x" value="0.12" />
     <xacro:property name="arm_position_y" value="0.0" />
     <xacro:property name="arm_position_z" value="0.0" />
     <xacro:property name="arm_orientation_r" value="0.0" />

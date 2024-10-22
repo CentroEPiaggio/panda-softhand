@@ -3,7 +3,7 @@
   <xacro:macro name="darko_franka_robot" params="joint_limits hand parent:='' prefix *origin">
     <!-- Name of this panda -->
     <!-- Should a franka_gripper be mounted at the flange?" -->
-    <xacro:arg name="hand" default="true" />
+    <xacro:arg name="hand" default="false" />
     <!-- Positional offset between $(arm_id)_hand -> $(arm_id)_hand_tcp [m]. Only used when
     hand:=true -->
     <xacro:arg name="tcp_xyz" default="0 0 0.1034" />
@@ -11,7 +11,7 @@
     hand:=true -->
     <xacro:arg name="tcp_rpy" default="0 0 0" />
     <!-- Is the robot being simulated in gazebo?" -->
-    <xacro:arg name="gazebo" default="true" />
+    <xacro:arg name="gazebo" default="false" />
 
     <xacro:include filename="$(find franka_description)/robots/common/utils.xacro" />
     <xacro:include filename="$(find franka_description)/robots/common/franka_arm.xacro" />
